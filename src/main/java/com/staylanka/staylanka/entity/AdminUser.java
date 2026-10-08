@@ -1,5 +1,9 @@
 package com.staylanka.staylanka.entity;
 
+
+import jakarta.persistence.Entity;
+
+@Entity
 public class AdminUser extends User {
 
     public AdminUser(){}
