@@ -31,7 +31,7 @@ public class CustomerService {
             existingUser.setUserName(customerDetails.getUserName());
         }
 
-        if(customerDetails.getPassword() != null) {
+         if(customerDetails.getPassword() != null) {
             existingUser.setPassword(customerDetails.getPassword());
         }
         if(customerDetails.getPhoneNumber() != null){

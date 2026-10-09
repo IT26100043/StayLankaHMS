@@ -28,6 +28,11 @@ public class User {
 
     //setters
 
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
@@ -46,6 +51,10 @@ public class User {
 
     //getters
 
+
+    public Long getId() {
+        return id;
+    }
 
     public String getPassword() {
         return password;
