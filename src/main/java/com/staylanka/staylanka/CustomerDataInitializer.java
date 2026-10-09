@@ -1,5 +1,4 @@
 
-
 package com.staylanka.staylanka;
 
 import com.staylanka.staylanka.entity.AdminUser;

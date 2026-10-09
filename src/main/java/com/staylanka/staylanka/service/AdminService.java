@@ -25,4 +25,20 @@ public class AdminService {
     }
 
 
+    public AdminUser updateAminUser(long id,AdminUser adminUser){
+        AdminUser existingUser = adminUserRepository.findById(id).orElseThrow();
+        if (adminUser.getUserName() != null){
+            existingUser.setUserName(adminUser.getUserName());
+        }
+        if (adminUser.getPassword() != null){
+            existingUser.setPassword(adminUser.getPassword());
+        }
+        if (adminUser.getPhoneNumber() != null){
+            existingUser.setPhoneNumber(adminUser.getPhoneNumber());
+        }
+        return adminUserRepository.save(existingUser);
+
+
+    }
+
 }

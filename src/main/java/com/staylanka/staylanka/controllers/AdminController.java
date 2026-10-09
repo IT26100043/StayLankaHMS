@@ -2,10 +2,7 @@ package com.staylanka.staylanka.controllers;
 
 import com.staylanka.staylanka.entity.AdminUser;
 import com.staylanka.staylanka.service.AdminService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,14 +17,21 @@ public class AdminController {
         this.adminService = adminService;
     }
 
+
     @GetMapping("/admins")
     public List<AdminUser> getAdminUser(){
         return adminService.getAdminUser();
     }
 
+
     @GetMapping("/{id}")
     public Optional<AdminUser> getAdminById(@PathVariable Long id){
         return adminService.getAdminById(id);
+    }
+
+    @PutMapping("/{id}")
+    public AdminUser updateAdminUser(@PathVariable Long id,@RequestBody AdminUser adminUser){
+        return adminService.updateAminUser(id,adminUser);
     }
 
 
