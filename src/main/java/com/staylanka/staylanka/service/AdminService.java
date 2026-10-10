@@ -2,6 +2,7 @@ package com.staylanka.staylanka.service;
 
 import com.staylanka.staylanka.entity.AdminUser;
 import com.staylanka.staylanka.repository.AdminUserRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,8 +38,12 @@ public class AdminService {
             existingUser.setPhoneNumber(adminUser.getPhoneNumber());
         }
         return adminUserRepository.save(existingUser);
-
-
     }
+
+    public void deleteAdminUser(Long id){
+        adminUserRepository.deleteById(id);
+    }
+
+
 
 }

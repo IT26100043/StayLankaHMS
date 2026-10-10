@@ -34,6 +34,13 @@ public class AdminController {
         return adminService.updateAminUser(id,adminUser);
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteAdminById(@PathVariable Long id){
+        adminService.deleteAdminUser(id);
+    }
+
+    
+
 
 
 }
