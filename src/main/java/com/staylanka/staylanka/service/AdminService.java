@@ -44,6 +44,11 @@ public class AdminService {
         adminUserRepository.deleteById(id);
     }
 
+    public AdminUser registerNewUser(AdminUser adminUser){
+        return adminUserRepository.save(adminUser);
+
+    }
+
 
 
 }

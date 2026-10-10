@@ -39,7 +39,11 @@ public class AdminController {
         adminService.deleteAdminUser(id);
     }
 
-    
+    @PostMapping("/register")
+    public AdminUser registerAdminUser(@RequestBody AdminUser adminUser){
+        return adminService.registerNewUser(adminUser);
+    }
+
 
 
 
