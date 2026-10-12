@@ -1,6 +1,7 @@
 package com.staylanka.staylanka.controllers;
 
 import com.staylanka.staylanka.entity.AdminUser;
+import com.staylanka.staylanka.entity.CustomerUser;
 import com.staylanka.staylanka.service.AuthenticationService;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,11 @@ public class AuthenticationController {
     @PostMapping("/admin")
     public AdminUser checkAdminUserAuth(@RequestBody AdminUser adminUser){
         return authenticationService.checkAdminAuthentication(adminUser);
+    }
+
+    @PostMapping("/customer")
+    public CustomerUser checkCustomerAuth(@RequestBody CustomerUser customerUser){
+        return authenticationService.checkCustomerAuthentication(customerUser);
     }
 
 }
