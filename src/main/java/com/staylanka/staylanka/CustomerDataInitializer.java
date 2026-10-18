@@ -17,10 +17,11 @@ import org.springframework.context.annotation.Configuration;
         @Bean
         CommandLineRunner initDatabase(CustomerRepository repository , AdminUserRepository adminUserRepository) {
             return args -> {
-                repository.save(new CustomerUser("testuser1", "abc@123", "07126766255"));
-                repository.save(new CustomerUser("testuser2","xyz@789", "07127777255"));
+                repository.save(new CustomerUser("testuser1", "abc@123", "07126886299"));
+                repository.save(new CustomerUser("testuser2","xyz@789", "07112345678"));
                 adminUserRepository.save(new AdminUser("Admin1","abcd@123","01188123488"));
-                adminUserRepository.save(new AdminUser("Admin2","xyz@123","02255123487"));
+                adminUserRepository.save(new AdminUser("Admin2","xyz@123","071123456789"));
+                adminUserRepository.save(new AdminUser("Admin3","pqr@123","07112345678"));
             };
         }
     }
