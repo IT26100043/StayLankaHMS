@@ -2,9 +2,143 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f9;
+            margin: 0;
+        }
+        .signup-box {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 320px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #responseOutput {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #f0f0f0;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            display: none;
+        }
+        .error {
+            background-color: #ffe6e6 !important;
+            color: #d8000c;
+        }
+        .success {
+            background-color: #e6ffe6 !important;
+            color: #270;
+        }
+    </style>
 </head>
 <body>
+
+<div class="signup-box">
+    <h2>Customer Signup</h2>
+
+    <form id="signupForm">
+        <div class="form-group">
+            <label for="userName">Username</label>
+            <input type="text" id="userName" required placeholder="Enter username">
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" required placeholder="Enter password">
+        </div>
+
+        <div class="form-group">
+            <label for="phoneNumber">Phone Number</label>
+            <input type="tel" id="phoneNumber" required placeholder="Enter phone number">
+        </div>
+
+        <button type="submit">Sign Up</button>
+    </form>
+
+    <pre id="responseOutput"></pre>
+</div>
+
+<script>
+    document.getElementById('signupForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        // 1. Capture user inputs
+        const userNameVal = document.getElementById('userName').value;
+        const passwordVal = document.getElementById('password').value;
+        const phoneNumberVal = document.getElementById('phoneNumber').value;
+        const outputElement = document.getElementById('responseOutput');
+
+        const payload = {
+            userName: userNameVal,
+            password: passwordVal,
+            phoneNumber: phoneNumberVal
+        };
+
+        try {
+            const response = await fetch('http://localhost:8080/customer/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                const data = await response.json().catch(() => ({ message: "Registration successful" }));
+
+                outputElement.className = "success";
+                outputElement.style.display = "block";
+                outputElement.textContent = "Response Received:\n" + JSON.stringify(data, null, 2);
+            } else {
+                outputElement.className = "error";
+                outputElement.style.display = "block";
+                outputElement.textContent = `Registration failed: HTTP ${response.status}`;
+            }
+        } catch (error) {
+            outputElement.className = "error";
+            outputElement.style.display = "block";
+            outputElement.textContent = "Network Error: " + error.message;
+        }
+    });
+</script>
 
 </body>
 </html>
