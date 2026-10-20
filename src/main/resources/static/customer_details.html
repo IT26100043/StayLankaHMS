@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Management</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --danger-color: #ef4444;
+            --danger-hover: #dc2626;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .header {
+            margin-bottom: 20px;
+        }
+
+        .header h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .status-banner {
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-banner.success {
+            display: block;
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .status-banner.error {
+            display: block;
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        thead {
+            background-color: #f1f5f9;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            padding: 14px 18px;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        td {
+            padding: 16px 18px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.92rem;
+            vertical-align: middle;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        code {
+            font-family: Source Code Pro, monospace;
+            background-color: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: #475569;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            background-color: #e0e7ff;
+            color: #3730a3;
+            text-transform: uppercase;
+        }
+
+        .btn-delete {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-delete:hover {
+            background-color: var(--danger-hover);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>Customer Management</h2>
+    </div>
+
+    <!-- Dynamic Alert Banner -->
+    <div id="statusBanner" class="status-banner"></div>
+
+    <div class="card">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Password</th>
+                <th>Phone Number</th>
+                <th>Role</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="customerTableBody">
+            <!-- Rows injected dynamically -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const API_BASE_URL = 'http://localhost:8080/customer';
+
+    document.addEventListener('DOMContentLoaded', fetchCustomers);
+
+    /**
+     * Fetch customer records asynchronously from the Spring Boot API
+     */
+    async function fetchCustomers() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/customers`);
+            if (!response.ok) {
+                throw new Error(`Server returned status: ${response.status}`);
+            }
+            const customers = await response.json();
+            renderCustomerTable(customers);
+        } catch (error) {
+            showBanner(`Failed to load customers: ${error.message}`, 'error');
+        }
+    }
+
+    /**
+     * Render HTML rows dynamically into the DOM
+     */
+    function renderCustomerTable(customers) {
+        const tbody = document.getElementById('customerTableBody');
+        tbody.innerHTML = '';
+
+        if (!customers || customers.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No customers found in database.</td></tr>`;
+            return;
+        }
+
+        customers.forEach(customer => {
+            const row = document.createElement('tr');
+            row.id = `customer-row-${customer.id}`;
+
+            row.innerHTML = `
+                <td><strong>#${escapeHtml(customer.id)}</strong></td>
+                <td>${escapeHtml(customer.userName)}</td>
+                <td><code>${escapeHtml(customer.password)}</code></td>
+                <td>${escapeHtml(customer.phoneNumber)}</td>
+                <td><span class="role-badge">${escapeHtml(customer.Role)}</span></td>
+                <td>
+                    <button class="btn-delete" onclick="deleteCustomer(${customer.id})">Delete</button>
+                </td>
+            `;
+
+            tbody.appendChild(row);
+        });
+    }
+
+    /**
+     * Send HTTP DELETE request to remove customer by ID
+     */
+    async function deleteCustomer(id) {
+        if (!confirm(`Are you sure you want to delete customer ID: ${id}?`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                showBanner(`Customer #${id} successfully deleted.`, 'success');
+
+                // Remove deleted row immediately from display
+                const row = document.getElementById(`customer-row-${id}`);
+                if (row) {
+                    row.remove();
+                }
+
+                // If no rows remain, show empty state message
+                const tbody = document.getElementById('customerTableBody');
+                if (tbody.children.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No customers found in database.</td></tr>`;
+                }
+            } else {
+                throw new Error(`Deletion failed with status: ${response.status}`);
+            }
+        } catch (error) {
+            showBanner(`Error: ${error.message}`, 'error');
+        }
+    }
+
+    /**
+     * Utility: Display timed status banner
+     */
+    function showBanner(message, type) {
+        const banner = document.getElementById('statusBanner');
+        banner.textContent = message;
+        banner.className = `status-banner ${type}`;
+
+        setTimeout(() => {
+            banner.className = 'status-banner';
+            banner.textContent = '';
+        }, 4000);
+    }
+
+    /**
+     * Utility: Prevent basic HTML/Script injection
+     */
+    function escapeHtml(value) {
+        if (value === null || value === undefined) return '';
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+</script>
+</body>
+</html>
