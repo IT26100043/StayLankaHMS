@@ -1,0 +1,762 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>NOVA Hotel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;1,6..96,400&family=Instrument+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
+<style>
+    /* Layout: one pinned scene that zooms from night garden through the front doors into the lobby, then rooms, experience and contact below. Committed single dark look. */
+    :root{
+        --ink:#0a1510; --deep:#11231a; --moss:#1f3a2c; --leaf:#5d8a68;
+        --lamp:#d9b877; --lamp-soft:rgba(217,184,119,.16); --stone:#ebe4d5; --mute:#9db0a3;
+        --line:rgba(235,228,213,.15); --danger:#e48a7a; --ok:#8fd0a0;
+        --f-display:"Bodoni Moda","Didot",Georgia,serif;
+        --f-body:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+        --f-mono:"DM Mono",ui-monospace,Menlo,monospace;
+        --ox:50%; --oy:60%;
+        color-scheme:dark;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{background:var(--ink);color:var(--stone);font:15px/1.6 var(--f-body);padding-inline:0;overflow-x:hidden}
+    button,input,select{font:inherit;color:inherit}
+    a{color:inherit}
+    :focus-visible{outline:2px solid var(--lamp);outline-offset:3px}
+    .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+    /* NAV */
+    .nav{position:fixed;inset:0 0 auto 0;z-index:50;padding:calc(12px + env(safe-area-inset-top,0px)) 20px 12px;
+        display:flex;align-items:center;gap:20px;flex-wrap:wrap;transition:background .35s,backdrop-filter .35s,border-color .35s;border-bottom:1px solid transparent}
+    .nav.scrolled{background:rgba(12,24,18,.52);-webkit-backdrop-filter:blur(16px) saturate(1.3);backdrop-filter:blur(16px) saturate(1.3);border-bottom-color:var(--line)}
+    .logo{font:600 24px/1 var(--f-display);letter-spacing:.42em;text-decoration:none;padding-right:.1em}
+    .links{display:flex;gap:26px;margin-inline:auto}
+    .links a{font-size:13px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;color:var(--mute);padding:6px 0;position:relative;transition:color .2s}
+    .links a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--lamp);transform:scaleX(0);transform-origin:left;transition:transform .3s}
+    .links a:hover,.links a.on{color:var(--stone)}
+    .links a:hover::after,.links a.on::after{transform:scaleX(1)}
+    .auth{display:flex;align-items:center;position:relative}
+    .btn{border:1px solid var(--lamp);background:transparent;color:var(--lamp);padding:9px 20px;border-radius:999px;font-weight:500;font-size:13px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .2s,color .2s}
+    .btn:hover{background:var(--lamp);color:var(--ink)}
+    .btn.solid{background:var(--lamp);color:var(--ink)}
+    .btn.solid:hover{background:#ffd08c}
+    .btn.ghost{border-color:var(--line);color:var(--stone)}
+    .btn.ghost:hover{background:rgba(235,228,213,.1);color:var(--stone)}
+    .btn.danger{border-color:var(--danger);color:var(--danger)}
+    .btn.danger:hover{background:var(--danger);color:var(--ink)}
+    .btn[disabled]{opacity:.45;cursor:not-allowed}
+    .avatar{width:40px;height:40px;border-radius:50%;border:1px solid var(--lamp);background:var(--lamp-soft);color:var(--lamp);font:600 18px/1 var(--f-display);cursor:pointer;display:grid;place-items:center;transition:background .2s}
+    .avatar:hover,.avatar[aria-expanded="true"]{background:var(--lamp);color:var(--ink)}
+    .pop{position:absolute;right:0;top:calc(100% + 12px);width:min(330px,calc(100vw - 32px));background:rgba(14,28,21,.94);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+    .pop h3{font:400 22px/1.2 var(--f-display);margin:0 0 2px}
+    .pop .sub{font-size:12px;color:var(--mute);margin:0 0 14px;overflow-wrap:anywhere}
+    .dl{display:grid;grid-template-columns:auto 1fr;gap:7px 14px;margin:0 0 16px;font-size:13px}
+    .dl dt{color:var(--mute)}
+    .dl dd{margin:0;font-family:var(--f-mono);font-size:12.5px;overflow-wrap:anywhere}
+    .dl dd button{background:none;border:0;color:var(--lamp);cursor:pointer;font-size:11px;margin-left:6px;text-decoration:underline;padding:0}
+    .pop .res{border-top:1px solid var(--line);padding-top:12px;margin-bottom:14px;font-size:13px}
+    .pop .res b{font-weight:500;color:var(--mute);display:block;margin-bottom:4px;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .confirm{border-top:1px solid var(--line);margin-top:14px;padding-top:14px}
+    .confirm p{margin:0 0 10px;font-size:13px;color:var(--stone)}
+
+    /* JOURNEY */
+    .journey{position:relative;height:540svh}
+    .stage{position:sticky;top:0;height:100svh;overflow:hidden;background:#07110c}
+    .layer{position:absolute;inset:0;transform-origin:var(--ox) var(--oy);will-change:transform,opacity}
+    .layer svg{width:100%;height:100%;display:block}
+    #facade g.door{transform-box:fill-box}
+    #doorL{transform-origin:left center}
+    #doorR{transform-origin:right center}
+    .vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 55%,transparent 45%,rgba(3,8,5,.65) 100%)}
+    .caps{position:absolute;left:0;right:0;bottom:calc(9svh + env(safe-area-inset-bottom,0px));padding-inline:24px;text-align:center;pointer-events:none}
+    .cap{position:absolute;left:24px;right:24px;bottom:0;opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+    .cap.show{opacity:1;transform:none}
+    .cap .eyebrow{font:500 12px/1 var(--f-mono);letter-spacing:.24em;text-transform:uppercase;color:var(--lamp);margin:0 0 14px}
+    .cap h1,.cap h2{font:400 clamp(34px,7vw,76px)/1.04 var(--f-display);margin:0 auto;max-width:15ch;text-wrap:balance;text-shadow:0 4px 40px rgba(0,0,0,.6)}
+    .cap h1 em,.cap h2 em{font-style:italic;color:var(--lamp)}
+    .cap .cta{display:inline-block;margin-top:22px;pointer-events:auto;text-decoration:none}
+    .hint{position:absolute;left:50%;bottom:calc(2svh + env(safe-area-inset-bottom,0px));transform:translateX(-50%);font:500 11px/1 var(--f-mono);letter-spacing:.24em;text-transform:uppercase;color:var(--mute);display:flex;flex-direction:column;align-items:center;gap:8px;transition:opacity .4s}
+    .hint i{width:1px;height:30px;background:linear-gradient(var(--lamp),transparent);animation:drip 1.8s ease-in-out infinite}
+    @keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+    .bar{position:absolute;right:0;top:0;bottom:0;width:2px;background:rgba(235,228,213,.08);z-index:3}
+    .bar span{display:block;width:100%;height:0;background:var(--lamp)}
+
+    .layer.fore-f,#fore{filter:blur(2.5px)}
+    .bloom{position:absolute;inset:0;pointer-events:none;opacity:0;mix-blend-mode:screen;background:radial-gradient(ellipse 55% 60% at var(--ox) var(--oy),rgba(255,214,150,.55),rgba(255,190,110,.18) 45%,transparent 70%)}
+    .grain{position:absolute;inset:-50%;pointer-events:none;opacity:.08;mix-blend-mode:overlay;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");animation:gr 1s steps(6) infinite}
+    @keyframes gr{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}60%{transform:translate(-2%,-1%)}80%{transform:translate(3%,3%)}100%{transform:translate(0,0)}}
+    .bars{position:absolute;inset:0;pointer-events:none}
+    .bars::before,.bars::after{content:"";position:absolute;left:0;right:0;height:4.5svh;background:#000}
+    .bars::before{top:0}.bars::after{bottom:0}
+    .vig{background:radial-gradient(ellipse at 50% 55%,transparent 38%,rgba(2,4,6,.78) 100%)}
+    @media (prefers-reduced-motion:reduce){.grain{animation:none}}
+    /* SECTIONS */
+    section.s{padding:clamp(72px,11vw,140px) 24px;position:relative;scroll-margin-top:60px}
+    .wrap{max-width:1180px;margin-inline:auto}
+    .kicker{font:500 12px/1 var(--f-mono);letter-spacing:.24em;text-transform:uppercase;color:var(--lamp);margin:0 0 16px}
+    .s h2{font:400 clamp(32px,5vw,58px)/1.08 var(--f-display);margin:0 0 18px;max-width:18ch;text-wrap:balance}
+    .lead{color:var(--mute);max-width:56ch;margin:0 0 36px;font-size:16px}
+    #rooms{background:linear-gradient(#1a140c,var(--ink) 70%)}
+    .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px}
+    .chip{background:transparent;border:1px solid var(--line);border-radius:999px;padding:7px 16px;font-size:13px;cursor:pointer;color:var(--mute);transition:all .2s}
+    .chip:hover{color:var(--stone);border-color:var(--mute)}
+    .chip[aria-pressed="true"]{background:var(--stone);color:var(--ink);border-color:var(--stone)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+    .room{border:1px solid var(--line);border-radius:6px;padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0;background:rgba(235,228,213,.025);transition:border-color .25s,transform .25s}
+    .room:hover{border-color:rgba(240,184,102,.5);transform:translateY(-3px)}
+    .room .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+    .room .no{font:500 13px var(--f-mono);color:var(--mute);letter-spacing:.1em}
+    .pill{font:500 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;padding:6px 10px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+    .pill.available{color:var(--ok)} .pill.occupied{color:var(--danger)} .pill.cleaning{color:#e8cf7a} .pill.reserved{color:var(--lamp)}
+    .room h3{font:400 24px/1.15 var(--f-display);margin:0}
+    .room p{margin:0;color:var(--mute);font-size:13.5px}
+    .room .meta{display:flex;gap:14px;flex-wrap:wrap;font:400 12px var(--f-mono);color:var(--stone)}
+    .room .foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:auto;padding-top:12px;border-top:1px solid var(--line)}
+    .price{font:400 26px var(--f-display)} .price small{font:400 12px var(--f-body);color:var(--mute)}
+    .room .btn{padding:8px 16px;font-size:12px}
+    #experience{background:var(--deep)}
+    .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:36px 48px;margin-top:40px}
+    .cols h3{font:400 24px var(--f-display);margin:0 0 8px}
+    .cols p{margin:0;color:var(--mute);font-size:14.5px}
+    .cols .t{font:500 12px var(--f-mono);letter-spacing:.14em;color:var(--lamp);margin-bottom:10px;display:block}
+    #contact{background:var(--ink);border-top:1px solid var(--line)}
+    .contact{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px;margin-top:30px}
+    .contact dt{font:500 11px var(--f-mono);letter-spacing:.18em;text-transform:uppercase;color:var(--mute);margin-bottom:6px}
+    .contact dd{margin:0;font-size:16px;overflow-wrap:anywhere}
+    footer{padding:28px 24px calc(28px + env(safe-area-inset-bottom,0px));text-align:center;font:400 12px var(--f-mono);color:var(--mute);letter-spacing:.1em;border-top:1px solid var(--line)}
+
+    /* MODAL */
+    .back{position:fixed;inset:0;z-index:100;background:rgba(4,10,7,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:grid;place-items:center;padding:16px;overflow-y:auto}
+    .modal{width:min(480px,100%);background:var(--deep);border:1px solid var(--line);border-radius:20px;padding:30px 26px;margin-block:auto;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+    .modal h2{font:400 32px/1.1 var(--f-display);margin:0 0 6px;max-width:none}
+    .modal .sub{color:var(--mute);margin:0 0 22px;font-size:14px}
+    .x{position:absolute;right:14px;top:14px;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:none;cursor:pointer;font-size:18px;line-height:1;color:var(--mute)}
+    .x:hover{color:var(--stone);border-color:var(--mute)}
+    form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .f{display:flex;flex-direction:column;gap:6px;min-width:0}
+    .f.full{grid-column:1/-1}
+    label{font:500 11px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+    input,select{background:rgba(235,228,213,.05);border:1px solid var(--line);border-radius:10px;padding:11px 13px;width:100%;min-width:0;outline:none;transition:border-color .2s}
+    select option{background:var(--deep)}
+    input:focus,select:focus{border-color:var(--lamp)}
+    .err{grid-column:1/-1;color:var(--danger);font-size:13px;min-height:0;margin:0}
+    .swap{grid-column:1/-1;display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;margin-top:6px;padding-top:16px;border-top:1px solid var(--line);color:var(--mute);font-size:13px}
+    .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--stone);color:var(--ink);padding:11px 20px;border-radius:999px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:all .3s;z-index:200;max-width:calc(100vw - 32px)}
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+
+    @media (max-width:760px){
+        .nav{gap:8px 12px;padding-inline:16px}
+        .links{order:3;flex-basis:100%;justify-content:space-between;gap:8px;margin:0}
+        .links a{font-size:11px;letter-spacing:.1em}
+        .logo{font-size:21px}
+        section.s{padding-inline:20px}
+        form{grid-template-columns:1fr}
+        .auth{margin-left:auto}
+        .caps{bottom:calc(11svh + env(safe-area-inset-bottom,0px))}
+    }
+    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hint i{animation:none}.cap{transition:none}}
+</style>
+<nav class="nav" id="nav" aria-label="Main">
+    <a class="logo" href="#top" data-go="top" aria-label="NOVA home">NOVA</a>
+    <div class="links">
+        <a href="#top" data-go="top" class="on">Arrival</a>
+        <a href="#rooms" data-go="rooms">Rooms</a>
+        <a href="#experience" data-go="experience">Experience</a>
+        <a href="#contact" data-go="contact">Contact</a>
+    </div>
+    <div class="auth" id="auth"></div>
+</nav>
+
+<main id="top">
+    <div class="journey" id="journey">
+        <div class="stage" id="stage">
+            <div class="layer" id="sky"></div>
+            <div class="layer" id="hills"></div>
+            <div class="layer" id="garden"></div>
+            <div class="layer" id="facade"></div>
+            <div class="layer" id="fore"></div>
+            <div class="vig"></div><div class="bloom" id="bloom"></div><div class="grain"></div><div class="bars"></div>
+            <div class="caps">
+                <div class="cap show" data-c="0">
+                    <p class="eyebrow">Colombo &middot; 7.0&deg;N 79.9&deg;E</p>
+                    <h1>Arrive quietly. <em>Stay beautifully.</em></h1>
+                </div>
+                <div class="cap" data-c="1">
+                    <p class="eyebrow">The approach</p>
+                    <h2>A drive lined with <em>soft light.</em></h2>
+                </div>
+                <div class="cap" data-c="2">
+                    <p class="eyebrow">The doors open</p>
+                    <h2>Marble, brass, <em>hush.</em></h2>
+                </div>
+                <div class="cap" data-c="3">
+                    <p class="eyebrow">Lobby &middot; 24 hour desk</p>
+                    <h2>Welcome to <em>NOVA.</em></h2>
+                    <a class="btn solid cta" href="#rooms" data-go="rooms">See the rooms</a>
+                </div>
+            </div>
+            <div class="hint" id="hint"><span>Scroll to enter</span><i></i></div>
+            <div class="bar"><span id="barfill"></span></div>
+        </div>
+    </div>
+
+    <section class="s" id="rooms">
+        <div class="wrap">
+            <p class="kicker">Rooms &amp; availability</p>
+            <h2>Our rooms, live status.</h2>
+            <p class="lead">Rooms added by the hotel team appear here automatically. Sign in to book a room for your dates.</p>
+            <div class="filters" id="filters" role="group" aria-label="Filter rooms by status"></div>
+            <div class="grid" id="roomgrid"></div>
+        </div>
+    </section>
+
+    <section class="s" id="experience">
+        <div class="wrap">
+            <p class="kicker">The experience</p>
+            <h2>A building that behaves like a garden.</h2>
+            <p class="lead">Every floor opens onto planting. Nothing here is rushed, and nothing is left for you to ask twice.</p>
+            <div class="cols">
+                <div><span class="t">06:00 &ndash; 10:30</span><h3>Garden breakfast</h3><p>String hoppers, kiribath and fruit from the courtyard trees, served outside until the sun gets hot.</p></div>
+                <div><span class="t">15 m &middot; heated</span><h3>Rooftop pool</h3><p>A narrow lap pool above the canopy, open from first light until the last lantern goes out.</p></div>
+                <div><span class="t">Concierge</span><h3>One desk, no queue</h3><p>Airport transfers, train tickets to Kandy, a table at the right place. Ask once, it is handled.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="s" id="contact">
+        <div class="wrap">
+            <p class="kicker">Contact</p>
+            <h2>Talk to the front desk.</h2>
+            <dl class="contact">
+                <div><dt>Address</dt><dd>14 Garden Lane, Colombo 07, Sri Lanka</dd></div>
+                <div><dt>Reservations</dt><dd>+94 11 555 0140</dd></div>
+                <div><dt>Email</dt><dd>desk@nova-hotel.example</dd></div>
+                <div><dt>Check-in / out</dt><dd>14:00 / 11:00</dd></div>
+            </dl>
+        </div>
+    </section>
+    <footer>NOVA &middot; Room management demo &middot; accounts are stored only in this browser</footer>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+    (function(){
+        "use strict";
+        /* ---------- helpers ---------- */
+        function h(tag,attrs){
+            var el=document.createElement(tag);
+            if(attrs)for(var k in attrs){
+                if(k==="class")el.className=attrs[k];
+                else if(k==="text")el.textContent=attrs[k];
+                else if(k.slice(0,2)==="on")el.addEventListener(k.slice(2),attrs[k]);
+                else el.setAttribute(k,attrs[k]);
+            }
+            for(var i=2;i<arguments.length;i++){var c=arguments[i];if(c==null)continue;el.appendChild(typeof c==="string"?document.createTextNode(c):c)}
+            return el;
+        }
+        var mem={};
+        function lsGet(k,def){try{var v=localStorage.getItem(k);if(v!==null)return JSON.parse(v)}catch(e){}return (k in mem)?mem[k]:def}
+        function lsSet(k,v){mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+        function clamp(x,a,b){return Math.min(b,Math.max(a,x))}
+        function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+        var toastEl=document.getElementById("toast"),toastT;
+        function toast(msg){toastEl.textContent=msg;toastEl.classList.add("show");clearTimeout(toastT);toastT=setTimeout(function(){toastEl.classList.remove("show")},2600)}
+        window.__novaToast=toast;
+
+        /* ---------- scene drawing ---------- */
+        var VB='viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"';
+        function wrap(id,inner){document.getElementById(id).innerHTML='<svg '+VB+' aria-hidden="true">'+inner+'</svg>'}
+        var r=rng(7);
+
+        /* sky: deep dusk with soft cloud wisps */
+        (function(){
+            var s='<defs><linearGradient id="skyg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#04060b"/><stop offset=".5" stop-color="#0d1624"/><stop offset=".78" stop-color="#2e2a38"/><stop offset="1" stop-color="#85603f"/></linearGradient>'+
+                '<filter id="cl" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".0025 .011" numOctaves="4" seed="9"/><feColorMatrix values="0 0 0 0 .78 0 0 0 0 .62 0 0 0 0 .52 0 0 0 1.5 -.62"/><feGaussianBlur stdDeviation="5"/></filter></defs>'+
+                '<rect width="1600" height="900" fill="url(#skyg)"/><rect width="1600" height="600" filter="url(#cl)" opacity=".55"/>';
+            for(var i=0;i<40;i++)s+='<circle cx="'+(r()*1600|0)+'" cy="'+(r()*260|0)+'" r="'+(r()*.9+.3).toFixed(1)+'" fill="#f4efe0" opacity="'+(r()*.5+.15).toFixed(2)+'"/>';
+            wrap("sky",s);
+        })();
+
+        /* distant skyline, soft focus */
+        (function(){
+            var s='<defs><filter id="sb"><feGaussianBlur stdDeviation="3"/></filter><filter id="bk"><feGaussianBlur stdDeviation="5"/></filter></defs>'+
+                '<g filter="url(#sb)"><path d="M0 560 C180 500 340 530 520 505 C720 478 880 520 1080 495 C1280 470 1440 515 1600 490 L1600 900 L0 900Z" fill="#0a121a"/></g><g filter="url(#bk)">';
+            for(var i=0;i<26;i++)s+='<circle cx="'+(r()*1600|0)+'" cy="'+(520+r()*50|0)+'" r="'+(3+r()*5).toFixed(1)+'" fill="#ffd9a0" opacity="'+(.25+r()*.4).toFixed(2)+'"/>';
+            wrap("hills",s+'</g><path d="M0 600 C300 560 600 590 900 565 C1200 545 1400 580 1600 560 L1600 900 L0 900Z" fill="#070d12"/>');
+        })();
+
+        /* approach: polished stone drive, reflecting pools, uplit columns and lamps */
+        (function(){
+            var s='<defs>'+
+                '<linearGradient id="gnd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14161a"/><stop offset="1" stop-color="#040506"/></linearGradient>'+
+                '<linearGradient id="drv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a4034"/><stop offset=".25" stop-color="#2a2620"/><stop offset="1" stop-color="#0b0a09"/></linearGradient>'+
+                '<linearGradient id="wat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b2a33"/><stop offset="1" stop-color="#05090c"/></linearGradient>'+
+                '<linearGradient id="trk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#10201a"/><stop offset="1" stop-color="#030605"/></linearGradient>'+
+                '<radialGradient id="pool"><stop offset="0" stop-color="#ffd9a0" stop-opacity=".55"/><stop offset="1" stop-color="#ffd9a0" stop-opacity="0"/></radialGradient>'+
+                '<radialGradient id="lg"><stop offset="0" stop-color="#ffe2b0" stop-opacity=".9"/><stop offset=".25" stop-color="#ffcf8a" stop-opacity=".35"/><stop offset="1" stop-color="#ffcf8a" stop-opacity="0"/></radialGradient>'+
+                '<filter id="b2"><feGaussianBlur stdDeviation="2.2"/></filter></defs>'+
+                '<rect y="600" width="1600" height="300" fill="url(#gnd)"/>'+
+                '<polygon points="694,650 590,650 -160,900 314,900" fill="url(#wat)"/><polygon points="906,650 1010,650 1760,900 1286,900" fill="url(#wat)"/>'+
+                '<polygon points="720,650 880,650 1260,900 340,900" fill="url(#drv)"/><ellipse cx="800" cy="705" rx="270" ry="48" fill="url(#pool)"/>'+
+                '<g stroke="#d9b877" fill="none"><line x1="720" y1="650" x2="340" y2="900" stroke-width="1.5" opacity=".5"/><line x1="880" y1="650" x2="1260" y2="900" stroke-width="1.5" opacity=".5"/><line x1="800" y1="650" x2="800" y2="900" opacity=".18"/></g>';
+            for(var i=0;i<6;i++){
+                var t=i/5,base=662+t*t*210,sc=.3+t*1.2,half=80+1.52*(base-650);
+                [-1,1].forEach(function(d){
+                    var x=800+d*half,tx=800+d*(half+150*sc),th=130*sc;
+                    s+='<ellipse cx="'+tx.toFixed(0)+'" cy="'+(base-th*.55).toFixed(0)+'" rx="'+(24*sc).toFixed(0)+'" ry="'+(th*.62).toFixed(0)+'" fill="url(#trk)"/><circle cx="'+tx.toFixed(0)+'" cy="'+base.toFixed(0)+'" r="'+(60*sc).toFixed(0)+'" fill="url(#lg)" opacity=".35"/>';
+                    s+='<rect x="'+(x+d*34*sc-sc*1.5).toFixed(1)+'" y="'+(base+4*sc).toFixed(0)+'" width="'+(3*sc).toFixed(1)+'" height="'+(70*sc).toFixed(0)+'" fill="#ffd9a0" opacity=".28" filter="url(#b2)"/>';
+                    s+='<ellipse cx="'+x.toFixed(0)+'" cy="'+base.toFixed(0)+'" rx="'+(80*sc).toFixed(0)+'" ry="'+(14*sc).toFixed(0)+'" fill="url(#pool)"/><rect x="'+(x-1.6*sc).toFixed(1)+'" y="'+(base-110*sc).toFixed(0)+'" width="'+(3.2*sc).toFixed(1)+'" height="'+(110*sc).toFixed(0)+'" fill="#17130f"/><circle cx="'+x.toFixed(0)+'" cy="'+(base-112*sc).toFixed(0)+'" r="'+(34*sc).toFixed(0)+'" fill="url(#lg)"/><circle cx="'+x.toFixed(0)+'" cy="'+(base-112*sc).toFixed(0)+'" r="'+(4*sc).toFixed(1)+'" fill="#fff3d6"/>';
+                });
+            }
+            wrap("garden",s);
+        })();
+
+        /* facade + lobby (lobby sits inside the door opening 690-910 x 380-650) */
+        (function(){
+            var A='';
+            for(var a=0;a<5;a++){var ax=330+a*235;
+                A+='<path d="M'+ax+' 640 V430 a75 75 0 0 1 150 0 V640Z" fill="url(#arch)" opacity="'+(a===2?.95:.55)+'"/><path d="M'+ax+' 640 V430 a75 75 0 0 1 150 0 V640 M'+(ax+75)+' 355 V640" fill="none" stroke="#d9b877" stroke-width="3" opacity=".7"/>';}
+            var C='<circle cx="800" cy="300" r="170" fill="url(#cg)"/><line x1="800" y1="-200" x2="800" y2="250" stroke="#d9b877" stroke-width="2"/>';
+            [[90,12,258,16],[62,9,296,12],[36,6,330,8]].forEach(function(t){
+                C+='<ellipse cx="800" cy="'+t[2]+'" rx="'+t[0]+'" ry="'+t[1]+'" fill="none" stroke="#d9b877" stroke-width="2.5"/>';
+                for(var n=0;n<t[3];n++){var an=n/t[3]*6.283,x=800+Math.cos(an)*t[0],y=t[2]+Math.sin(an)*t[1],dl=10+(n%3)*7;
+                    C+='<line x1="'+x.toFixed(1)+'" y1="'+y.toFixed(1)+'" x2="'+x.toFixed(1)+'" y2="'+(y+dl)+'" stroke="#fff1d2" stroke-width="1" opacity=".7"/><circle cx="'+x.toFixed(1)+'" cy="'+(y+dl+2)+'" r="2.8" fill="#fff4dc"/><circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="9" fill="url(#lg)" opacity=".6"/>'}
+            });
+            var F='';
+            for(var j=-9;j<=9;j++)F+='<line x1="800" y1="640" x2="'+(800+j*190)+'" y2="1100" stroke="#f1e2c4" stroke-opacity=".07"/>';
+            for(var q=1;q<7;q++)F+='<line x1="-300" x2="1900" y1="'+(640+q*q*9)+'" y2="'+(640+q*q*9)+'" stroke="#f1e2c4" stroke-opacity=".06"/>';
+            var fl=rng(5),Fl='<g filter="url(#b1)">';
+            for(var u=0;u<12;u++)Fl+='<circle cx="'+(800+(fl()-.5)*70).toFixed(0)+'" cy="'+(650-fl()*36).toFixed(0)+'" r="'+(10+fl()*9).toFixed(0)+'" fill="'+(u%3?'#f1e4cf':'#e6c4b8')+'" opacity=".9"/>';
+            Fl+='</g>';
+            var L='<g id="lobbyG"><rect x="-300" y="-200" width="2200" height="840" fill="url(#wall)"/><circle cx="800" cy="320" r="460" fill="url(#cg)" opacity=".6"/>';
+            for(var f=200;f<1400;f+=30)L+='<rect x="'+f+'" y="0" width="2" height="640" fill="#000" opacity=".25"/>';
+            L+=A+'<rect x="-300" y="640" width="2200" height="460" fill="url(#floor)"/>'+F+'<g transform="translate(0 1280) scale(1 -1)" opacity=".12">'+A+'</g><ellipse cx="800" cy="745" rx="160" ry="70" fill="url(#cg)" opacity=".5"/>';
+            [455,1101].forEach(function(x){L+='<rect x="'+x+'" y="-200" width="44" height="840" fill="url(#cyl)"/><rect x="'+(x-4)+'" y="590" width="52" height="8" fill="url(#goldt)"/><rect x="'+(x-4)+'" y="120" width="52" height="8" fill="url(#goldt)"/>'});
+            L+=C+'<rect x="610" y="572" width="380" height="68" fill="url(#mar)"/><rect x="606" y="566" width="388" height="6" fill="url(#goldt)"/><rect x="640" y="590" width="320" height="1.5" fill="#d9b877" opacity=".5"/><rect x="610" y="636" width="380" height="3" fill="#ffd89a" opacity=".7"/>'+
+                '<ellipse cx="800" cy="716" rx="76" ry="13" fill="#000" opacity=".4"/><rect x="796" y="672" width="8" height="44" fill="url(#goldt)"/><ellipse cx="800" cy="672" rx="64" ry="10" fill="#14100c" stroke="#d9b877" stroke-width="1.5"/>'+Fl+'</g>';
+
+            var B='';
+            B+='<path fill-rule="evenodd" fill="url(#lime)" d="M330 190 H1270 V650 H330Z M690 380 H910 V650 H690Z"/>';
+            for(var x=330;x<1270;x+=24){if(x>672&&x<916)continue;B+='<rect x="'+x+'" y="196" width="2" height="454" fill="#000" opacity=".22"/><rect x="'+(x+2)+'" y="196" width="1" height="454" fill="#e8d7b8" opacity=".06"/>'}
+            B+='<rect x="310" y="174" width="980" height="22" fill="#14120f"/><rect x="310" y="194" width="980" height="3" fill="url(#goldt)"/>';
+            var wr=rng(21);
+            [232,376,520].forEach(function(y,row){
+                [385,1015].forEach(function(x0){for(var c=0;c<3;c++){
+                    var x=x0+c*72,hh=row===2?110:120,on=wr()>.22;
+                    B+='<rect x="'+x+'" y="'+y+'" width="56" height="'+hh+'" fill="'+(on?'url(#glass)':'#0b0d10')+'" opacity="'+(on?(.7+wr()*.3).toFixed(2):.95)+'"/><path d="M'+(x+28)+' '+y+' V'+(y+hh)+' M'+x+' '+(y+hh*.4)+' H'+(x+56)+'" stroke="#0c0a08" stroke-width="2"/><rect x="'+x+'" y="'+y+'" width="56" height="'+hh+'" fill="none" stroke="#b8964f" stroke-opacity=".45"/>'}})
+            });
+            for(var w=0;w<14;w++){var wx=380+w*60;if(wx>640&&wx<940)continue;B+='<ellipse cx="'+wx+'" cy="640" rx="40" ry="110" fill="url(#sp)" opacity=".22"/>'}
+            B+='<rect x="590" y="296" width="420" height="26" fill="url(#slab)"/><rect x="590" y="322" width="420" height="3" fill="url(#goldt)"/><rect x="610" y="325" width="380" height="60" fill="url(#dl)"/>';
+            B+='<text x="800" y="262" text-anchor="middle" font-family="Bodoni Moda,Didot,Georgia,serif" font-size="30" letter-spacing="22" fill="#ffd9a0" opacity=".55" filter="url(#b3)">NOVA</text><text x="800" y="262" text-anchor="middle" font-family="Bodoni Moda,Didot,Georgia,serif" font-size="30" letter-spacing="22" fill="url(#goldt)">NOVA</text>';
+            [625,945].forEach(function(x){B+='<rect x="'+x+'" y="325" width="30" height="325" fill="url(#cyl)"/><rect x="'+(x-4)+'" y="322" width="38" height="8" fill="url(#goldt)"/><rect x="'+(x-4)+'" y="642" width="38" height="8" fill="url(#goldt)"/>'});
+            B+='<rect x="686" y="376" width="228" height="274" fill="none" stroke="url(#goldt)" stroke-width="5"/>';
+            function door(id,x,hx){return '<g class="door" id="'+id+'"><rect x="'+x+'" y="380" width="110" height="270" fill="url(#doorg)"/><rect x="'+(x+12)+'" y="396" width="86" height="226" fill="#ffd9a0" opacity=".16" stroke="#d9b877" stroke-width="1.5"/>'+(function(){var t='';for(var k=0;k<14;k++)t+='<rect x="'+(x+14+k*6)+'" y="398" width="1" height="222" fill="#ffe6c0" opacity=".14"/>';return t})()+'<rect x="'+hx+'" y="480" width="4" height="84" rx="2" fill="url(#goldt)"/></g>'}
+            B+=door("doorL",690,792)+door("doorR",800,804);
+            B+='<ellipse cx="800" cy="684" rx="270" ry="38" fill="url(#sp)" opacity=".8"/><rect x="600" y="650" width="400" height="14" fill="#3a332a"/><rect x="570" y="664" width="460" height="14" fill="#2c2620"/><rect x="540" y="678" width="520" height="14" fill="#1f1a16"/><rect x="600" y="650" width="400" height="1.5" fill="#d9b877" opacity=".5"/>';
+
+            var defs='<defs>'+
+                '<linearGradient id="lime" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#15171b"/><stop offset=".55" stop-color="#2a2723"/><stop offset="1" stop-color="#6a5740"/></linearGradient>'+
+                '<linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffdca0"/><stop offset="1" stop-color="#a8672c"/></linearGradient>'+
+                '<linearGradient id="goldt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3dca5"/><stop offset=".5" stop-color="#b8964f"/><stop offset="1" stop-color="#e9cf92"/></linearGradient>'+
+                '<linearGradient id="slab" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b2519"/><stop offset="1" stop-color="#0f0c08"/></linearGradient>'+
+                '<linearGradient id="dl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd9a0" stop-opacity=".5"/><stop offset="1" stop-color="#ffd9a0" stop-opacity="0"/></linearGradient>'+
+                '<linearGradient id="cyl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0c0a08"/><stop offset=".35" stop-color="#8a7556"/><stop offset=".65" stop-color="#2a2219"/><stop offset="1" stop-color="#0a0807"/></linearGradient>'+
+                '<linearGradient id="doorg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1e12"/><stop offset="1" stop-color="#0c0805"/></linearGradient>'+
+                '<linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a3622"/><stop offset="1" stop-color="#1c130b"/></linearGradient>'+
+                '<linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b4a3a"/><stop offset="1" stop-color="#0b0806"/></linearGradient>'+
+                '<linearGradient id="arch" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe6b8"/><stop offset="1" stop-color="#c98c45"/></linearGradient>'+
+                '<linearGradient id="mar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b2420"/><stop offset="1" stop-color="#0b0807"/></linearGradient>'+
+                '<radialGradient id="cg"><stop offset="0" stop-color="#ffd890" stop-opacity=".85"/><stop offset="1" stop-color="#ffd890" stop-opacity="0"/></radialGradient>'+
+                '<radialGradient id="sp"><stop offset="0" stop-color="#ffd9a0" stop-opacity=".6"/><stop offset="1" stop-color="#ffd9a0" stop-opacity="0"/></radialGradient>'+
+                '<filter id="b1"><feGaussianBlur stdDeviation=".9"/></filter><filter id="b3"><feGaussianBlur stdDeviation="6"/></filter>'+
+                '<clipPath id="hole"><rect x="690" y="380" width="220" height="270"/></clipPath></defs>';
+            wrap("facade",defs+'<g clip-path="url(#hole)">'+L+'</g>'+B);
+        })();
+
+        /* out-of-focus foreground: dark planters and warm bokeh */
+        (function(){
+            var fr=rng(3);
+            function side(x0,dir){
+                var s='<g id="'+(dir<0?"foreL":"foreR")+'"><ellipse cx="'+(x0+dir*90)+'" cy="900" rx="210" ry="150" fill="#030504"/><ellipse cx="'+(x0+dir*60)+'" cy="700" rx="50" ry="280" fill="url(#trk)"/>';
+                for(var i=0;i<9;i++)s+='<circle cx="'+(x0+dir*fr()*430).toFixed(0)+'" cy="'+(540+fr()*320).toFixed(0)+'" r="'+(26+fr()*60).toFixed(0)+'" fill="#ffd9a0" opacity="'+(.08+fr()*.14).toFixed(2)+'"/>';
+                return s+'</g>';
+            }
+            wrap("fore",side(0,1)+side(1600,-1));
+        })();
+
+        /* ---------- scroll animation ---------- */
+        var journey=document.getElementById("journey"),stage=document.getElementById("stage");
+        var L={sky:document.getElementById("sky"),hills:document.getElementById("hills"),garden:document.getElementById("garden"),facade:document.getElementById("facade"),fore:document.getElementById("fore")};
+        var lobbyG=document.getElementById("lobbyG"),doorL=document.getElementById("doorL"),doorR=document.getElementById("doorR");
+        var bloom=document.getElementById("bloom"),foreL=document.getElementById("foreL"),foreR=document.getElementById("foreR");
+        var caps=[].slice.call(document.querySelectorAll(".cap")),hint=document.getElementById("hint"),barfill=document.getElementById("barfill");
+        var target=0,cur=0,raf=0,reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        function origin(){
+            var w=stage.clientWidth,hh=stage.clientHeight,s=Math.max(w/1600,hh/900);
+            stage.style.setProperty("--ox",(w/2)+"px");
+            stage.style.setProperty("--oy",(hh/2+(515-450)*s)+"px");
+        }
+        function measure(){
+            var max=journey.offsetHeight-window.innerHeight;
+            var top=journey.getBoundingClientRect().top;
+            target=clamp(-top/Math.max(1,max),0,1);
+        }
+        function ease(t){return t*t*(3-2*t)}
+        function apply(p){
+            var e=p*p*(3-2*p)*.55+p*.45;
+            L.sky.style.transform="scale("+(1+.12*e).toFixed(4)+")";
+            L.hills.style.transform="scale("+(1+.5*e).toFixed(4)+")";
+            L.garden.style.transform="scale("+(1+2.4*e).toFixed(4)+")";
+            L.facade.style.transform="scale("+(1+9.5*Math.pow(e,1.3)).toFixed(4)+")";
+            var fo=1-clamp((p-.06)/.3,0,1);
+            L.fore.style.transform="scale("+(1+4*e).toFixed(4)+")";
+            L.fore.style.opacity=fo.toFixed(3);
+            foreL.style.transform="translateX("+(-e*520).toFixed(1)+"px)";
+            foreR.style.transform="translateX("+(e*520).toFixed(1)+"px)";
+            var k=.55+.6*e;
+            lobbyG.setAttribute("transform","translate(800 540) scale("+k.toFixed(4)+") translate(-800 -540)");
+            var t=ease(clamp((p-.3)/.22,0,1)),sx=(1-.93*t).toFixed(4);
+            doorL.style.transform="scaleX("+sx+")";doorR.style.transform="scaleX("+sx+")";
+            bloom.style.opacity=(clamp((p-.22)/.3,0,1)*.7*(1-.55*clamp((p-.78)/.22,0,1))).toFixed(3);
+            var ci=p<.16?0:p<.4?1:p<.72?2:3;
+            for(var i=0;i<caps.length;i++)caps[i].classList.toggle("show",i===ci);
+            hint.style.opacity=(1-clamp(p*9,0,1)).toFixed(3);
+            barfill.style.height=(p*100).toFixed(1)+"%";
+        }
+        function tick(){
+            var d=target-cur;
+            cur=reduce||Math.abs(d)<.0004?target:cur+d*.09;
+            apply(cur);
+            raf=(cur!==target)?requestAnimationFrame(tick):0;
+        }
+        function onScroll(){
+            measure();
+            if(!raf)raf=requestAnimationFrame(tick);
+            document.getElementById("nav").classList.toggle("scrolled",window.scrollY>40);
+            var y=window.scrollY+140,on="top";
+            ["rooms","experience","contact"].forEach(function(id){if(document.getElementById(id).offsetTop<=y)on=id});
+            [].forEach.call(document.querySelectorAll(".links a"),function(a){a.classList.toggle("on",a.getAttribute("data-go")===on)});
+        }
+        window.addEventListener("scroll",onScroll,{passive:true});
+        window.addEventListener("resize",function(){origin();onScroll()});
+        document.addEventListener("click",function(e){
+            var a=e.target.closest&&e.target.closest("[data-go]");
+            if(!a)return;e.preventDefault();
+            var id=a.getAttribute("data-go");
+            if(id==="top")window.scrollTo({top:0,behavior:reduce?"auto":"smooth"});
+            else{var el=document.getElementById(id);if(el)el.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"})}
+        });
+        origin();measure();cur=target;apply(cur);onScroll();
+        window.__nova={h:h,lsGet:lsGet,lsSet:lsSet};
+    })();
+</script>
+<script>
+    (function(){
+        "use strict";
+        var N=window.__nova,h=N.h,lsGet=N.lsGet,lsSet=N.lsSet,toast=window.__novaToast;
+
+        /* ---------- connection to the Spring Boot backend ---------- */
+        // Page served by the backend (port 8080)? use relative addresses. Opened any other way? use localhost:8080.
+        var ROOT=(location.protocol.indexOf("http")===0&&location.port==="8080")?"":"http://localhost:8080";
+        var API=ROOT+"/api/v1";          // rooms + bookings
+        var AUTH=ROOT+"/auth/customer";  // POST  {userName,password}  -> customer or empty (wrong login)
+        var CUST=ROOT+"/customer";       // POST /register, GET /{id}, PUT /{id}, DELETE /{id}, GET /customers
+
+        var ROOMS=[],LOAD_ERROR="";
+        var BLURB={Standard:"A comfortable room with everything you need for a good stay.",Deluxe:"More space and extra comfort for a relaxed stay.",Suite:"Our most spacious room, made for a special stay."};
+        var LABEL={available:"Available",occupied:"Booked",cleaning:"Maintenance",reserved:"Reserved"};
+        var state={filter:"all",user:null,pop:false,confirmDel:false,editPhone:false,mine:[]};
+        var SESSION_KEY="staylanka_customer_id";
+
+        /* ---------- backend helpers ---------- */
+        async function apiLogin(userName,password){
+            var res=await fetch(AUTH,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({userName:userName,password:password})});
+            if(!res.ok)throw new Error("Server answered "+res.status);
+            var text=await res.text();
+            if(!text)return null;                    // backend returns an empty body for a wrong username / password
+            try{return JSON.parse(text)}catch(e){return null}
+        }
+        async function apiRegister(userName,password,phoneNumber){
+            var res=await fetch(CUST+"/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({userName:userName,password:password,phoneNumber:phoneNumber})});
+            if(!res.ok)throw new Error("Server answered "+res.status);
+            return res.json();
+        }
+        async function usernameTaken(userName){
+            var res=await fetch(CUST+"/customers");
+            if(!res.ok)throw new Error("Server answered "+res.status);
+            var list=await res.json();
+            return list.some(function(c){return String(c.userName).toLowerCase()===userName.toLowerCase()});
+        }
+        async function apiGetCustomer(id){
+            var res=await fetch(CUST+"/"+id);
+            if(!res.ok)return null;
+            var text=await res.text();
+            if(!text)return null;
+            try{return JSON.parse(text)}catch(e){return null}
+        }
+
+        /* ---------- rooms (loaded from the backend) ---------- */
+        function mapStatus(v){v=String(v||"").toLowerCase();return v==="available"?"available":v==="maintenance"?"cleaning":"occupied"}
+        async function loadRooms(){
+            try{
+                var res=await fetch(API+"/rooms");
+                if(!res.ok)throw new Error("Server answered "+res.status);
+                var list=await res.json();
+                ROOMS=list.map(function(r){return{id:r.roomId,type:r.type,capacity:r.capacity,price:r.pricePerNight,status:mapStatus(r.status),note:BLURB[r.type]||"A comfortable room for your stay."}});
+                LOAD_ERROR="";
+            }catch(e){ROOMS=[];LOAD_ERROR="Cannot reach the room server. Start the Spring Boot app and refresh this page."}
+            renderRooms();
+        }
+
+        var filters=document.getElementById("filters"),grid=document.getElementById("roomgrid");
+        function statusOf(r){return r.status}
+        function renderFilters(){
+            filters.textContent="";
+            [["all","All rooms"],["available","Available"],["occupied","Booked"],["cleaning","Maintenance"]].forEach(function(f){
+                filters.appendChild(h("button",{class:"chip","aria-pressed":String(state.filter===f[0]),type:"button",text:f[1],onclick:function(){state.filter=f[0];renderFilters();renderRooms()}}));
+            });
+        }
+        function hasMyBooking(roomId){return state.mine.some(function(b){return b.roomId===roomId&&b.status==="Confirmed"})}
+        function renderRooms(){
+            grid.textContent="";
+            if(LOAD_ERROR){grid.appendChild(h("p",{class:"lead",text:LOAD_ERROR}));return}
+            var n=0;
+            ROOMS.forEach(function(r){
+                var st=statusOf(r);
+                if(state.filter!=="all"&&st!==state.filter)return;
+                n++;
+                var mine=hasMyBooking(r.id);
+                var btn;
+                if(st==="available"&&state.user)btn=h("button",{class:"btn",type:"button",text:"Book",onclick:function(){openModal("book",r)}});
+                else if(st==="available")btn=h("button",{class:"btn",type:"button",text:"Sign in to book",onclick:function(){openModal("login","Sign in to book a room.")}});
+                else btn=h("button",{class:"btn ghost",type:"button",text:"Unavailable",disabled:"disabled"});
+                grid.appendChild(h("article",{class:"room"},
+                    h("div",{class:"top"},h("span",{class:"no",text:"ROOM "+r.id}),h("span",{class:"pill "+st,text:mine?"Yours":LABEL[st]})),
+                    h("h3",{text:r.type+" Room"}),
+                    h("p",{text:r.note}),
+                    h("div",{class:"meta"},h("span",{text:"Sleeps "+r.capacity})),
+                    h("div",{class:"foot"},h("div",{class:"price"},"Rs. "+r.price,h("small",{text:" /night"})),btn)
+                ));
+            });
+            if(!n)grid.appendChild(h("p",{class:"lead",text:ROOMS.length?"No rooms with this status right now.":"No rooms have been added yet."}));
+        }
+
+        /* ---------- my bookings (looked up on the backend by guest name + phone) ---------- */
+        async function loadMine(){
+            state.mine=[];
+            if(!state.user){renderRooms();return}
+            try{
+                var res=await fetch(API+"/bookings?keyword="+encodeURIComponent(state.user.userName));
+                if(res.ok){
+                    var list=await res.json(),u=state.user;
+                    state.mine=list.filter(function(b){return b.guestName===u.userName&&String(b.guestPhone||"")===String(u.phoneNumber||"")});
+                }
+            }catch(e){}
+            renderRooms();if(state.pop)renderPop();
+        }
+        async function cancelMine(id){
+            if(!confirm("Cancel this booking?"))return;
+            try{var res=await fetch(API+"/bookings/"+id+"/cancel",{method:"PUT"});toast(res.ok?"Booking cancelled":"Could not cancel the booking")}
+            catch(e){toast("Cannot reach the server")}
+            loadMine();loadRooms();
+        }
+
+        /* ---------- nav auth ---------- */
+        var authEl=document.getElementById("auth");
+        function renderAuth(){
+            authEl.textContent="";
+            if(!state.user){
+                state.pop=false;
+                authEl.appendChild(h("button",{class:"btn",type:"button",id:"loginBtn",text:"Login",onclick:function(){openModal("login")}}));
+                return;
+            }
+            var av=h("button",{class:"avatar",type:"button",id:"avatarBtn","aria-haspopup":"true","aria-expanded":String(state.pop),"aria-label":"Account menu for "+state.user.userName,text:state.user.userName.charAt(0).toUpperCase(),
+                onclick:function(e){e.stopPropagation();state.pop=!state.pop;state.confirmDel=false;state.editPhone=false;renderAuth()}});
+            authEl.appendChild(av);
+            if(state.pop){authEl.appendChild(h("div",{class:"pop",id:"pop",onclick:function(e){e.stopPropagation()}}));renderPop()}
+        }
+        function renderPop(){
+            var pop=document.getElementById("pop");if(!pop)return;
+            var u=state.user;pop.textContent="";
+            pop.appendChild(h("h3",{text:u.userName}));
+            pop.appendChild(h("p",{class:"sub",text:"Customer account #"+u.id}));
+
+            var phoneCell;
+            if(state.editPhone){
+                var pin=h("input",{type:"tel",id:"newphone",value:u.phoneNumber||"",style:"padding:6px 8px;font-size:12px"});
+                var perr=h("p",{class:"err",style:"margin:6px 0 0"});
+                phoneCell=h("dd",null,pin,
+                    h("div",{class:"row",style:"margin-top:6px"},
+                        h("button",{type:"button",text:"Save",onclick:async function(){
+                                var v=pin.value.trim(),d=v.replace(/\D/g,"");
+                                if(!/^\+?[0-9 ()-]{7,20}$/.test(v)||d.length<7||d.length>15){perr.textContent="Enter a valid phone number.";return}
+                                try{
+                                    var res=await fetch(CUST+"/"+u.id,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({phoneNumber:v})});
+                                    if(!res.ok){perr.textContent="Could not update (server "+res.status+").";return}
+                                    state.user=await res.json();state.editPhone=false;renderPop();toast("Phone number updated");loadMine();
+                                }catch(e){perr.textContent="Cannot reach the server."}
+                            }}),
+                        h("button",{type:"button",text:"Cancel",onclick:function(){state.editPhone=false;renderPop()}})),
+                    perr);
+            }else{
+                phoneCell=h("dd",null,u.phoneNumber||"—",h("button",{type:"button",text:"Edit",onclick:function(){state.editPhone=true;renderPop()}}));
+            }
+            pop.appendChild(h("dl",{class:"dl"},h("dt",{text:"Username"}),h("dd",{text:u.userName}),h("dt",{text:"Phone"}),phoneCell));
+
+            var active=state.mine.filter(function(b){return b.status==="Confirmed"});
+            var box=h("div",{class:"res"},h("b",{text:"Your bookings"}));
+            if(!active.length)box.appendChild(h("span",{text:"None yet"}));
+            active.forEach(function(b){
+                box.appendChild(h("div",{style:"margin-bottom:8px"},
+                    h("span",{text:"Room "+b.roomId+" · "+b.checkIn+" to "+b.checkOut+" · Rs. "+b.totalPrice+" "}),
+                    h("button",{type:"button",class:"btn ghost",style:"padding:3px 10px;font-size:11px",text:"Cancel",onclick:function(){cancelMine(b.bookingId)}})));
+            });
+            pop.appendChild(box);
+            if(!state.confirmDel){
+                pop.appendChild(h("div",{class:"row"},
+                    h("button",{class:"btn ghost",type:"button",text:"Log out",onclick:logout}),
+                    h("button",{class:"btn danger",type:"button",text:"Delete account",onclick:function(){state.confirmDel=true;renderPop()}})
+                ));
+            }else{
+                var pw=h("input",{type:"password",id:"delpw",placeholder:"Enter your password",autocomplete:"current-password"});
+                var err=h("p",{class:"err",style:"margin:8px 0 0"});
+                pop.appendChild(h("div",{class:"confirm"},
+                    h("p",{text:"This permanently removes your account and cancels your bookings. Enter your password to confirm."}),
+                    pw,
+                    h("div",{class:"row",style:"margin-top:12px"},
+                        h("button",{class:"btn danger",type:"button",text:"Delete permanently",onclick:async function(){
+                                try{
+                                    var ok=await apiLogin(u.userName,pw.value);          // re-check the password on the backend
+                                    if(!ok){err.textContent="That password is not correct.";return}
+                                    var active2=state.mine.filter(function(b){return b.status==="Confirmed"});
+                                    for(var i=0;i<active2.length;i++){try{await fetch(API+"/bookings/"+active2[i].bookingId+"/cancel",{method:"PUT"})}catch(e){}}
+                                    var res=await fetch(CUST+"/"+u.id,{method:"DELETE"});
+                                    if(!res.ok){err.textContent="Could not delete the account (server "+res.status+").";return}
+                                    lsSet(SESSION_KEY,"");state.user=null;state.mine=[];state.pop=false;state.confirmDel=false;
+                                    renderAuth();renderRooms();loadRooms();toast("Your account has been deleted");
+                                }catch(e){err.textContent="Cannot reach the server. Is the backend running?"}
+                            }}),
+                        h("button",{class:"btn ghost",type:"button",text:"Keep account",onclick:function(){state.confirmDel=false;renderPop()}})
+                    ),err
+                ));
+            }
+        }
+        function logout(){lsSet(SESSION_KEY,"");state.user=null;state.mine=[];state.pop=false;state.confirmDel=false;state.editPhone=false;renderAuth();renderRooms();toast("Signed out")}
+        document.addEventListener("click",function(){if(state.pop){state.pop=false;state.confirmDel=false;state.editPhone=false;renderAuth()}});
+        document.addEventListener("keydown",function(e){
+            if(e.key!=="Escape")return;
+            if(document.getElementById("back"))closeModal();
+            else if(state.pop){state.pop=false;state.confirmDel=false;state.editPhone=false;renderAuth();var b=document.getElementById("avatarBtn");if(b)b.focus()}
+        });
+
+        /* ---------- modal ---------- */
+        var lastFocus=null;
+        function closeModal(){var b=document.getElementById("back");if(b){b.remove();document.body.style.overflow="";if(lastFocus&&lastFocus.focus)lastFocus.focus()}}
+        function field(id,label,attrs,full){
+            var el=h("input",Object.assign({id:id,name:id,required:"required"},attrs));
+            return h("div",{class:"f"+(full?" full":"")},h("label",{for:id,text:label}),el);
+        }
+        function val(id){return document.getElementById(id).value.trim()}
+        function openModal(view,note){
+            closeModal();
+            lastFocus=document.activeElement;
+            var back=h("div",{class:"back",id:"back",onclick:function(e){if(e.target===back)closeModal()}});
+            var box=h("div",{class:"modal",role:"dialog","aria-modal":"true","aria-labelledby":"mt"});
+            box.appendChild(h("button",{class:"x",type:"button","aria-label":"Close",text:"×",onclick:closeModal}));
+            if(view==="login")buildLogin(box,note);else if(view==="book")buildBook(box,note);else buildSignup(box);
+            back.appendChild(box);document.body.appendChild(back);document.body.style.overflow="hidden";
+            var first=box.querySelector("input");if(first)first.focus();
+        }
+        function buildBook(box,room){
+            var u=state.user;
+            box.appendChild(h("h2",{id:"mt",text:"Book room "+room.id}));
+            box.appendChild(h("p",{class:"sub",text:room.type+" Room · Rs. "+room.price+" per night · for "+u.userName}));
+            var err=h("p",{class:"err",id:"berr",role:"alert"});
+            var d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());
+            var today=d.toISOString().slice(0,10);
+            var form=h("form",{novalidate:"novalidate"},
+                field("b-in","Check-in",{type:"date",min:today}),
+                field("b-out","Check-out",{type:"date",min:today}),
+                err,
+                h("button",{class:"btn solid full",type:"submit",style:"grid-column:1/-1",text:"Confirm booking"})
+            );
+            form.addEventListener("submit",async function(e){
+                e.preventDefault();err.textContent="";
+                var cin=val("b-in"),cout=val("b-out");
+                if(!cin||!cout){err.textContent="Choose your check-in and check-out dates.";return}
+                if(cout<=cin){err.textContent="Check-out must be after check-in.";return}
+                try{
+                    var res=await fetch(API+"/bookings",{method:"POST",headers:{"Content-Type":"application/json"},
+                        body:JSON.stringify({roomId:room.id,guestName:u.userName,guestPhone:u.phoneNumber,checkIn:cin,checkOut:cout})});
+                    var text=await res.text();
+                    if(!res.ok){err.textContent=text||"The booking could not be made.";return}
+                    var t=text.match(/total price:\s*([\d.]+)/);
+                    closeModal();toast("Room "+room.id+" booked"+(t?" · Rs. "+t[1]:""));loadMine();loadRooms();
+                }catch(ex){err.textContent="Cannot reach the server. Is the backend running?"}
+            });
+            box.appendChild(form);
+        }
+        function buildLogin(box,note){
+            box.appendChild(h("h2",{id:"mt",text:"Welcome back"}));
+            box.appendChild(h("p",{class:"sub",text:note||"Sign in to manage your stay."}));
+            var err=h("p",{class:"err",id:"lerr",role:"alert"});
+            var form=h("form",{novalidate:"novalidate"},
+                field("l-user","Username",{type:"text",autocomplete:"username"},true),
+                field("l-pw","Password",{type:"password",autocomplete:"current-password"},true),
+                err,
+                h("button",{class:"btn solid full",type:"submit",style:"grid-column:1/-1",text:"Login"}),
+                h("div",{class:"swap"},h("span",{text:"New to NOVA?"}),h("button",{class:"btn",type:"button",id:"toSignup",text:"Sign up",onclick:function(){openModal("signup")}}))
+            );
+            form.addEventListener("submit",async function(e){
+                e.preventDefault();err.textContent="";
+                var name=val("l-user"),pw=document.getElementById("l-pw").value;
+                if(!name||!pw){err.textContent="Enter your username and password.";return}
+                try{
+                    var u=await apiLogin(name,pw);
+                    if(!u){err.textContent="Username or password is incorrect.";return}
+                    startSession(u);closeModal();toast("Welcome back, "+u.userName);
+                }catch(ex){err.textContent="Cannot reach the server. Is the backend running?"}
+            });
+            box.appendChild(form);
+        }
+        function buildSignup(box){
+            box.appendChild(h("h2",{id:"mt",text:"Create your account"}));
+            box.appendChild(h("p",{class:"sub",text:"Choose a username and password to book a room."}));
+            var err=h("p",{class:"err",id:"serr",role:"alert"});
+            var form=h("form",{novalidate:"novalidate"},
+                field("s-user","Username",{type:"text",autocomplete:"username"},true),
+                field("s-pw","Password (6+ characters)",{type:"password",autocomplete:"new-password",minlength:"6"},true),
+                field("s-phone","Phone number",{type:"tel",autocomplete:"tel",placeholder:"0771234567"},true),
+                err,
+                h("button",{class:"btn solid full",type:"submit",style:"grid-column:1/-1",text:"Create account"}),
+                h("div",{class:"swap"},h("span",{text:"Already a guest?"}),h("button",{class:"btn ghost",type:"button",text:"Back to login",onclick:function(){openModal("login")}}))
+            );
+            form.addEventListener("submit",async function(e){
+                e.preventDefault();err.textContent="";
+                var d={userName:val("s-user"),pw:document.getElementById("s-pw").value,phone:val("s-phone")};
+                var digits=d.phone.replace(/\D/g,"");
+                var msg=
+                    !/^[A-Za-z0-9_.-]{3,30}$/.test(d.userName)?"Username must be 3 to 30 letters, digits, or . _ - with no spaces.":
+                        d.pw.length<6?"Your password needs at least 6 characters.":
+                            !/^\+?[0-9 ()-]{7,20}$/.test(d.phone)||digits.length<7||digits.length>15?"Enter a valid phone number.":"";
+                if(msg){err.textContent=msg;return}
+                try{
+                    if(await usernameTaken(d.userName)){err.textContent="That username is already taken. Choose another or log in.";return}
+                    var u=await apiRegister(d.userName,d.pw,d.phone);
+                    startSession(u);closeModal();toast("Account created. Welcome, "+u.userName);
+                }catch(ex){err.textContent="Cannot reach the server. Is the backend running?"}
+            });
+            box.appendChild(form);
+        }
+        function startSession(u){lsSet(SESSION_KEY,u.id);state.user=u;state.pop=false;state.editPhone=false;renderAuth();renderRooms();loadMine()}
+
+        /* ---------- boot ---------- */
+        renderFilters();renderRooms();renderAuth();loadRooms();
+        (async function(){
+            var id=lsGet(SESSION_KEY,"");
+            if(!id)return;
+            try{var u=await apiGetCustomer(id);if(u){state.user=u;renderAuth();loadMine()}else lsSet(SESSION_KEY,"")}catch(e){}
+        })();
+    })();
+</script>
+
+</body></html>
