@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Room Booking</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Room Booking</h2>
+        <a class="btn btn-outline-primary" href="index.html">Go to Rooms</a>
+    </div>
+
+    <!-- Message area (success / error) -->
+    <div id="message"></div>
+
+    <!-- BOOK / EDIT FORM -->
+    <div class="card mb-4">
+        <div class="card-header" id="formTitle">New Booking</div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Room</label>
+                    <select id="roomId" class="form-select"></select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Guest name</label>
+                    <input id="guestName" class="form-control" placeholder="Nimal Perera">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Phone</label>
+                    <input id="guestPhone" class="form-control" placeholder="0771234567">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Check-in</label>
+                    <input id="checkIn" type="date" class="form-control">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Check-out</label>
+                    <input id="checkOut" type="date" class="form-control">
+                </div>
+            </div>
+            <div class="mt-3">
+                <button id="saveBtn" class="btn btn-success" onclick="saveBooking()">Book Room</button>
+                <button class="btn btn-secondary" onclick="resetForm()">Clear</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="d-flex mb-3">
+        <input id="keyword" class="form-control me-2" placeholder="Search by guest name">
+        <button class="btn btn-primary me-2" onclick="loadBookings()">Search</button>
+        <button class="btn btn-outline-secondary" onclick="clearSearch()">Show All</button>
+    </div>
+
+    <!-- BOOKING TABLE -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped bg-white">
+            <thead class="table-dark">
+            <tr>
+                <th>ID</th><th>Room</th><th>Guest</th><th>Phone</th>
+                <th>Check-in</th><th>Check-out</th><th>Total</th><th>Status</th><th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="bookingTable"></tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+    const API = "/api/v1/bookings";
+    const ROOM_API = "/api/v1/rooms";
+    let editingId = null;   // null = new booking, otherwise the booking ID being edited
+
+    // Stops text typed by users from being treated as HTML
+    function esc(text) {
+        return String(text ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    function showMessage(text, kind) {
+        document.getElementById("message").innerHTML =
+            '<div class="alert alert-' + kind + '">' + esc(text) + '</div>';
+    }
+
+    // Fill the room dropdown from the room list
+    async function loadRoomOptions() {
+        const res = await fetch(ROOM_API);
+        const rooms = await res.json();
+        const select = document.getElementById("roomId");
+        select.innerHTML = "";
+        if (rooms.length === 0) {
+            select.innerHTML = '<option value="">No rooms yet</option>';
+            return;
+        }
+        rooms.forEach(room => {
+            const option = document.createElement("option");
+            option.value = room.roomId;
+            option.textContent = room.roomId + " - " + room.type + " (" + room.pricePerNight + "/night)";
+            select.appendChild(option);
+        });
+    }
+
+    // READ: load all bookings (or search results) into the table
+    async function loadBookings() {
+        const keyword = document.getElementById("keyword").value.trim();
+        const url = keyword ? API + "?keyword=" + encodeURIComponent(keyword) : API;
+        const res = await fetch(url);
+        const bookings = await res.json();
+
+        const table = document.getElementById("bookingTable");
+        table.innerHTML = "";
+        if (bookings.length === 0) {
+            table.innerHTML = '<tr><td colspan="9" class="text-center">No bookings found</td></tr>';
+            return;
+        }
+        bookings.forEach(b => {
+            const cancelled = b.status === "Cancelled";
+            let buttons = "";
+            if (!cancelled) {
+                buttons += '<button class="btn btn-sm btn-warning me-1" onclick="editBooking(' + b.bookingId + ')">Edit</button>';
+                buttons += '<button class="btn btn-sm btn-secondary me-1" onclick="cancelBooking(' + b.bookingId + ')">Cancel</button>';
+            }
+            buttons += '<button class="btn btn-sm btn-danger" onclick="deleteBooking(' + b.bookingId + ')">Delete</button>';
+
+            table.innerHTML +=
+                "<tr>" +
+                "<td>" + esc(b.bookingId) + "</td>" +
+                "<td>" + esc(b.roomId) + "</td>" +
+                "<td>" + esc(b.guestName) + "</td>" +
+                "<td>" + esc(b.guestPhone) + "</td>" +
+                "<td>" + esc(b.checkIn) + "</td>" +
+                "<td>" + esc(b.checkOut) + "</td>" +
+                "<td>" + esc(b.totalPrice) + "</td>" +
+                '<td><span class="badge ' + (cancelled ? "bg-secondary" : "bg-success") + '">' + esc(b.status) + "</span></td>" +
+                "<td>" + buttons + "</td></tr>";
+        });
+    }
+
+    // CREATE or UPDATE (depends on editingId)
+    async function saveBooking() {
+        const booking = {
+            roomId: document.getElementById("roomId").value,
+            guestName: document.getElementById("guestName").value.trim(),
+            guestPhone: document.getElementById("guestPhone").value.trim(),
+            checkIn: document.getElementById("checkIn").value,
+            checkOut: document.getElementById("checkOut").value
+        };
+
+        const isEdit = editingId !== null;
+        const res = await fetch(isEdit ? API + "/" + editingId : API, {
+            method: isEdit ? "PUT" : "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(booking)
+        });
+        const text = await res.text();
+
+        if (res.ok) {
+            showMessage(text, "success");
+            resetForm();
+            loadBookings();
+        } else {
+            showMessage(text || "Something went wrong", "danger");
+        }
+    }
+
+    // UPDATE step 1: put the booking's details into the form
+    async function editBooking(id) {
+        const res = await fetch(API + "/" + id);
+        const b = await res.json();
+
+        document.getElementById("roomId").value = b.roomId;
+        document.getElementById("roomId").disabled = true;      // the room cannot be changed
+        document.getElementById("guestName").value = b.guestName;
+        document.getElementById("guestPhone").value = b.guestPhone || "";
+        document.getElementById("checkIn").value = b.checkIn;
+        document.getElementById("checkOut").value = b.checkOut;
+
+        editingId = b.bookingId;
+        document.getElementById("formTitle").innerText = "Edit Booking " + b.bookingId;
+        document.getElementById("saveBtn").innerText = "Update Booking";
+        window.scrollTo(0, 0);
+    }
+
+    // CANCEL: keeps the booking in the list but frees the dates
+    async function cancelBooking(id) {
+        if (!confirm("Cancel booking " + id + "?")) return;
+        const res = await fetch(API + "/" + id + "/cancel", { method: "PUT" });
+        const text = await res.text();
+        showMessage(res.ok ? text : "Booking not found", res.ok ? "success" : "danger");
+        loadBookings();
+    }
+
+    // DELETE: removes the booking completely
+    async function deleteBooking(id) {
+        if (!confirm("Delete booking " + id + " completely?")) return;
+        const res = await fetch(API + "/" + id, { method: "DELETE" });
+        const text = await res.text();
+        showMessage(res.ok ? text : "Booking not found", res.ok ? "success" : "danger");
+        loadBookings();
+    }
+
+    // Put the form back to "new booking" mode
+    function resetForm() {
+        document.getElementById("roomId").disabled = false;
+        document.getElementById("guestName").value = "";
+        document.getElementById("guestPhone").value = "";
+        document.getElementById("checkIn").value = "";
+        document.getElementById("checkOut").value = "";
+        editingId = null;
+        document.getElementById("formTitle").innerText = "New Booking";
+        document.getElementById("saveBtn").innerText = "Book Room";
+    }
+
+    function clearSearch() {
+        document.getElementById("keyword").value = "";
+        loadBookings();
+    }
+
+    // When the page opens
+    loadRoomOptions();
+    loadBookings();
+</script>
+</body>
+</html>
