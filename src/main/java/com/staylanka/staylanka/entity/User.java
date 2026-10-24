@@ -11,8 +11,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = true, unique = true)
     private String userName;
+
+    @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
     private String phoneNumber;
     private String Role;
 
