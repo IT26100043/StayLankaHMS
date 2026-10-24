@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Room Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+
+    <h2 class="mb-3">Room Management</h2>
+
+    <!-- Message area (success / error) -->
+    <div id="message"></div>
+
+    <!-- ADD / EDIT FORM -->
+    <div class="card mb-4">
+        <div class="card-header" id="formTitle">Add Room</div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-2">
+                    <label class="form-label">Room ID</label>
+                    <input id="roomId" class="form-control" placeholder="R301">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Type</label>
+                    <select id="type" class="form-select">
+                        <option>Standard</option>
+                        <option>Deluxe</option>
+                        <option>Suite</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Price per night</label>
+                    <input id="pricePerNight" type="number" step="0.01" class="form-control">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Capacity</label>
+                    <input id="capacity" type="number" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select id="status" class="form-select">
+                        <option>Available</option>
+                        <option>Booked</option>
+                        <option>Maintenance</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-3">
+                <button id="saveBtn" class="btn btn-success" onclick="saveRoom()">Save Room</button>
+                <button class="btn btn-secondary" onclick="resetForm()">Clear</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="d-flex mb-3">
+        <input id="keyword" class="form-control me-2" placeholder="Search by ID, type or status">
+        <button class="btn btn-primary me-2" onclick="loadRooms()">Search</button>
+        <button class="btn btn-outline-secondary" onclick="clearSearch()">Show All</button>
+    </div>
+
+    <!-- ROOM TABLE -->
+    <table class="table table-bordered table-striped bg-white">
+        <thead class="table-dark">
+        <tr>
+            <th>Room ID</th><th>Type</th><th>Price / Night</th><th>Capacity</th><th>Status</th><th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="roomTable"></tbody>
+    </table>
+
+</div>
+
+<script>
+    const API = "/api/v1/rooms";
+    let editingId = null;   // null = adding, otherwise the ID being edited
+
+    // Show a message at the top
+    function showMessage(text, kind) {
+        document.getElementById("message").innerHTML =
+            '<div class="alert alert-' + kind + '">' + text + '</div>';
+    }
+
+    // READ: load all rooms (or search results) into the table
+    async function loadRooms() {
+        const keyword = document.getElementById("keyword").value.trim();
+        const url = keyword ? API + "?keyword=" + encodeURIComponent(keyword) : API;
+        const res = await fetch(url);
+        const rooms = await res.json();
+
+        const table = document.getElementById("roomTable");
+        table.innerHTML = "";
+        if (rooms.length === 0) {
+            table.innerHTML = '<tr><td colspan="6" class="text-center">No rooms found</td></tr>';
+            return;
+        }
+        rooms.forEach(room => {
+            table.innerHTML +=
+                "<tr>" +
+                "<td>" + room.roomId + "</td>" +
+                "<td>" + room.type + "</td>" +
+                "<td>" + room.pricePerNight + "</td>" +
+                "<td>" + room.capacity + "</td>" +
+                "<td>" + room.status + "</td>" +
+                "<td>" +
+                '<button class="btn btn-sm btn-warning me-1" onclick="editRoom(\'' + room.roomId + '\')">Edit</button>' +
+                '<button class="btn btn-sm btn-danger" onclick="deleteRoom(\'' + room.roomId + '\')">Delete</button>' +
+                "</td></tr>";
+        });
+    }
+
+    // CREATE or UPDATE (depends on editingId)
+    async function saveRoom() {
+        const room = {
+            type: document.getElementById("type").value,
+            roomId: document.getElementById("roomId").value.trim(),
+            pricePerNight: parseFloat(document.getElementById("pricePerNight").value),
+            capacity: parseInt(document.getElementById("capacity").value),
+            status: document.getElementById("status").value
+        };
+
+        const isEdit = editingId !== null;
+        const res = await fetch(isEdit ? API + "/" + editingId : API, {
+            method: isEdit ? "PUT" : "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(room)
+        });
+        const text = await res.text();
+
+        if (res.ok) {
+            showMessage(text, "success");
+            resetForm();
+            loadRooms();
+        } else {
+            showMessage(text || "Something went wrong", "danger");
+        }
+    }
+
+    // UPDATE step 1: put the room's details into the form
+    async function editRoom(id) {
+        const res = await fetch(API + "/" + id);
+        const room = await res.json();
+
+        document.getElementById("roomId").value = room.roomId;
+        document.getElementById("roomId").readOnly = true;
+        document.getElementById("type").value = room.type;
+        document.getElementById("pricePerNight").value = room.pricePerNight;
+        document.getElementById("capacity").value = room.capacity;
+        document.getElementById("status").value = room.status;
+
+        editingId = room.roomId;
+        document.getElementById("formTitle").innerText = "Edit Room " + room.roomId;
+        document.getElementById("saveBtn").innerText = "Update Room";
+        window.scrollTo(0, 0);
+    }
+
+    // DELETE
+    async function deleteRoom(id) {
+        if (!confirm("Delete room " + id + "?")) return;
+        const res = await fetch(API + "/" + id, { method: "DELETE" });
+        const text = await res.text();
+        showMessage(res.ok ? text : "Room not found", res.ok ? "success" : "danger");
+        loadRooms();
+    }
+
+    // Put the form back to "Add" mode
+    function resetForm() {
+        document.getElementById("roomId").value = "";
+        document.getElementById("roomId").readOnly = false;
+        document.getElementById("type").value = "Standard";
+        document.getElementById("pricePerNight").value = "";
+        document.getElementById("capacity").value = "";
+        document.getElementById("status").value = "Available";
+        editingId = null;
+        document.getElementById("formTitle").innerText = "Add Room";
+        document.getElementById("saveBtn").innerText = "Save Room";
+    }
+
+    function clearSearch() {
+        document.getElementById("keyword").value = "";
+        loadRooms();
+    }
+
+    // Load the table when the page opens
+    loadRooms();
+</script>
+</body>
+</html>
