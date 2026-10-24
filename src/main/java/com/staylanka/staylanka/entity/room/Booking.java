@@ -27,6 +27,17 @@ public class Booking {
 
     }
 
+    // machn I add parameterized constructor @Sahan
+    public Booking(String roomId,String guestName,String guestPhone,LocalDate checkIn,LocalDate checkOut,double totalPrice,String status){
+        this.roomId = roomId;
+        this.guestName = guestName;
+        this.guestPhone = guestPhone;
+        this.checkIn = checkIn;
+        this.checkOut = checkOut;
+        this.totalPrice = totalPrice;
+        this.status  = status;
+    }
+
     public Long getBookingId() {
         return bookingId;
     }

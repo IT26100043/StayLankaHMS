@@ -3,23 +3,29 @@ package com.staylanka.staylanka;
 
 import com.staylanka.staylanka.entity.AdminUser;
 import com.staylanka.staylanka.entity.CustomerUser;
+import com.staylanka.staylanka.entity.payment.payment;
+import com.staylanka.staylanka.entity.room.Booking;
 import com.staylanka.staylanka.entity.room.DeluxeRoom;
 import com.staylanka.staylanka.entity.room.StandedRoom;
 import com.staylanka.staylanka.entity.room.SuiteRoom;
 import com.staylanka.staylanka.repository.AdminUserRepository;
 import com.staylanka.staylanka.repository.CustomerRepository;
+import com.staylanka.staylanka.repository.Room.BookingRepository;
 import com.staylanka.staylanka.repository.Room.RoomRepository;
+import com.staylanka.staylanka.repository.payment.PaymentRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
-    @Configuration
+@Configuration
     public class CustomerDataInitializer {
 
         @Bean
-        CommandLineRunner initDatabase(CustomerRepository customerRepository , AdminUserRepository adminUserRepository, RoomRepository roomRepository)  {
+        CommandLineRunner initDatabase(CustomerRepository customerRepository , AdminUserRepository adminUserRepository, RoomRepository roomRepository, PaymentRepository paymentRepository, BookingRepository bookingRepository)  {
             return args -> {
                 // add customer dummy data
                 customerRepository.save(new CustomerUser("testuser1", "abc@123", "07126886299"));
@@ -44,6 +50,15 @@ import org.springframework.context.annotation.Configuration;
                 //Suites
                 roomRepository.save(new SuiteRoom("R301",15000,4,"Available"));
                 roomRepository.save(new SuiteRoom("R302", 18000, 4, "Maintenance"));
+
+                //paymentDummy
+                CustomerUser customerUser = new CustomerUser("lesly","Lesly123","078315468");
+                Booking booking = new Booking("AAA","ABC","071233654", LocalDate.of(2026, 11, 1),LocalDate.of(2026,11,10),1500,"CONFIRMED");
+
+                customerRepository.save(customerUser);
+                bookingRepository.save(booking);
+
+                paymentRepository.save(new payment(customerUser,booking,"CONFIRMED", LocalDateTime.of(2026,11,20,10,10,20),1000));
 
             };
         }
