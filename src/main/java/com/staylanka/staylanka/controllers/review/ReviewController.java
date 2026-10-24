@@ -6,7 +6,6 @@ import com.staylanka.staylanka.entity.review.UpdateReviewRequest;
 import com.staylanka.staylanka.service.review.ReviewService;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,5 +45,5 @@ public class ReviewController {
     public Review UpdateComment(@PathVariable Long id, @RequestBody UpdateReviewRequest updateReviewRequest){
         return reviewService.UpdateReview(id,updateReviewRequest);
     }
-    
+
 }
