@@ -26,7 +26,7 @@ public class AdminService {
     }
 
 
-    public AdminUser updateAminUser(long id,AdminUser adminUser){
+    public AdminUser updateAminUser(Long id,AdminUser adminUser){
         AdminUser existingUser = adminUserRepository.findById(id).orElseThrow();
         if (adminUser.getUserName() != null){
             existingUser.setUserName(adminUser.getUserName());

@@ -22,4 +22,26 @@ public class CardPayment extends payment{
     }
 
     public CardPayment() {}
+
+
+    //getters
+
+    public String getCardCvvNumber() {
+        return cardCvvNumber;
+    }
+
+    public String getCardHolder() {
+        return cardHolder;
+    }
+
+    //setter
+
+
+    public void setCardCvvNumber(String cardCvvNumber) {
+        this.cardCvvNumber = cardCvvNumber;
+    }
+
+    public void setCardHolder(String cardHolder) {
+        this.cardHolder = cardHolder;
+    }
 }

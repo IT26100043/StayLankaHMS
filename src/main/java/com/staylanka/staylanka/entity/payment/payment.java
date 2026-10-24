@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Payment")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class payment {
 
     @Id

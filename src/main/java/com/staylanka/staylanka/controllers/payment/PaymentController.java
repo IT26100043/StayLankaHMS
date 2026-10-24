@@ -1,7 +1,9 @@
 package com.staylanka.staylanka.controllers.payment;
 
 
+import com.staylanka.staylanka.entity.payment.CardPayment;
 import com.staylanka.staylanka.entity.payment.CardPaymentRequest;
+import com.staylanka.staylanka.entity.payment.UpdateCardRequestData;
 import com.staylanka.staylanka.entity.payment.payment;
 import com.staylanka.staylanka.service.payment.PaymentService;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +33,16 @@ public class PaymentController {
     @PostMapping("/newpay")
     public payment CreateNewPayment(@RequestBody CardPaymentRequest cardPaymentRequest){
         return paymentService.CreateNewPayment(cardPaymentRequest);
+    }
+
+    @PutMapping("/{id}")
+    public payment UpdateNewPayment(@PathVariable Long id, @RequestBody UpdateCardRequestData updateCardRequestData){
+        return paymentService.UpdatePayment(id,updateCardRequestData);
+    }
+
+    @DeleteMapping("/{id}")
+    public void DeletePaymentById(@PathVariable Long id){
+        paymentService.DeletePayment(id);
     }
 
 

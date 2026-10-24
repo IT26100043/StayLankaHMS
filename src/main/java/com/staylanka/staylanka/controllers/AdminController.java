@@ -23,7 +23,6 @@ public class AdminController {
         return adminService.getAdminUser();
     }
 
-
     @GetMapping("/{id}")
     public Optional<AdminUser> getAdminById(@PathVariable Long id){
         return adminService.getAdminById(id);
@@ -43,6 +42,8 @@ public class AdminController {
     public AdminUser registerAdminUser(@RequestBody AdminUser adminUser){
         return adminService.registerNewUser(adminUser);
     }
+
+
 
 
 
