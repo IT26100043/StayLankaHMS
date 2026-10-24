@@ -45,5 +45,4 @@ public class PaymentController {
         paymentService.DeletePayment(id);
     }
 
-
 }
