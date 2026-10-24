@@ -1,9 +1,7 @@
 package com.staylanka.staylanka.entity.payment;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.staylanka.staylanka.entity.User;
+import jakarta.persistence.*;
 
 @Entity
 public class payment {
@@ -13,8 +11,9 @@ public class payment {
     private Long paymentId;
 
     private double amount;
-
-    private 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customerId",nullable = false)
+    private User user;
 
 
     //getter
