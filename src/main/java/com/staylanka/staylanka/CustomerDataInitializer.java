@@ -55,6 +55,8 @@ import java.time.LocalDateTime;
                 CustomerUser customerUser = new CustomerUser("lesly","Lesly123","078315468");
                 Booking booking = new Booking("AAA","ABC","071233654", LocalDate.of(2026, 11, 1),LocalDate.of(2026,11,10),1500,"CONFIRMED");
 
+                bookingRepository.save(new Booking("AAAs","ABC","071233654", LocalDate.of(2026, 11, 1),LocalDate.of(2026,11,10),1500,"CONFIRMED"));
+
                 customerRepository.save(customerUser);
                 bookingRepository.save(booking);
 

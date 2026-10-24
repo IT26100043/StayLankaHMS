@@ -1,13 +1,13 @@
 package com.staylanka.staylanka.controllers.payment;
 
 
+import com.staylanka.staylanka.entity.payment.CardPaymentRequest;
 import com.staylanka.staylanka.entity.payment.payment;
 import com.staylanka.staylanka.service.payment.PaymentService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/payment")
@@ -22,4 +22,16 @@ public class PaymentController {
     public List<payment> getAllPaymentDetails(){
         return paymentService.getAllPaymentDetails();
     }
+
+    @GetMapping("/{id}")
+    public Optional<payment> getPaymentById(@PathVariable Long id){
+        return paymentService.getPaymentById(id);
+    }
+
+    @PostMapping("/newpay")
+    public payment CreateNewPayment(@RequestBody CardPaymentRequest cardPaymentRequest){
+        return paymentService.CreateNewPayment(cardPaymentRequest);
+    }
+
+
 }
