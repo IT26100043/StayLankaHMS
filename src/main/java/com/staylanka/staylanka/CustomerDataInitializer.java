@@ -4,15 +4,14 @@ package com.staylanka.staylanka;
 import com.staylanka.staylanka.entity.AdminUser;
 import com.staylanka.staylanka.entity.CustomerUser;
 import com.staylanka.staylanka.entity.payment.payment;
-import com.staylanka.staylanka.entity.room.Booking;
-import com.staylanka.staylanka.entity.room.DeluxeRoom;
-import com.staylanka.staylanka.entity.room.StandedRoom;
-import com.staylanka.staylanka.entity.room.SuiteRoom;
+import com.staylanka.staylanka.entity.review.Review;
+import com.staylanka.staylanka.entity.room.*;
 import com.staylanka.staylanka.repository.AdminUserRepository;
 import com.staylanka.staylanka.repository.CustomerRepository;
 import com.staylanka.staylanka.repository.Room.BookingRepository;
 import com.staylanka.staylanka.repository.Room.RoomRepository;
 import com.staylanka.staylanka.repository.payment.PaymentRepository;
+import com.staylanka.staylanka.repository.review.ReviewRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +24,7 @@ import java.time.LocalDateTime;
     public class CustomerDataInitializer {
 
         @Bean
-        CommandLineRunner initDatabase(CustomerRepository customerRepository , AdminUserRepository adminUserRepository, RoomRepository roomRepository, PaymentRepository paymentRepository, BookingRepository bookingRepository)  {
+        CommandLineRunner initDatabase(CustomerRepository customerRepository , AdminUserRepository adminUserRepository, RoomRepository roomRepository, PaymentRepository paymentRepository, BookingRepository bookingRepository, ReviewRepository reviewRepository)  {
             return args -> {
                 // add customer dummy data
                 customerRepository.save(new CustomerUser("testuser1", "abc@123", "07126886299"));
@@ -62,6 +61,11 @@ import java.time.LocalDateTime;
 
                 paymentRepository.save(new payment(customerUser,booking,"CONFIRMED", LocalDateTime.of(2026,11,20,10,10,20),1000));
 
+                //review dummy
+                Room room1 = new StandedRoom("R105",5500,3,"Available");
+                roomRepository.save(room1);
+
+                reviewRepository.save(new Review(customerUser,room1,5,"Good Rooms",LocalDate.of(2026,11,25)));
             };
         }
     }
