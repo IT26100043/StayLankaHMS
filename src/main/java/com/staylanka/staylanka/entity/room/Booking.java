@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.time.LocalDate;
 
@@ -26,6 +27,7 @@ public class Booking {
     public Booking() {
 
     }
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 
     // machn I add parameterized constructor @Sahan
     public Booking(String roomId,String guestName,String guestPhone,LocalDate checkIn,LocalDate checkOut,double totalPrice,String status){

@@ -210,7 +210,8 @@
             "roomId": "R105",
             "pricePerNight": 5500,
             "capacity": 3,
-            "status": "Available",
+            "maintenanceFrom": null,
+            "maintenanceTo": null,
             "hibernateLazyInitializer": {},
             "type": "Standard"
         },
@@ -221,7 +222,7 @@
     }
 ]
 ```
-2.POST method - create new Review <br>
+2.POST method - create new Review (only for a customer who has paid for a booking of that room and whose check-in date has arrived; otherwise 403) <br>
 `http://localhost:8080/review/newreview`
 #### Input Method
 ``` 
@@ -246,7 +247,8 @@
     },
     "room": {
         "capacity": 2,
-        "status": "Available",
+        "maintenanceFrom": null,
+        "maintenanceTo": null,
         "pricePerNight": 5000,
         "roomId": "R101",
         "type": "Standard"
@@ -277,7 +279,8 @@
         "roomId": "R105",
         "pricePerNight": 5500,
         "capacity": 3,
-        "status": "Available",
+        "maintenanceFrom": null,
+        "maintenanceTo": null,
         "hibernateLazyInitializer": {},
         "type": "Standard"
     },
@@ -318,7 +321,8 @@
         "roomId": "R101",
         "pricePerNight": 5000,
         "capacity": 2,
-        "status": "Available",
+        "maintenanceFrom": null,
+        "maintenanceTo": null,
         "hibernateLazyInitializer": {},
         "type": "Standard"
     },

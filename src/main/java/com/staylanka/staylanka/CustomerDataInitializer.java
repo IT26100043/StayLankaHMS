@@ -37,18 +37,18 @@ import java.time.LocalDateTime;
 
                 // add room dummy data
                 // Standard room
-                roomRepository.save(new StandedRoom("R101",5000,2,"Available"));
-                roomRepository.save(new StandedRoom("R102",5000,2,"Booked"));
-                roomRepository.save(new StandedRoom("R103",5500,3,"Available"));
+                roomRepository.save(new StandedRoom("R101",5000,2));
+                roomRepository.save(new StandedRoom("R102",5000,2));
+                roomRepository.save(new StandedRoom("R103",5500,3));
 
                 // Deluxe room
-                roomRepository.save(new DeluxeRoom("R201",8500,2,"Available"));
-                roomRepository.save(new DeluxeRoom("R202",9000,3,"Booked"));
-                roomRepository.save(new DeluxeRoom("R203",9500,4,"Available"));
+                roomRepository.save(new DeluxeRoom("R201",8500,2));
+                roomRepository.save(new DeluxeRoom("R202",9000,3));
+                roomRepository.save(new DeluxeRoom("R203",9500,4));
 
                 //Suites
-                roomRepository.save(new SuiteRoom("R301",15000,4,"Available"));
-                roomRepository.save(new SuiteRoom("R302", 18000, 4, "Maintenance"));
+                roomRepository.save(new SuiteRoom("R301",15000,4));
+                roomRepository.save(new SuiteRoom("R302", 18000, 4, LocalDate.of(2026, 11, 5), LocalDate.of(2026, 11, 12)));
 
                 //paymentDummy
                 CustomerUser customerUser = new CustomerUser("lesly","Lesly123","078300468","800");
@@ -62,7 +62,7 @@ import java.time.LocalDateTime;
                 paymentRepository.save(new payment(customerUser,booking,"CONFIRMED", LocalDateTime.of(2026,11,20,10,10,20),1000));
 
                 //review dummy
-                Room room1 = new StandedRoom("R105",5500,3,"Available");
+                Room room1 = new StandedRoom("R105",5500,3);
                 roomRepository.save(room1);
 
                 reviewRepository.save(new Review(customerUser,room1,5,"Good Rooms",LocalDate.of(2026,11,25)));

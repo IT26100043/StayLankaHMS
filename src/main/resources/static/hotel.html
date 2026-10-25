@@ -106,7 +106,7 @@
     .room .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
     .room .no{font:500 13px var(--f-mono);color:var(--mute);letter-spacing:.1em}
     .pill{font:500 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;padding:6px 10px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
-    .pill.available{color:var(--ok)} .pill.occupied{color:var(--danger)} .pill.cleaning{color:#e8cf7a} .pill.reserved{color:var(--lamp)}
+    .pill.reserved{color:var(--lamp)}
     .room h3{font:400 24px/1.15 var(--f-display);margin:0}
     .room p{margin:0;color:var(--mute);font-size:13.5px}
     .room .meta{display:flex;gap:14px;flex-wrap:wrap;font:400 12px var(--f-mono);color:var(--stone)}
@@ -154,6 +154,19 @@
         .caps{bottom:calc(11svh + env(safe-area-inset-bottom,0px))}
     }
     @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hint i{animation:none}.cap{transition:none}}
+
+    textarea{background:rgba(235,228,213,.05);border:1px solid var(--line);border-radius:10px;padding:11px 13px;width:100%;min-width:0;outline:none;font:inherit;color:inherit;resize:vertical;min-height:84px;transition:border-color .2s}
+    textarea:focus{border-color:var(--lamp)}
+    .rvlink{background:none;border:0;color:var(--lamp);cursor:pointer;font:inherit;text-decoration:underline;padding:0}
+    .rvlist{max-height:240px;overflow:auto;margin:0 0 18px;display:flex;flex-direction:column;gap:10px}
+    .rv{border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+    .rv p{margin:6px 0 0;font-size:13.5px;color:var(--stone)}
+    .rvtop{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
+    .rvstars{color:var(--lamp);letter-spacing:.1em;font-size:14px}
+    .bk{margin-bottom:14px}
+    .bkbtns{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;align-items:center}
+    .bkbtns .btn{padding:3px 10px;font-size:11px}
+    .paytag{font-size:11px;color:var(--mute)}
 </style>
 <nav class="nav" id="nav" aria-label="Main">
     <a class="logo" href="#top" data-go="top" aria-label="NOVA home">NOVA</a>
@@ -201,10 +214,9 @@
 
     <section class="s" id="rooms">
         <div class="wrap">
-            <p class="kicker">Rooms &amp; availability</p>
-            <h2>Our rooms, live status.</h2>
+            <p class="kicker">Rooms</p>
+            <h2>Our rooms.</h2>
             <p class="lead">Rooms added by the hotel team appear here automatically. Sign in to book a room for your dates.</p>
-            <div class="filters" id="filters" role="group" aria-label="Filter rooms by status"></div>
             <div class="grid" id="roomgrid"></div>
         </div>
     </section>
@@ -459,12 +471,14 @@
         var ROOT=(location.protocol.indexOf("http")===0&&location.port==="8080")?"":"http://localhost:8080";
         var API=ROOT+"/api/v1";          // rooms + bookings
         var AUTH=ROOT+"/auth/customer";  // POST  {userName,password}  -> customer or empty (wrong login)
+        var PAY=ROOT+"/payment";         // POST /newpay, GET /payments, PUT /{id}, DELETE /{id}
+        var REV=ROOT+"/review";          // POST /newreview, GET /reviews, PUT /{id}, DELETE /{id}
+        var JSONH={"Content-Type":"application/json"};
         var CUST=ROOT+"/customer";       // POST /register, GET /{id}, PUT /{id}, DELETE /{id}, GET /customers
 
         var ROOMS=[],LOAD_ERROR="";
         var BLURB={Standard:"A comfortable room with everything you need for a good stay.",Deluxe:"More space and extra comfort for a relaxed stay.",Suite:"Our most spacious room, made for a special stay."};
-        var LABEL={available:"Available",occupied:"Booked",cleaning:"Maintenance",reserved:"Reserved"};
-        var state={filter:"all",user:null,pop:false,confirmDel:false,editPhone:false,mine:[]};
+        var state={user:null,pop:false,confirmDel:false,editPhone:false,mine:[],reviews:[],pays:[]};
         var SESSION_KEY="staylanka_customer_id";
 
         /* ---------- backend helpers ---------- */
@@ -495,49 +509,38 @@
         }
 
         /* ---------- rooms (loaded from the backend) ---------- */
-        function mapStatus(v){v=String(v||"").toLowerCase();return v==="available"?"available":v==="maintenance"?"cleaning":"occupied"}
         async function loadRooms(){
             try{
                 var res=await fetch(API+"/rooms");
                 if(!res.ok)throw new Error("Server answered "+res.status);
                 var list=await res.json();
-                ROOMS=list.map(function(r){return{id:r.roomId,type:r.type,capacity:r.capacity,price:r.pricePerNight,status:mapStatus(r.status),note:BLURB[r.type]||"A comfortable room for your stay."}});
+                ROOMS=list.map(function(r){return{id:r.roomId,type:r.type,capacity:r.capacity,price:r.pricePerNight,note:BLURB[r.type]||"A comfortable room for your stay."}});
                 LOAD_ERROR="";
             }catch(e){ROOMS=[];LOAD_ERROR="Cannot reach the room server. Start the Spring Boot app and refresh this page."}
             renderRooms();
         }
 
-        var filters=document.getElementById("filters"),grid=document.getElementById("roomgrid");
-        function statusOf(r){return r.status}
-        function renderFilters(){
-            filters.textContent="";
-            [["all","All rooms"],["available","Available"],["occupied","Booked"],["cleaning","Maintenance"]].forEach(function(f){
-                filters.appendChild(h("button",{class:"chip","aria-pressed":String(state.filter===f[0]),type:"button",text:f[1],onclick:function(){state.filter=f[0];renderFilters();renderRooms()}}));
-            });
-        }
+        var grid=document.getElementById("roomgrid");
         function hasMyBooking(roomId){return state.mine.some(function(b){return b.roomId===roomId&&b.status==="Confirmed"})}
         function renderRooms(){
             grid.textContent="";
             if(LOAD_ERROR){grid.appendChild(h("p",{class:"lead",text:LOAD_ERROR}));return}
             var n=0;
             ROOMS.forEach(function(r){
-                var st=statusOf(r);
-                if(state.filter!=="all"&&st!==state.filter)return;
                 n++;
                 var mine=hasMyBooking(r.id);
                 var btn;
-                if(st==="available"&&state.user)btn=h("button",{class:"btn",type:"button",text:"Book",onclick:function(){openModal("book",r)}});
-                else if(st==="available")btn=h("button",{class:"btn",type:"button",text:"Sign in to book",onclick:function(){openModal("login","Sign in to book a room.")}});
-                else btn=h("button",{class:"btn ghost",type:"button",text:"Unavailable",disabled:"disabled"});
+                if(state.user)btn=h("button",{class:"btn",type:"button",text:"Book",onclick:function(){openModal("book",r)}});
+                else btn=h("button",{class:"btn",type:"button",text:"Sign in to book",onclick:function(){openModal("login","Sign in to book a room.")}});
                 grid.appendChild(h("article",{class:"room"},
-                    h("div",{class:"top"},h("span",{class:"no",text:"ROOM "+r.id}),h("span",{class:"pill "+st,text:mine?"Yours":LABEL[st]})),
+                    h("div",{class:"top"},h("span",{class:"no",text:"ROOM "+r.id}),mine?h("span",{class:"pill reserved",text:"Yours"}):h("span")),
                     h("h3",{text:r.type+" Room"}),
                     h("p",{text:r.note}),
-                    h("div",{class:"meta"},h("span",{text:"Sleeps "+r.capacity})),
+                    h("div",{class:"meta"},h("span",{text:"Sleeps "+r.capacity}),h("button",{type:"button",class:"rvlink",text:revText(r.id),onclick:function(){openModal("reviews",r)}})),
                     h("div",{class:"foot"},h("div",{class:"price"},"Rs. "+r.price,h("small",{text:" /night"})),btn)
                 ));
             });
-            if(!n)grid.appendChild(h("p",{class:"lead",text:ROOMS.length?"No rooms with this status right now.":"No rooms have been added yet."}));
+            if(!n)grid.appendChild(h("p",{class:"lead",text:"No rooms have been added yet."}));
         }
 
         /* ---------- my bookings (looked up on the backend by guest name + phone) ---------- */
@@ -554,10 +557,52 @@
             renderRooms();if(state.pop)renderPop();
         }
         async function cancelMine(id){
-            if(!confirm("Cancel this booking?"))return;
+            if(!confirm(payFor(id)?"Cancel this booking? Its payment record stays on file.":"Cancel this booking?"))return;
             try{var res=await fetch(API+"/bookings/"+id+"/cancel",{method:"PUT"});toast(res.ok?"Booking cancelled":"Could not cancel the booking")}
             catch(e){toast("Cannot reach the server")}
             loadMine();loadRooms();
+        }
+
+        /* ---------- feedback (reviews) ---------- */
+        function stars(n){n=Math.max(0,Math.min(5,Number(n)||0));return "★★★★★".slice(0,n)+"☆☆☆☆☆".slice(0,5-n)}
+        function revId(r){return r.id!=null?r.id:r.reviewId}
+        function revDate(r){return String(r.date||r.Date||"")}
+        function revRoomId(r){return r.room&&r.room.roomId}
+        function revUserId(r){return r.user&&r.user.id}
+        function reviewsFor(roomId){
+            return state.reviews.filter(function(r){return revRoomId(r)===roomId}).sort(function(a,b){return (revId(b)||0)-(revId(a)||0)});
+        }
+        function revText(roomId){
+            var l=reviewsFor(roomId);
+            if(!l.length)return "No reviews yet";
+            var sum=0;l.forEach(function(r){sum+=Number(r.rating)||0});
+            return "★ "+(sum/l.length).toFixed(1)+" · "+l.length+(l.length===1?" review":" reviews");
+        }
+        async function loadReviews(){
+            try{var res=await fetch(REV+"/reviews");if(res.ok)state.reviews=await res.json()}catch(e){}
+            renderRooms();
+        }
+
+        /* ---------- payments ---------- */
+        function payFor(bookingId){
+            for(var i=0;i<state.pays.length;i++){var p=state.pays[i];if(p.booking&&String(p.booking.bookingId)===String(bookingId))return p}
+            return null;
+        }
+        function niceStatus(v){v=String(v||"pending").toLowerCase();return v.charAt(0).toUpperCase()+v.slice(1)}
+        async function loadPays(){
+            state.pays=[];
+            if(!state.user)return;
+            try{
+                var res=await fetch(PAY+"/payments");
+                if(res.ok){var all=await res.json(),uid=String(state.user.id);state.pays=all.filter(function(p){return p.user&&String(p.user.id)===uid})}
+            }catch(e){}
+            if(state.pop)renderPop();
+        }
+        async function removePay(id){
+            if(!confirm("Remove this payment record?"))return;
+            try{var res=await fetch(PAY+"/"+id,{method:"DELETE"});toast(res.ok?"Payment removed":"Could not remove the payment")}
+            catch(e){toast("Cannot reach the server")}
+            loadPays();
         }
 
         /* ---------- nav auth ---------- */
@@ -606,9 +651,19 @@
             var box=h("div",{class:"res"},h("b",{text:"Your bookings"}));
             if(!active.length)box.appendChild(h("span",{text:"None yet"}));
             active.forEach(function(b){
-                box.appendChild(h("div",{style:"margin-bottom:8px"},
-                    h("span",{text:"Room "+b.roomId+" · "+b.checkIn+" to "+b.checkOut+" · Rs. "+b.totalPrice+" "}),
-                    h("button",{type:"button",class:"btn ghost",style:"padding:3px 10px;font-size:11px",text:"Cancel",onclick:function(){cancelMine(b.bookingId)}})));
+                var p=payFor(b.bookingId);
+                var btns=h("div",{class:"bkbtns"});
+                if(p){
+                    btns.appendChild(h("span",{class:"paytag",text:"Payment: "+niceStatus(p.status)}));
+                    btns.appendChild(h("button",{type:"button",class:"btn ghost",text:"Card",onclick:function(){openModal("pay",{booking:b,pay:p})}}));
+                    btns.appendChild(h("button",{type:"button",class:"btn ghost",text:"Remove payment",onclick:function(){removePay(p.paymentId)}}));
+                }else{
+                    btns.appendChild(h("button",{type:"button",class:"btn",text:"Pay now",onclick:function(){openModal("pay",{booking:b})}}));
+                }
+                btns.appendChild(h("button",{type:"button",class:"btn ghost",text:"Cancel booking",onclick:function(){cancelMine(b.bookingId)}}));
+                box.appendChild(h("div",{class:"bk"},
+                    h("span",{text:"Room "+b.roomId+" · "+b.checkIn+" to "+b.checkOut+" · Rs. "+b.totalPrice}),
+                    btns));
             });
             pop.appendChild(box);
             if(!state.confirmDel){
@@ -629,9 +684,12 @@
                                     if(!ok){err.textContent="That password is not correct.";return}
                                     var active2=state.mine.filter(function(b){return b.status==="Confirmed"});
                                     for(var i=0;i<active2.length;i++){try{await fetch(API+"/bookings/"+active2[i].bookingId+"/cancel",{method:"PUT"})}catch(e){}}
+                                    for(var j=0;j<state.pays.length;j++){try{await fetch(PAY+"/"+state.pays[j].paymentId,{method:"DELETE"})}catch(e){}}
+                                    var myRevs=state.reviews.filter(function(r){return String(revUserId(r))===String(u.id)});
+                                    for(var k=0;k<myRevs.length;k++){try{await fetch(REV+"/"+revId(myRevs[k]),{method:"DELETE"})}catch(e){}}
                                     var res=await fetch(CUST+"/"+u.id,{method:"DELETE"});
                                     if(!res.ok){err.textContent="Could not delete the account (server "+res.status+").";return}
-                                    lsSet(SESSION_KEY,"");state.user=null;state.mine=[];state.pop=false;state.confirmDel=false;
+                                    lsSet(SESSION_KEY,"");state.user=null;state.mine=[];state.pays=[];state.pop=false;state.confirmDel=false;
                                     renderAuth();renderRooms();loadRooms();toast("Your account has been deleted");
                                 }catch(e){err.textContent="Cannot reach the server. Is the backend running?"}
                             }}),
@@ -640,7 +698,7 @@
                 ));
             }
         }
-        function logout(){lsSet(SESSION_KEY,"");state.user=null;state.mine=[];state.pop=false;state.confirmDel=false;state.editPhone=false;renderAuth();renderRooms();toast("Signed out")}
+        function logout(){lsSet(SESSION_KEY,"");state.user=null;state.mine=[];state.pays=[];state.pop=false;state.confirmDel=false;state.editPhone=false;renderAuth();renderRooms();toast("Signed out")}
         document.addEventListener("click",function(){if(state.pop){state.pop=false;state.confirmDel=false;state.editPhone=false;renderAuth()}});
         document.addEventListener("keydown",function(e){
             if(e.key!=="Escape")return;
@@ -662,7 +720,7 @@
             var back=h("div",{class:"back",id:"back",onclick:function(e){if(e.target===back)closeModal()}});
             var box=h("div",{class:"modal",role:"dialog","aria-modal":"true","aria-labelledby":"mt"});
             box.appendChild(h("button",{class:"x",type:"button","aria-label":"Close",text:"×",onclick:closeModal}));
-            if(view==="login")buildLogin(box,note);else if(view==="book")buildBook(box,note);else buildSignup(box);
+            if(view==="login")buildLogin(box,note);else if(view==="book")buildBook(box,note);else if(view==="pay")buildPay(box,note);else if(view==="reviews")buildReviews(box,note);else buildSignup(box);
             back.appendChild(box);document.body.appendChild(back);document.body.style.overflow="hidden";
             var first=box.querySelector("input");if(first)first.focus();
         }
@@ -686,12 +744,117 @@
                 if(cout<=cin){err.textContent="Check-out must be after check-in.";return}
                 try{
                     var res=await fetch(API+"/bookings",{method:"POST",headers:{"Content-Type":"application/json"},
-                        body:JSON.stringify({roomId:room.id,guestName:u.userName,guestPhone:u.phoneNumber,checkIn:cin,checkOut:cout})});
+                        body:JSON.stringify({roomId:room.id,guestName:u.userName,guestPhone:u.phoneNumber,checkIn:cin,checkOut:cout,totalPrice:0})});
                     var text=await res.text();
                     if(!res.ok){err.textContent=text||"The booking could not be made.";return}
-                    var t=text.match(/total price:\s*([\d.]+)/);
-                    closeModal();toast("Room "+room.id+" booked"+(t?" · Rs. "+t[1]:""));loadMine();loadRooms();
+                    var t=text.match(/total price:\s*([\d.]+)/),idm=text.match(/ID:\s*(\d+)/);
+                    toast("Room "+room.id+" booked"+(t?" · Rs. "+t[1]:""));loadMine();loadRooms();
+                    if(idm)openModal("pay",{booking:{bookingId:parseInt(idm[1],10),roomId:room.id,checkIn:cin,checkOut:cout,totalPrice:t?parseFloat(t[1]):0}});
+                    else closeModal();
                 }catch(ex){err.textContent="Cannot reach the server. Is the backend running?"}
+            });
+            box.appendChild(form);
+        }
+        function buildPay(box,ctx){
+            var b=ctx.booking,u=state.user,p=ctx.pay||payFor(b.bookingId),editing=!!p;
+            box.appendChild(h("h2",{id:"mt",text:editing?"Card details":"Pay for your stay"}));
+            box.appendChild(h("p",{class:"sub",text:"Booking #"+b.bookingId+" · Room "+b.roomId+" · "+b.checkIn+" to "+b.checkOut+" · Rs. "+b.totalPrice}));
+            var err=h("p",{class:"err",id:"perr",role:"alert"});
+            var go=h("button",{class:"btn solid full",type:"submit",style:"grid-column:1/-1",text:editing?"Save card details":"Pay Rs. "+b.totalPrice});
+            var form=h("form",{novalidate:"novalidate"},
+                field("p-name","Card holder name",{type:"text",autocomplete:"cc-name",value:editing?(p.cardHolder||""):""},true),
+                field("p-cvv",editing?"CVV (leave blank to keep the current one)":"CVV",{type:"password",inputmode:"numeric",maxlength:"4",autocomplete:"cc-csc",placeholder:"123"},true),
+                err,go);
+            if(!editing)form.appendChild(h("button",{class:"btn ghost full",type:"button",style:"grid-column:1/-1",text:"Pay later",onclick:closeModal}));
+            form.addEventListener("submit",async function(e){
+                e.preventDefault();err.textContent="";
+                var name=val("p-name"),cv=val("p-cvv"),cvOk=/^\d{3,4}$/.test(cv);
+                if(!/^[A-Za-z][A-Za-z .'-]{1,59}$/.test(name)){err.textContent="Enter the card holder name as printed on the card.";return}
+                if((!editing&&!cvOk)||(editing&&cv&&!cvOk)){err.textContent="The CVV must be 3 or 4 digits.";return}
+                if(!editing&&payFor(b.bookingId)){err.textContent="This booking already has a payment.";return}
+                go.disabled=true;
+                try{
+                    var res;
+                    if(editing){
+                        var upd={cardHolder:name};if(cv)upd.cardCvvNumber=cv;
+                        res=await fetch(PAY+"/"+p.paymentId,{method:"PUT",headers:JSONH,body:JSON.stringify(upd)});
+                    }else{
+                        res=await fetch(PAY+"/newpay",{method:"POST",headers:JSONH,body:JSON.stringify({customerId:u.id,bookingId:b.bookingId,cardHolderName:name,cardCvvNumber:cv})});
+                    }
+                    if(!res.ok){err.textContent="The payment could not be saved (server "+res.status+").";go.disabled=false;return}
+                    closeModal();toast(editing?"Card details updated":"Payment received for booking #"+b.bookingId);loadPays();
+                }catch(ex){err.textContent="Cannot reach the server. Is the backend running?";go.disabled=false}
+            });
+            box.appendChild(form);
+        }
+        async function canReviewRoom(room){
+            try{var res=await fetch(REV+"/can-review?customerId="+encodeURIComponent(state.user.id)+"&roomId="+encodeURIComponent(room.id));return res.ok&&(await res.text()).trim()==="true"}catch(e){return false}
+        }
+        function buildReviews(box,room){
+            var u=state.user,list=reviewsFor(room.id);
+            var mine=u?list.filter(function(r){return String(revUserId(r))===String(u.id)})[0]:null;
+            box.appendChild(h("h2",{id:"mt",text:"Room "+room.id+" reviews"}));
+            box.appendChild(h("p",{class:"sub",text:list.length?revText(room.id):"No reviews yet."}));
+            if(list.length){
+                var wrap=h("div",{class:"rvlist"});
+                list.forEach(function(r){
+                    wrap.appendChild(h("div",{class:"rv"},
+                        h("div",{class:"rvtop"},h("span",{class:"rvstars",text:stars(r.rating)}),h("span",{text:((r.user&&r.user.userName)||"Guest")+(revDate(r)?" · "+revDate(r):"")})),
+                        h("p",{text:r.comment||""})));
+                });
+                box.appendChild(wrap);
+            }
+            if(!u){
+                box.appendChild(h("button",{class:"btn solid full",type:"button",style:"width:100%",text:"Sign in to leave a review",onclick:function(){openModal("login","Sign in to leave a review.")}}));
+                return;
+            }
+            if(!mine){
+                var gate=h("p",{class:"sub",text:"Checking if you can review this room…"});
+                box.appendChild(gate);
+                canReviewRoom(room).then(function(ok){
+                    if(!document.body.contains(gate))return;
+                    if(ok){gate.remove();buildReviewForm(box,room,u,mine)}
+                    else gate.textContent="Only guests who have paid for and checked in to this room can leave a review.";
+                });
+                return;
+            }
+            buildReviewForm(box,room,u,mine);
+        }
+        function buildReviewForm(box,room,u,mine){
+            var err=h("p",{class:"err",id:"rerr",role:"alert"});
+            var sel=h("select",{id:"r-rating"},
+                h("option",{value:"5",text:"5 · Excellent"}),h("option",{value:"4",text:"4 · Very good"}),h("option",{value:"3",text:"3 · Good"}),
+                h("option",{value:"2",text:"2 · Fair"}),h("option",{value:"1",text:"1 · Poor"}));
+            var ta=h("textarea",{id:"r-comment",maxlength:"300",placeholder:"How was your stay?"});
+            if(mine){sel.value=String(mine.rating);ta.value=mine.comment||""}
+            var save=h("button",{class:"btn solid full",type:"submit",style:"grid-column:1/-1",text:mine?"Update my review":"Post review"});
+            var form=h("form",{novalidate:"novalidate"},
+                h("div",{class:"f full"},h("label",{for:"r-rating",text:mine?"Your rating (you already reviewed this room)":"Your rating"}),sel),
+                h("div",{class:"f full"},h("label",{for:"r-comment",text:"Your comment"}),ta),
+                err,save);
+            if(mine)form.appendChild(h("button",{class:"btn danger full",type:"button",style:"grid-column:1/-1",text:"Delete my review",onclick:async function(){
+                    if(!confirm("Delete your review?"))return;
+                    try{
+                        var res=await fetch(REV+"/"+revId(mine),{method:"DELETE"});
+                        if(!res.ok){err.textContent="Could not delete the review (server "+res.status+").";return}
+                        await loadReviews();toast("Review deleted");openModal("reviews",room);
+                    }catch(ex){err.textContent="Cannot reach the server."}
+                }}));
+            form.addEventListener("submit",async function(e){
+                e.preventDefault();err.textContent="";
+                var rating=parseInt(sel.value,10),comment=ta.value.trim();
+                if(!(rating>=1&&rating<=5)){err.textContent="Choose a rating from 1 to 5.";return}
+                if(comment.length<3){err.textContent="Write a few words about your stay.";return}
+                if(comment.length>300){err.textContent="Keep your comment under 300 characters.";return}
+                save.disabled=true;
+                try{
+                    var res=mine
+                        ?await fetch(REV+"/"+revId(mine),{method:"PUT",headers:JSONH,body:JSON.stringify({rating:rating,comment:comment})})
+                        :await fetch(REV+"/newreview",{method:"POST",headers:JSONH,body:JSON.stringify({customerId:u.id,roomId:room.id,rating:rating,comment:comment})});
+                    if(res.status===403){err.textContent="Only guests who have paid for and checked in can leave a review.";save.disabled=false;return}
+                    if(!res.ok){err.textContent="Could not save your review (server "+res.status+").";save.disabled=false;return}
+                    await loadReviews();toast(mine?"Review updated":"Thank you for your review");openModal("reviews",room);
+                }catch(ex){err.textContent="Cannot reach the server. Is the backend running?";save.disabled=false}
             });
             box.appendChild(form);
         }
@@ -747,14 +910,14 @@
             });
             box.appendChild(form);
         }
-        function startSession(u){lsSet(SESSION_KEY,u.id);state.user=u;state.pop=false;state.editPhone=false;renderAuth();renderRooms();loadMine()}
+        function startSession(u){lsSet(SESSION_KEY,u.id);state.user=u;state.pop=false;state.editPhone=false;renderAuth();renderRooms();loadMine();loadPays()}
 
         /* ---------- boot ---------- */
-        renderFilters();renderRooms();renderAuth();loadRooms();
+        renderRooms();renderAuth();loadRooms();loadReviews();
         (async function(){
             var id=lsGet(SESSION_KEY,"");
             if(!id)return;
-            try{var u=await apiGetCustomer(id);if(u){state.user=u;renderAuth();loadMine()}else lsSet(SESSION_KEY,"")}catch(e){}
+            try{var u=await apiGetCustomer(id);if(u){state.user=u;renderAuth();loadMine();loadPays()}else lsSet(SESSION_KEY,"")}catch(e){}
         })();
     })();
 </script>
