@@ -39,8 +39,7 @@ public class ReviewController {
     public Review newReview(@RequestBody ReviewRequest reviewRequest){
         return reviewService.postNewReview(reviewRequest);
     }
-
-
+    
     @PutMapping("/{id}")
     public Review UpdateComment(@PathVariable Long id, @RequestBody UpdateReviewRequest updateReviewRequest){
         return reviewService.UpdateReview(id,updateReviewRequest);
