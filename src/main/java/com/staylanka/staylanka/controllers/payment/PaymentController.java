@@ -1,5 +1,7 @@
 package com.staylanka.staylanka.controllers.payment;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 
 import com.staylanka.staylanka.entity.payment.CardPayment;
 import com.staylanka.staylanka.entity.payment.CardPaymentRequest;

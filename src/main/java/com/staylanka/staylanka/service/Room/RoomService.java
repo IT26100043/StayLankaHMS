@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,14 @@ public class RoomService {
         }
         if (room.getCapacity() <= 0) {
             throw new IllegalArgumentException("Capacity must be at least 1");
+        }
+        LocalDate from = room.getMaintenanceFrom();
+        LocalDate to = room.getMaintenanceTo();
+        if ((from == null) != (to == null)) {
+            throw new IllegalArgumentException("Give both maintenance dates (from and to), or leave both empty");
+        }
+        if (from != null && to.isBefore(from)) {
+            throw new IllegalArgumentException("Maintenance end date cannot be before the start date");
         }
     }
 
@@ -54,8 +63,7 @@ public class RoomService {
         List<Room> result = new ArrayList<>();
         for (Room r : roomRepository.findAll()) {
             if (r.getRoomId().toLowerCase().contains(k)
-                    || r.getType().toLowerCase().contains(k)
-                    || r.getStatus().toLowerCase().contains(k)) {
+                    || r.getType().toLowerCase().contains(k)) {
                 result.add(r);
             }
         }

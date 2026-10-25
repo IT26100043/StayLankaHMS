@@ -32,9 +32,7 @@ public class BookingService {
         if (room == null) {
             throw new IllegalArgumentException("Room not found");
         }
-        if ("Maintenance".equals(room.getStatus())) {
-            throw new IllegalArgumentException("This room is under maintenance");
-        }
+        checkMaintenance(room, booking);
 
         checkRoomIsFree(booking, null);
 
@@ -79,6 +77,7 @@ public class BookingService {
         if (room == null) {
             throw new IllegalArgumentException("Room not found");
         }
+        checkMaintenance(room, existing);
         existing.setTotalPrice(calculateTotal(room, existing));
         return bookingRepository.save(existing);
     }
@@ -118,6 +117,15 @@ public class BookingService {
         }
         if (!booking.getCheckOut().isAfter(booking.getCheckIn())) {
             throw new IllegalArgumentException("Check-out must be after check-in");
+        }
+    }
+
+    // the room cannot be booked on days that fall inside its maintenance period
+    private void checkMaintenance(Room room, Booking booking) {
+        if (room.isUnderMaintenance(booking.getCheckIn(), booking.getCheckOut())) {
+            throw new IllegalArgumentException("Room " + room.getRoomId() + " is under maintenance from "
+                    + room.getMaintenanceFrom() + " to " + room.getMaintenanceTo()
+                    + ". Please choose other dates.");
         }
     }
 
