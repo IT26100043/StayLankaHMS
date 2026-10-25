@@ -25,7 +25,7 @@ public class CustomerService {
         return customerRepository.findById(id);
     }
 
-    /*
+    
     public CustomerUser UpdateCustomer(Long id, CustomerUser customerDetails ){
         CustomerUser existingUser = customerRepository.findById(id).orElseThrow();
 
@@ -42,8 +42,8 @@ public class CustomerService {
         customerRepository.save(existingUser);
         return existingUser;
 
-    }*/
-
+    }
+/*
     public CustomerUser UpdateCustomer(Long id,CustomerUser customerDetails){
         try{
             CustomerUser existingUser = customerRepository.findById(id).orElseThrow();
@@ -65,7 +65,7 @@ public class CustomerService {
             System.out.println("Error Found in UpdateCustomer Method!");
             return customerDetails;
         }
-    }
+    }*/
 
     public void deleteCustomer(Long id){
         customerRepository.deleteById(id);
