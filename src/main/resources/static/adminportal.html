@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>StayLanka Admin Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'media',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        @keyframes pop {
+            from { opacity: 0; transform: translateY(6px) scale(.99); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .pop { animation: pop .22s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        /* Custom subtle scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.5); }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased min-h-screen selection:bg-brand-500 selection:text-white">
+
+<!-- LOGIN SECTION -->
+<section id="login" class="min-h-screen grid lg:grid-cols-12 bg-slate-900">
+    <!-- Left Hero Banner -->
+    <div class="hidden lg:flex lg:col-span-7 flex-col justify-between relative overflow-hidden bg-gradient-to-br from-brand-950 via-brand-900 to-slate-950 p-12 lg:p-16 border-r border-brand-900/50">
+        <!-- Background Decorative Glow -->
+        <div class="absolute -top-24 -left-24 w-96 h-96 bg-brand-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="relative z-10 flex items-center gap-3">
+            <div class="h-10 w-10 rounded-xl bg-brand-500/20 border border-brand-500/30 flex items-center justify-center text-brand-400 font-bold text-xl shadow-inner">
+                S
+            </div>
+            <span class="text-2xl font-bold tracking-tight text-white">Stay<span class="text-brand-500">Lanka</span></span>
+        </div>
+
+        <div class="relative z-10 my-auto max-w-lg">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold mb-6">
+                <span class="h-2 w-2 rounded-full bg-brand-500 animate-pulse"></span>
+                Administrator Access Portal
+            </div>
+            <h1 class="text-4xl xl:text-5xl font-extrabold leading-tight text-white tracking-tight">
+                Manage every room, booking & guest with precision.
+            </h1>
+            <p class="mt-4 text-base text-slate-300 font-normal leading-relaxed">
+                Streamline operations, track daily payments, inspect analytics, and deliver outstanding guest experiences through one central console.
+            </p>
+        </div>
+
+        <div class="relative z-10 flex items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-6">
+            <span>© StayLanka Hotel Management System</span>
+            <span class="flex items-center gap-1.5"><span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span> System Operational</span>
+        </div>
+    </div>
+
+    <!-- Right Login Form -->
+    <div class="lg:col-span-5 flex items-center justify-center p-6 sm:p-12 bg-white dark:bg-slate-900">
+        <form id="loginForm" class="w-full max-w-sm pop space-y-6">
+            <div class="lg:hidden flex items-center gap-2 mb-2">
+                <div class="h-9 w-9 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold text-lg">S</div>
+                <span class="text-2xl font-bold text-slate-900 dark:text-white">Stay<span class="text-brand-500">Lanka</span></span>
+            </div>
+
+            <div>
+                <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Sign in to Admin</h2>
+                <p class="text-slate-500 dark:text-slate-400 mt-1 text-sm">Enter your credentials to manage your property.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Username</label>
+                    <input id="u" required autocomplete="username" placeholder="e.g. admin_john" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all duration-150">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Password</label>
+                    <input id="p" type="password" required autocomplete="current-password" placeholder="••••••••" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all duration-150">
+                </div>
+            </div>
+
+            <p id="loginErr" class="text-rose-500 text-xs min-h-[18px] font-medium" role="alert"></p>
+
+            <div class="space-y-3 pt-1">
+                <button id="loginBtn" class="w-full rounded-xl bg-brand-600 hover:bg-brand-700 active:scale-[0.99] text-white font-semibold py-3 text-sm shadow-sm hover:shadow transition-all duration-150 disabled:opacity-60 flex items-center justify-center gap-2">
+                    <span>Sign in to Dashboard</span>
+                </button>
+
+                <button type="button" id="forgotBtn" class="w-full text-center text-xs text-slate-500 hover:text-brand-600 dark:hover:text-brand-400 font-medium transition">
+                    Forgot your admin password?
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- MAIN APP SECTION -->
+<section id="app" class="hidden min-h-screen">
+    <!-- Desktop Sidebar -->
+    <aside class="hidden lg:flex fixed inset-y-0 left-0 w-64 flex-col bg-slate-900 text-slate-300 border-r border-slate-800/80 z-30">
+        <!-- Sidebar Brand Header -->
+        <div class="px-6 py-5 flex items-center justify-between border-b border-slate-800/80">
+            <div class="flex items-center gap-2.5">
+                <div class="h-8 w-8 rounded-lg bg-brand-600 flex items-center justify-center text-white font-bold text-base shadow-sm">S</div>
+                <div class="text-xl font-bold text-white tracking-tight">Stay<span class="text-brand-500">Lanka</span></div>
+            </div>
+            <span class="text-[10px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">v1.0</span>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <div class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+            <div class="px-3 pb-2 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Navigation</div>
+            <nav id="nav" class="space-y-1"></nav>
+        </div>
+
+        <!-- Sidebar User Profile Footer -->
+        <div class="p-4 border-t border-slate-800/80 bg-slate-900/50">
+            <div class="rounded-xl bg-slate-800/60 border border-slate-700/50 p-3 flex items-center gap-3">
+                <div class="h-9 w-9 rounded-lg bg-brand-500/20 text-brand-400 font-bold flex items-center justify-center border border-brand-500/30 shrink-0">
+                    A
+                </div>
+                <div class="overflow-hidden flex-1">
+                    <div class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Signed in as</div>
+                    <div id="who" class="font-semibold text-white text-sm truncate"></div>
+                </div>
+            </div>
+            <button id="logoutBtn" class="w-full mt-2 rounded-lg py-2 px-3 text-xs font-semibold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition text-center flex items-center justify-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                Sign out
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="lg:ml-64 flex flex-col min-h-screen">
+        <!-- Top Sticky Header -->
+        <header class="sticky top-0 z-20 backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border-b border-slate-200/80 dark:border-slate-800/80 px-4 lg:px-8 py-3.5 flex items-center justify-between gap-4">
+            <div>
+                <h1 id="title" class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white"></h1>
+                <p id="updated" class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5"></p>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="refreshBtn" class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 shadow-sm transition active:scale-[0.98]">
+                    <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    Refresh
+                </button>
+                <button id="logoutBtn2" class="lg:hidden inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition">
+                    Sign out
+                </button>
+            </div>
+        </header>
+
+        <!-- Mobile Horizontal Tab Bar -->
+        <div id="mnav" class="lg:hidden flex gap-1.5 overflow-x-auto px-4 py-2.5 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 no-scrollbar"></div>
+
+        <!-- View Display Container -->
+        <main class="p-4 sm:p-6 lg:p-8 max-w-[1400px] w-full mx-auto flex-1">
+            <div id="banner"></div>
+            <div id="view" class="pop"></div>
+        </main>
+    </div>
+</section>
+
+<!-- MODAL DIALOG CONTAINER -->
+<div id="modal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm items-center justify-center p-4"></div>
+
+<!-- TOAST CONTAINER -->
+<div id="toasts" class="fixed bottom-6 right-6 z-50 space-y-2 pointer-events-none"></div>
+
+<!-- JAVASCRIPT LOGIC (ORIGINAL LOGIC PRESERVED) -->
+<script>
+    (function(){
+        var ROOT=(location.protocol.indexOf("http")===0&&location.port==="8080")?"":"http://localhost:8080";
+        var SESSION="staylanka_admin_name";
+
+        /* ---------- entity definitions (one place to change endpoints) ---------- */
+        var ROOMTYPES=["Standard","Deluxe","Suite","Family"];
+        var E={
+            customers:{t:"Customer",list:"/customer/customers",add:"/customer/register",one:function(r){return"/customer/"+r.id},id:function(r){return r.id},name:function(r){return r.userName},
+                f:[["userName","Username"],["password","Password","password"],["phoneNumber","Phone number"],["securityNumber","Security number"]]},
+            admins:{t:"Admin",list:"/admin/admins",add:"/admin/register",one:function(r){return"/admin/"+r.id},id:function(r){return r.id},name:function(r){return r.userName},
+                f:[["userName","Username"],["password","Password","password"],["phoneNumber","Phone number"],["securityNumber","Security number"]]},
+            rooms:{t:"Room",list:"/api/v1/rooms",add:"/api/v1/rooms",one:function(r){return"/api/v1/rooms/"+r.roomId},id:function(r){return r.roomId},name:function(r){return"room "+r.roomId},lock:["roomId"],
+                f:[["roomId","Room ID"],["type","Type","select",ROOMTYPES],["pricePerNight","Price per night (Rs.)","number"],["capacity","Capacity","number"],["maintenanceFrom","Maintenance from","date"],["maintenanceTo","Maintenance to","date"]]},
+            bookings:{t:"Booking",list:"/api/v1/bookings",add:"/api/v1/bookings",one:function(r){return"/api/v1/bookings/"+r.bookingId},id:function(r){return r.bookingId},name:function(r){return"booking #"+r.bookingId},
+                f:[["roomId","Room ID"],["guestName","Guest name"],["guestPhone","Guest phone"],["checkIn","Check-in","date"],["checkOut","Check-out","date"],["totalPrice","Total price (Rs.)","number"],["status","Status","select",["CONFIRMED","CANCELLED"]]]},
+            payments:{t:"Payment",list:"/payment/payments",one:function(r){return"/payment/"+r.paymentId},id:function(r){return r.paymentId},name:function(r){return"payment #"+r.paymentId},
+                f:[["cardHolder","Card holder name"],["cardCvvNumber","CVV","password"]],partial:true},
+            reviews:{t:"Review",list:"/review/reviews",one:function(r){return"/review/"+r.id},id:function(r){return r.id},name:function(r){return"review #"+r.id},
+                f:[["rating","Rating (1-5)","number"],["comment","Comment","textarea"]]}
+        };
+        var NAV=[["overview","Overview","M3 12l9-9 9 9M5 10v10h14V10"],["customers","Customers","M17 20v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2M10 10a4 4 0 100-8 4 4 0 000 8M21 20v-2a4 4 0 00-3-3.9"],
+            ["bookings","Bookings","M8 2v4M16 2v4M3 8h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"],["rooms","Rooms","M3 20V8l9-5 9 5v12M9 20v-6h6v6"],
+            ["payments","Payments","M2 6h20v12H2zM2 10h20"],["reviews","Reviews","M12 3l2.7 5.6 6.3.9-4.5 4.4 1 6.1L12 17l-5.5 3 1-6.1L3 9.5l6.3-.9z"],["admins","Admins","M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z"]];
+
+        var D={customers:[],admins:[],rooms:[],bookings:[],payments:[],reviews:[]};
+        var ui={tab:"overview",sel:null,q:{},sort:{},secrets:false};
+
+        /* ---------- helpers ---------- */
+        function $(i){return document.getElementById(i)}
+        function esc(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+        function money(n){return"Rs. "+(Number(n)||0).toLocaleString("en-LK",{maximumFractionDigits:2})}
+        function today(){var d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)}
+        function nights(a,b){return Math.max(0,Math.round((new Date(b)-new Date(a))/864e5))}
+        function dt(v){return v?esc(String(v).replace("T"," ").slice(0,16)):"-"}
+
+        /* Updated UI class strings for sleek modern look */
+        var PILL={
+            ok:"bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20",
+            warn:"bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20",
+            bad:"bg-rose-50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20",
+            info:"bg-sky-50 text-sky-700 dark:bg-sky-500/10 dark:text-sky-400 border border-sky-200 dark:border-sky-500/20",
+            gray:"bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700"
+        };
+        function pill(t,k){return'<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap shadow-2xs '+PILL[k]+'">'+esc(t)+'</span>'}
+        function stars(n){n=Math.max(0,Math.min(5,Number(n)||0));return'<span class="text-amber-400 tracking-wider font-bold">'+"★".repeat(n)+'<span class="text-slate-200 dark:text-slate-700">'+"★".repeat(5-n)+'</span></span>'}
+        function secret(v){return ui.secrets?'<span class="font-mono text-xs bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-700 text-brand-600 dark:text-brand-400">'+esc(v||"-")+'</span>':'<span class="text-slate-400 select-none tracking-widest text-xs">••••••</span>'}
+        function payKind(s){return/^(failed|cancelled|refunded)$/i.test(s)?"bad":/pending/i.test(s)?"warn":"ok"}
+        function cancelled(b){return String(b.status||"").toLowerCase()==="cancelled"}
+        function bState(b){var t=today();if(cancelled(b))return{t:"Cancelled",k:"bad",o:4};if(b.checkOut<=t)return{t:"Completed",k:"gray",o:3};if(b.checkIn<=t)return{t:"Checked in",k:"ok",o:0};return{t:"Upcoming",k:"info",o:1}}
+        function payOf(b){return D.payments.filter(function(p){return p.booking&&String(p.booking.bookingId)===String(b.bookingId)})}
+        function payState(b){var p=payOf(b);if(!p.length)return pill("Not paid","warn");var s=String(p[0].status||"PENDING");return pill(s.charAt(0)+s.slice(1).toLowerCase(),payKind(s))}
+        function custFor(b){return D.customers.filter(function(c){return c.userName===b.guestName})[0]||null}
+        function bookingsOf(c){return D.bookings.filter(function(b){return b.guestName===c.userName})}
+        function reviewsOf(c){return D.reviews.filter(function(r){return r.user&&String(r.user.id)===String(c.id)})}
+
+        function toast(msg,bad){
+            var d=document.createElement("div");
+            d.className="pop pointer-events-auto rounded-xl px-4 py-3 text-sm shadow-xl text-white font-medium flex items-center gap-2 "+(bad?"bg-rose-600 border border-rose-500":"bg-slate-900 dark:bg-slate-800 border border-slate-700");
+            d.innerHTML=(bad?'<svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>':'<svg class="w-4 h-4 shrink-0 text-brand-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>')+esc(msg);
+            $("toasts").appendChild(d);
+            setTimeout(function(){d.remove()},3800);
+        }
+
+        async function call(m,u,b){
+            var r=await fetch(ROOT+u,{method:m,headers:{"Content-Type":"application/json"},body:b?JSON.stringify(b):undefined});
+            var t=await r.text(),d=t;try{d=t?JSON.parse(t):null}catch(e){}
+            if(!r.ok)throw new Error((d&&d.message)||(typeof d==="string"&&d.slice(0,140))||"Server answered "+r.status);return d}
+
+        /* ---------- modal: forms + confirm ---------- */
+        var INP="mt-1 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 disabled:opacity-50 transition-all duration-150";
+        function openModal(html){var m=$("modal");m.innerHTML='<div class="pop w-full max-w-md max-h-[90vh] overflow-auto rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-6 sm:p-7">'+html+'</div>';m.classList.remove("hidden");m.classList.add("flex")}
+        function closeModal(){var m=$("modal");m.classList.add("hidden");m.classList.remove("flex");m.innerHTML=""}
+        function openForm(title,fields,vals,lock,onSubmit,okText){
+            vals=vals||{};lock=lock||[];
+            var h='<div class="flex items-center justify-between mb-5"><h3 class="text-xl font-bold text-slate-900 dark:text-white">'+esc(title)+'</h3><button data-close class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg">✕</button></div><div class="space-y-3.5">'+fields.map(function(f){
+                    var v=vals[f[0]],dis=lock.indexOf(f[0])>-1?" disabled":"",lab='<label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">'+esc(f[1]);
+                    if(f[2]==="select")return lab+'</label><select name="'+f[0]+'" class="'+INP+'"'+dis+'>'+f[3].map(function(o){return'<option'+(String(v)===o?" selected":"")+'>'+o+'</option>'}).join("")+'</select>';
+                    if(f[2]==="textarea")return lab+'</label><textarea name="'+f[0]+'" rows="3" class="'+INP+'">'+esc(v)+'</textarea>';
+                    return lab+'</label><input name="'+f[0]+'" type="'+(f[2]||"text")+'" value="'+esc(v)+'" class="'+INP+'"'+dis+'>'}).join("")
+                +'</div><p id="mErr" class="text-rose-500 text-xs font-medium min-h-[20px] mt-3"></p><div class="flex justify-end gap-2.5 mt-4 pt-2 border-t border-slate-100 dark:border-slate-800"><button type="button" data-close class="rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-300 transition">Cancel</button><button id="mOk" class="rounded-xl bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 text-xs font-semibold shadow-sm transition-all duration-150">'+(okText||"Save")+'</button></div>';
+            openModal(h);
+            $("mOk").onclick=async function(){
+                var v={};$("modal").querySelectorAll("[name]").forEach(function(i){v[i.name]=i.type==="number"?(i.value===""?null:Number(i.value)):(i.value===""&&i.type==="date"?null:i.value)});
+                this.disabled=true;try{await onSubmit(v);closeModal()}catch(e){$("mErr").textContent=e.message;this.disabled=false}}}
+        function confirmDel(title,msg,onYes){
+            openModal('<h3 class="text-lg font-bold text-slate-900 dark:text-white">'+esc(title)+'</h3><p class="text-sm text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">'+esc(msg)+'</p><p id="mErr" class="text-rose-500 text-xs font-medium min-h-[20px] mt-3"></p><div class="flex justify-end gap-2.5 mt-5"><button data-close class="rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300">Cancel</button><button id="mOk" class="rounded-xl bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 text-xs font-semibold shadow-sm transition">Delete</button></div>');
+            $("mOk").onclick=async function(){this.disabled=true;try{await onYes();closeModal()}catch(e){$("mErr").textContent=e.message;this.disabled=false}}}
+
+        /* ---------- CRUD ---------- */
+        function formFor(name,row){
+            var d=E[name],edit=!!row;
+            openForm((edit?"Edit ":"Add ")+d.t.toLowerCase(),d.f,row||{},edit?d.lock:[],async function(v){
+                if(d.partial){var b={};Object.keys(v).forEach(function(k){if(v[k])b[k]=v[k]});v=b}
+                if(edit)await call("PUT",d.one(row),v);else await call("POST",d.add,v);
+                toast(d.t+(edit?" updated":" created"));await loadAll()},edit?"Save changes":"Create")}
+        function delFor(name,row){
+            var d=E[name];confirmDel("Delete "+d.t.toLowerCase()+"?","This permanently removes "+d.name(row)+". This action cannot be undone.",async function(){
+                await call("DELETE",d.one(row));toast(d.t+" deleted");if(ui.sel!=null&&name==="customers")ui.sel=null;await loadAll()})}
+        function rowOf(name,id){return D[name].filter(function(r){return String(E[name].id(r))===String(id)})[0]}
+
+        /* ---------- table ---------- */
+        var CARD="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-xs overflow-hidden";
+        var TH="px-4 py-3.5 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 bg-slate-50/80 dark:bg-slate-800/50 border-b border-slate-200/80 dark:border-slate-800 whitespace-nowrap";
+        var TD="px-4 py-3 border-b border-slate-100 dark:border-slate-800/60 align-middle text-sm text-slate-700 dark:text-slate-200";
+        var BTN="rounded-lg px-2.5 py-1 text-xs font-semibold transition-all duration-150 shadow-2xs ";
+        function table(name,cols,opt){
+            opt=opt||{};var d=E[name],q=(ui.q[name]||"").toLowerCase().trim(),rows=D[name];
+            var list=rows.filter(function(r){return!q||JSON.stringify(r).toLowerCase().indexOf(q)>-1});
+            var s=ui.sort[name];
+            if(s){var c=cols[s.i];if(c&&c[2])list=list.slice().sort(function(a,b){var x=c[2](a),y=c[2](b);if(x==null)x="";if(y==null)y="";return s.dir*((typeof x==="number"&&typeof y==="number")?x-y:String(x).localeCompare(String(y),undefined,{numeric:true}))})}
+            var canAdd=d.add&&!opt.noAdd,hasAct=d.one;
+            var h='<div class="flex flex-wrap items-center gap-3 mb-4"><div class="relative flex-1 max-w-xs"><input type="search" data-q="'+name+'" placeholder="Search '+name+'…" value="'+esc(ui.q[name]||"")+'" class="'+INP+' !mt-0 w-full pl-3 pr-4 py-2"><span class="absolute right-3 top-2.5 text-slate-400 text-xs">🔍</span></div>'
+                +'<span class="text-xs font-medium text-slate-500 dark:text-slate-400 px-1">'+list.length+(list.length===rows.length?" items":" of "+rows.length)+'</span>'
+                +(opt.secrets?'<label class="flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-400 cursor-pointer ml-2 bg-slate-100 dark:bg-slate-800/60 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700"><input type="checkbox" data-secrets class="accent-brand-600 rounded" '+(ui.secrets?"checked":"")+'> Reveal sensitive fields</label>':"")
+                +'<div class="ml-auto flex gap-2">'+(opt.extra||"")+(canAdd?'<button data-add="'+name+'" class="rounded-xl bg-brand-600 hover:bg-brand-700 active:scale-[0.98] text-white px-4 py-2 text-xs font-semibold shadow-xs transition-all duration-150 flex items-center gap-1.5">+ Add '+d.t.toLowerCase()+'</button>':"")+'</div></div>'
+                +'<div class="'+CARD+' overflow-x-auto"><table class="w-full text-sm min-w-[720px]"><thead><tr>'
+                +cols.map(function(c,i){return'<th class="'+TH+(c[2]?" cursor-pointer select-none hover:text-slate-800 dark:hover:text-slate-200 transition":"")+'"'+(c[2]?' data-sort="'+name+'|'+i+'"':"")+'>'+esc(c[0])+(s&&s.i===i?(s.dir>0?" ▲":" ▼"):"")+'</th>'}).join("")+(hasAct?'<th class="'+TH+' text-right">Actions</th>':"")+'</tr></thead><tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">';
+            if(!list.length)h+='<tr><td colspan="'+(cols.length+1)+'" class="'+TD+' text-center text-slate-400 py-12"><div class="text-3xl mb-2">📁</div>'+(rows.length?"Nothing matches your search filter":"No records available")+'</td></tr>';
+            list.forEach(function(r){var id=esc(d.id(r));
+                h+='<tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors'+(opt.click?" cursor-pointer":"")+'" '+(opt.click?'data-cust="'+id+'"':"")+'>'+cols.map(function(c){return'<td class="'+TD+'">'+c[1](r)+'</td>'}).join("")
+                    +(hasAct?'<td class="'+TD+' text-right whitespace-nowrap"><button data-edit="'+name+'|'+id+'" class="'+BTN+'bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200">Edit</button> <button data-del="'+name+'|'+id+'" class="'+BTN+'bg-rose-50 text-rose-600 hover:bg-rose-100 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 dark:text-rose-400">Delete</button></td>':"")+'</tr>'});
+            return h+'</tbody></table></div>'}
+
+        /* ---------- views ---------- */
+        var userCols=[["ID",function(r){return esc(r.id)},function(r){return r.id}],["Username",function(r){return'<span class="font-semibold text-slate-900 dark:text-white">'+esc(r.userName)+'</span>'},function(r){return r.userName}],["Phone",function(r){return esc(r.phoneNumber)}],["Password",function(r){return secret(r.password)}],["Security no.",function(r){return secret(r.securityNumber)}]];
+        var COLS={
+            customers:userCols.concat([["Bookings",function(r){var n=bookingsOf(r).length;return n?pill(n+" bookings","info"):'<span class="text-slate-400 text-xs">0</span>'},function(r){return bookingsOf(r).length}]]),
+            admins:userCols.concat([["Role",function(r){return pill(r.role||r.Role||"ADMIN","info")}]]),
+            rooms:[["Room",function(r){return'<span class="font-bold text-slate-900 dark:text-white">#'+esc(r.roomId)+'</span>'},function(r){return r.roomId}],["Type",function(r){return esc(r.type)},function(r){return r.type}],["Price / night",function(r){return money(r.pricePerNight)},function(r){return Number(r.pricePerNight)}],["Sleeps",function(r){return esc(r.capacity)+' guests'},function(r){return Number(r.capacity)}],
+                ["Maintenance",function(r){var t=today(),on=r.maintenanceFrom&&r.maintenanceFrom<=t&&r.maintenanceTo>=t;return r.maintenanceFrom?esc(r.maintenanceFrom)+" → "+esc(r.maintenanceTo)+(on?" "+pill("Active maintenance","warn"):""):'<span class="text-slate-400 text-xs">None</span>'}],
+                ["Booked dates",function(r){var t=today(),l=D.bookings.filter(function(b){return b.roomId===r.roomId&&!cancelled(b)&&b.checkOut>=t}).sort(function(a,b){return a.checkIn<b.checkIn?-1:1});return l.length?l.map(function(b){return'<div class="whitespace-nowrap text-xs"><span class="font-medium text-slate-700 dark:text-slate-300">'+esc(b.checkIn)+" → "+esc(b.checkOut)+'</span> <span class="text-slate-400">('+esc(b.guestName)+')</span></div>'}).join(""):'<span class="text-slate-400 text-xs">Available</span>'}],
+                ["Rating",function(r){var l=D.reviews.filter(function(x){return x.room&&x.room.roomId===r.roomId});if(!l.length)return'<span class="text-slate-400 text-xs">No ratings</span>';return'<span class="text-amber-500 font-bold">★ '+(l.reduce(function(a,x){return a+(Number(x.rating)||0)},0)/l.length).toFixed(1)+'</span> <span class="text-slate-400 text-xs">('+l.length+')</span>'}]],
+            bookings:[["ID",function(r){return esc(r.bookingId)},function(r){return r.bookingId}],["Room",function(r){return'<span class="font-bold text-slate-900 dark:text-white">Room '+esc(r.roomId)+'</span>'},function(r){return r.roomId}],
+                ["Guest",function(r){var c=custFor(r);return'<div><b>'+(c?'<a href="#" data-cust-link="'+esc(c.id)+'" class="text-brand-600 dark:text-brand-400 hover:underline font-semibold">'+esc(r.guestName)+'</a>':esc(r.guestName))+'</b><div class="text-xs text-slate-400">'+esc(r.guestPhone||"-")+'</div></div>'},function(r){return r.guestName}],
+                ["Check-in",function(r){return esc(r.checkIn)},function(r){return r.checkIn}],["Check-out",function(r){return esc(r.checkOut)},function(r){return r.checkOut}],["Nights",function(r){return nights(r.checkIn,r.checkOut)},function(r){return nights(r.checkIn,r.checkOut)}],
+                ["Total",function(r){return money(r.totalPrice)},function(r){return Number(r.totalPrice)}],["Stay",function(r){var s=bState(r);return pill(s.t,s.k)},function(r){return bState(r).o}],["Payment",payState]],
+            payments:[["ID",function(r){return esc(r.paymentId)},function(r){return r.paymentId}],["Customer",function(r){return'<span class="font-semibold text-slate-900 dark:text-white">'+esc(r.user&&r.user.userName)+'</span>'},function(r){return r.user&&r.user.userName}],
+                ["Booking",function(r){var b=r.booking;return b?'<div><span class="font-medium">#'+esc(b.bookingId)+' · Room '+esc(b.roomId)+'</span><div class="text-xs text-slate-400">'+esc(b.checkIn)+" → "+esc(b.checkOut)+'</div></div>':"-"}],
+                ["Amount",function(r){return money(r.amount)},function(r){return Number(r.amount)}],["Status",function(r){return pill(r.status||"-",payKind(r.status||""))},function(r){return r.status}],["Paid on",function(r){return dt(r.paymentDate)},function(r){return r.paymentDate}],
+                ["Card holder",function(r){return esc(r.cardHolder||"-")}],["CVV",function(r){return r.cardCvvNumber!=null?secret(r.cardCvvNumber):"-"}]],
+            reviews:[["ID",function(r){return esc(r.id)},function(r){return r.id}],["Guest",function(r){return'<span class="font-semibold text-slate-900 dark:text-white">'+esc(r.user&&r.user.userName)+'</span>'},function(r){return r.user&&r.user.userName}],
+                ["Room",function(r){return'<span>Room '+esc(r.room&&r.room.roomId)+'</span> <span class="text-slate-400 text-xs">('+esc(r.room&&r.room.type)+')</span>'},function(r){return r.room&&r.room.roomId}],["Rating",function(r){return stars(r.rating)},function(r){return Number(r.rating)}],
+                ["Comment",function(r){return'<div class="max-w-md text-xs leading-relaxed text-slate-600 dark:text-slate-300">'+esc(r.comment)+'</div>'}],["Date",function(r){return esc(r.Date||r.date||"-")},function(r){return r.Date||r.date}]]
+        };
+        function viewOverview(){
+            var t=today(),act=D.bookings.filter(function(b){return!cancelled(b)}),inH=act.filter(function(b){return b.checkIn<=t&&b.checkOut>t}).length,up=act.filter(function(b){return b.checkIn>t}).length;
+            var rev=D.payments.filter(function(p){return payKind(p.status||"")!=="bad"}).reduce(function(a,p){return a+(Number(p.amount)||0)},0);
+            var maint=D.rooms.filter(function(r){return r.maintenanceFrom&&r.maintenanceFrom<=t&&r.maintenanceTo>=t}).length;
+            var avg=D.reviews.length?(D.reviews.reduce(function(a,r){return a+(Number(r.rating)||0)},0)/D.reviews.length).toFixed(1):"-";
+            var S=[[money(rev),"Payments received","text-emerald-600 dark:text-emerald-400"],[inH,"Guests checked in","text-brand-600 dark:text-brand-400"],[up,"Upcoming bookings","text-sky-600 dark:text-sky-400"],[D.rooms.length-maint+"/"+D.rooms.length,"Rooms available today","text-slate-800 dark:text-slate-100"],[D.customers.length,"Registered customers","text-slate-800 dark:text-slate-100"],[avg+" ★","Average review rating","text-amber-500"]];
+            var h='<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">'+S.map(function(s){return'<div class="'+CARD+' p-6"><div class="text-2xl lg:text-3xl font-extrabold tracking-tight '+s[2]+'">'+esc(s[0])+'</div><div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mt-2">'+esc(s[1])+'</div></div>'}).join("")+'</div><div class="grid lg:grid-cols-2 gap-6">';
+            var lb=D.bookings.slice().sort(function(a,b){return(b.bookingId||0)-(a.bookingId||0)}).slice(0,6);
+            h+='<div class="'+CARD+' p-6"><h3 class="font-bold text-slate-900 dark:text-white mb-4 text-base">Latest bookings</h3>'+(lb.length?lb.map(function(b){var s=bState(b);return'<div class="flex items-center justify-between gap-3 py-3 border-t border-slate-100 dark:border-slate-800 first:border-0"><div><div class="font-semibold text-slate-900 dark:text-white text-sm">'+esc(b.guestName)+' <span class="text-slate-400 font-normal">· Room '+esc(b.roomId)+'</span></div><div class="text-xs text-slate-400 mt-0.5">'+esc(b.checkIn)+" → "+esc(b.checkOut)+'</div></div>'+pill(s.t,s.k)+'</div>'}).join(""):'<p class="text-sm text-slate-400">No bookings yet</p>')+'</div>';
+            var lr=D.reviews.slice().sort(function(a,b){return(b.id||0)-(a.id||0)}).slice(0,6);
+            h+='<div class="'+CARD+' p-6"><h3 class="font-bold text-slate-900 dark:text-white mb-4 text-base">Latest reviews</h3>'+(lr.length?lr.map(function(r){return'<div class="flex items-center justify-between gap-3 py-3 border-t border-slate-100 dark:border-slate-800 first:border-0"><div><div class="font-semibold text-slate-900 dark:text-white text-sm">'+esc(r.user&&r.user.userName)+' <span class="text-slate-400 font-normal">· Room '+esc(r.room&&r.room.roomId)+'</span></div><div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 max-w-xs truncate">'+esc(r.comment)+'</div></div>'+stars(r.rating)+'</div>'}).join(""):'<p class="text-sm text-slate-400">No reviews yet</p>')+'</div></div>';
+            return h}
+        function mini(cols,rows,empty){
+            if(!rows.length)return'<div class="'+CARD+' p-8 text-center text-sm text-slate-400">'+empty+'</div>';
+            return'<div class="'+CARD+' overflow-x-auto"><table class="w-full text-sm"><thead><tr>'+cols.map(function(c){return'<th class="'+TH+'">'+c[0]+'</th>'}).join("")+'</tr></thead><tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">'+rows.map(function(r){return'<tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">'+cols.map(function(c){return'<td class="'+TD+'">'+c[1](r)+'</td>'}).join("")+'</tr>'}).join("")+'</tbody></table></div>'}
+        function sec(t,n){return'<div class="flex items-center gap-2 mt-8 mb-4"><h3 class="font-bold text-slate-900 dark:text-white text-lg">'+t+'</h3><span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400">'+n+'</span></div>'}
+        function viewCustomer(c){
+            var mine=bookingsOf(c).sort(function(a,b){return a.checkIn<b.checkIn?1:-1}),pays=D.payments.filter(function(p){return p.user&&String(p.user.id)===String(c.id)}),revs=reviewsOf(c);
+            var spent=pays.filter(function(p){return payKind(p.status||"")!=="bad"}).reduce(function(a,p){return a+(Number(p.amount)||0)},0);
+            return'<button data-back class="mb-5 inline-flex items-center gap-1.5 text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline">← Back to all customers</button>'
+                +'<div class="'+CARD+' p-6 sm:p-8 flex flex-wrap items-center gap-6"><div class="h-16 w-16 rounded-2xl bg-brand-600 text-white flex items-center justify-center text-3xl font-extrabold shadow-md shrink-0">'+esc(String(c.userName||"?").charAt(0).toUpperCase())+'</div>'
+                +'<div class="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-4 flex-1 text-sm">'+[["Username","<b class='text-slate-900 dark:text-white'>"+esc(c.userName)+"</b>"],["Phone",esc(c.phoneNumber)],["Password",secret(c.password)],["Security no.",secret(c.securityNumber)],["Account ID",esc(c.id)],["Bookings",mine.length],["Total paid",money(spent)],["Reviews",revs.length]].map(function(k){return'<div><div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">'+k[0]+'</div>'+k[1]+'</div>'}).join("")+'</div>'
+                +'<div class="flex flex-col gap-2 shrink-0"><button data-edit="customers|'+esc(c.id)+'" class="'+BTN+'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200">Edit profile</button><button data-del="customers|'+esc(c.id)+'" class="'+BTN+'bg-rose-50 text-rose-600 hover:bg-rose-100 dark:bg-rose-500/10 dark:text-rose-400">Delete account</button><label class="text-xs font-medium text-slate-500 flex items-center gap-1.5 mt-1"><input type="checkbox" data-secrets class="accent-brand-600" '+(ui.secrets?"checked":"")+'> Reveal info</label></div></div>'
+                +sec("Customer Bookings",mine.length)+mini([["ID",function(b){return esc(b.bookingId)}],["Room",function(b){return"<b class='text-slate-900 dark:text-white'>Room "+esc(b.roomId)+"</b>"}],["Dates",function(b){return esc(b.checkIn)+" → "+esc(b.checkOut)}],["Nights",function(b){return nights(b.checkIn,b.checkOut)}],["Total",function(b){return money(b.totalPrice)}],["Stay",function(b){var s=bState(b);return pill(s.t,s.k)}],["Payment",payState]],mine,"No bookings for this customer")
+                +sec("Payment History",pays.length)+mini([["ID",function(p){return esc(p.paymentId)}],["Booking",function(p){return p.booking?"#"+esc(p.booking.bookingId)+" · Room "+esc(p.booking.roomId):"-"}],["Amount",function(p){return money(p.amount)}],["Status",function(p){return pill(p.status||"-",payKind(p.status||""))}],["Paid on",function(p){return dt(p.paymentDate)}]],pays,"No payment records")
+                +sec("Submitted Reviews",revs.length)+mini([["Room",function(r){return"Room "+esc(r.room&&r.room.roomId)}],["Rating",function(r){return stars(r.rating)}],["Comment",function(r){return esc(r.comment)}],["Date",function(r){return esc(r.Date||r.date||"-")}]],revs,"No reviews left")}
+
+        function render(){
+            var nav=NAV.map(function(n){var on=ui.tab===n[0];return'<button data-tab="'+n[0]+'" class="w-full flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-semibold transition-all duration-150 '+(on?"bg-brand-600 text-white shadow-xs":"text-slate-400 hover:bg-slate-800/80 hover:text-slate-200")+'"><svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="'+n[2]+'"/></svg>'+n[1]+(D[n[0]]?'<span class="ml-auto text-[11px] px-2 py-0.5 rounded-full font-bold '+(on?"bg-white/20 text-white":"bg-slate-800 text-slate-400")+'">'+D[n[0]].length+'</span>':"")+'</button>'}).join("");
+            $("nav").innerHTML=nav;
+            $("mnav").innerHTML=NAV.map(function(n){return'<button data-tab="'+n[0]+'" class="whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-semibold transition '+(ui.tab===n[0]?"bg-brand-600 text-white shadow-xs":"bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400")+'">'+n[1]+'</button>'}).join("");
+            $("title").textContent=NAV.filter(function(n){return n[0]===ui.tab})[0][1];
+            var a=document.activeElement,kq=a&&a.getAttribute&&a.getAttribute("data-q"),pos=kq?a.selectionStart:0,h;
+            if(ui.tab==="overview")h=viewOverview();
+            else if(ui.tab==="customers"&&ui.sel!=null&&rowOf("customers",ui.sel))h=viewCustomer(rowOf("customers",ui.sel));
+            else{ui.sel=null;h=table(ui.tab,COLS[ui.tab],{click:ui.tab==="customers",secrets:/^(customers|admins|payments)$/.test(ui.tab)})}
+            $("view").innerHTML=h;
+            if(kq){var el=document.querySelector('[data-q="'+kq+'"]');if(el){el.focus();try{el.setSelectionRange(pos,pos)}catch(e){}}}}
+
+        /* ---------- loading ---------- */
+        async function loadAll(){
+            $("refreshBtn").disabled=true;var errs=[];
+            await Promise.all(Object.keys(D).map(async function(k){try{var l=await call("GET",E[k].list);D[k]=Array.isArray(l)?l:[]}catch(e){D[k]=[];errs.push(E[k].list+" ("+e.message+")")}}));
+            $("banner").innerHTML=errs.length?'<div class="mb-5 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-700 dark:text-rose-300 px-4 py-3.5 text-xs font-medium flex items-start gap-2.5"><span class="text-base">⚠️</span><div><span class="font-bold">Backend connection notice:</span> Could not load: '+esc(errs.join(" · "))+'. Verify your Spring Boot server is running on port 8080 with CORS enabled.</div></div>':"";
+            $("updated").textContent="Last updated "+new Date().toLocaleTimeString();$("refreshBtn").disabled=false;render()}
+
+        /* ---------- events ---------- */
+        document.addEventListener("click",function(e){
+            var g=function(s){return e.target.closest(s)},x;
+            if(g("[data-close]")||e.target===$("modal")){closeModal();return}
+            if(x=g("[data-edit]")){var p=x.getAttribute("data-edit").split("|");formFor(p[0],rowOf(p[0],p[1]));return}
+            if(x=g("[data-del]")){var q=x.getAttribute("data-del").split("|");delFor(q[0],rowOf(q[0],q[1]));return}
+            if(x=g("[data-add]")){formFor(x.getAttribute("data-add"));return}
+            if(x=g("[data-tab]")){ui.tab=x.getAttribute("data-tab");ui.sel=null;render();return}
+            if(g("[data-back]")){ui.sel=null;render();return}
+            if(x=g("[data-cust-link]")){e.preventDefault();ui.tab="customers";ui.sel=x.getAttribute("data-cust-link");render();scrollTo(0,0);return}
+            if(x=g("tr[data-cust]")){ui.sel=x.getAttribute("data-cust");render();scrollTo(0,0);return}
+            if(x=g("[data-sort]")){var s=x.getAttribute("data-sort").split("|"),c=ui.sort[s[0]],i=Number(s[1]);ui.sort[s[0]]={i:i,dir:c&&c.i===i?-c.dir:1};render()}});
+        document.addEventListener("input",function(e){var q=e.target.getAttribute&&e.target.getAttribute("data-q");if(q){ui.q[q]=e.target.value;render()}});
+        document.addEventListener("change",function(e){if(e.target.hasAttribute&&e.target.hasAttribute("data-secrets")){ui.secrets=e.target.checked;render()}});
+        document.addEventListener("keydown",function(e){if(e.key==="Escape")closeModal()});
+        $("refreshBtn").onclick=loadAll;
+
+        /* ---------- auth ---------- */
+        function ss(k,v){try{if(v===undefined)return sessionStorage.getItem(k);sessionStorage.setItem(k,v)}catch(e){return null}}
+        function enter(n){ss(SESSION,n);$("login").classList.add("hidden");$("app").classList.remove("hidden");$("who").textContent=n;loadAll()}
+        function out(){ss(SESSION,"");$("app").classList.add("hidden");$("login").classList.remove("hidden");$("p").value=""}
+        $("logoutBtn").onclick=out;$("logoutBtn2").onclick=out;
+        $("loginForm").addEventListener("submit",async function(e){
+            e.preventDefault();var er=$("loginErr"),b=$("loginBtn");er.textContent="";b.disabled=true;
+            try{var a=await call("POST","/auth/admin",{userName:$("u").value.trim(),password:$("p").value});
+                if(!a||!a.userName)er.textContent="Wrong username or password.";else enter(a.userName)}
+            catch(x){er.textContent=/answered|message/i.test(x.message)||x.message.length<60&&!/fetch/i.test(x.message)?x.message:"Cannot reach the server. Is the Spring Boot app running?"}
+            finally{b.disabled=false}});
+        $("forgotBtn").onclick=function(){
+            openForm("Reset admin password",[["userName","Username"],["phoneNumber","Phone number"],["SecurityNumber","Security number"],["password","New password","password"]],{},[],async function(v){await call("PUT","/auth/adminforgot",v);toast("Password reset successfully. You can sign in now.")},"Reset password")};
+        var saved=ss(SESSION);if(saved)enter(saved);
+    })();
+</script>
+</body>
+</html>
