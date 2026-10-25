@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@RestController
+@CrossOrigin(origins = "*")
+@RestController()
 @RequestMapping("/review")
 public class ReviewController {
 
