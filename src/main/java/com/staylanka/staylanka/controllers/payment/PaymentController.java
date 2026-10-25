@@ -1,5 +1,7 @@
 package com.staylanka.staylanka.controllers.payment;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 
 import com.staylanka.staylanka.entity.payment.CardPayment;
 import com.staylanka.staylanka.entity.payment.CardPaymentRequest;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/payment")
 public class PaymentController {

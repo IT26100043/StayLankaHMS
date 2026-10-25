@@ -1,5 +1,7 @@
 package com.staylanka.staylanka.controllers.review;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 import com.staylanka.staylanka.entity.review.Review;
 import com.staylanka.staylanka.entity.review.ReviewRequest;
 import com.staylanka.staylanka.entity.review.UpdateReviewRequest;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/review")
 public class ReviewController {
@@ -25,6 +28,12 @@ public class ReviewController {
     }
 
 
+    // GET /review/can-review?customerId=1&roomId=R101  ->  true / false
+    @GetMapping("/can-review")
+    public boolean canReview(@RequestParam Long customerId, @RequestParam String roomId){
+        return reviewService.canReview(customerId, roomId);
+    }
+
     @GetMapping("/{id}")
     public Optional<Review> getReviewById(@PathVariable Long id){
         return reviewService.getReviewByUserId(id);
@@ -39,7 +48,7 @@ public class ReviewController {
     public Review newReview(@RequestBody ReviewRequest reviewRequest){
         return reviewService.postNewReview(reviewRequest);
     }
-    
+
     @PutMapping("/{id}")
     public Review UpdateComment(@PathVariable Long id, @RequestBody UpdateReviewRequest updateReviewRequest){
         return reviewService.UpdateReview(id,updateReviewRequest);

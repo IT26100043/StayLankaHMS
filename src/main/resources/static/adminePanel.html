@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>StayLanka Admin Panel</title>
+    <style>
+        :root{
+            --bg:#f4f5f7; --panel:#fff; --ink:#1b2430; --mute:#6b7685; --line:#e3e6eb;
+            --brand:#0f5c4d; --brand-ink:#fff; --soft:#e8f2ef;
+            --ok:#1e7a46; --okbg:#e3f4ea; --warn:#9a6700; --warnbg:#fff4d6; --bad:#b3261e; --badbg:#fde8e6; --info:#1c5fa8; --infobg:#e6f0fb;
+        }
+        @media (prefers-color-scheme:dark){
+            :root{--bg:#12161c; --panel:#1b222b; --ink:#e8ecf1; --mute:#93a0b1; --line:#2c3541; --soft:#17302b;
+                --okbg:#173a27; --warnbg:#3b3012; --badbg:#401c19; --infobg:#16304d; --ok:#6fd49a; --warn:#f0c765; --bad:#ff958d; --info:#8bbcf0; --brand:#2f9a84}
+        }
+        *{box-sizing:border-box}
+        body{margin:0;font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+        button{font:inherit;cursor:pointer}
+        .hidden{display:none!important}
+
+        /* login */
+        #login{min-height:100vh;display:grid;place-items:center;padding:16px}
+        .card{background:var(--panel);border:1px solid var(--line);border-radius:10px}
+        .login-box{width:100%;max-width:360px;padding:28px}
+        .login-box h1{margin:0 0 4px;font-size:22px}
+        .login-box p{margin:0 0 18px;color:var(--mute)}
+        label{display:block;font-size:12px;color:var(--mute);margin:12px 0 4px}
+        input[type=text],input[type=password],input[type=search]{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink);font:inherit}
+        input:focus{outline:2px solid var(--brand);outline-offset:0}
+        .btn{background:var(--brand);color:var(--brand-ink);border:0;border-radius:7px;padding:9px 16px;font-weight:600}
+        .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500}
+        .btn:disabled{opacity:.6;cursor:default}
+        .err{color:var(--bad);min-height:18px;margin:10px 0 0;font-size:13px}
+
+        /* layout */
+        header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;flex-wrap:wrap}
+        header.top h1{margin:0;font-size:18px}
+        header.top .right{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:13px;flex-wrap:wrap}
+        nav.tabs{display:flex;gap:4px;padding:10px 20px 0;overflow-x:auto;border-bottom:1px solid var(--line);background:var(--panel)}
+        nav.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:9px 12px;color:var(--mute);font-weight:500;white-space:nowrap}
+        nav.tabs button[aria-selected=true]{color:var(--brand);border-bottom-color:var(--brand)}
+        nav.tabs .n{display:inline-block;min-width:20px;padding:1px 6px;margin-left:4px;border-radius:99px;background:var(--bg);color:var(--mute);font-size:11px;text-align:center}
+        main{padding:20px;max-width:1300px;margin:0 auto}
+        .banner{padding:10px 14px;border-radius:8px;margin-bottom:14px;background:var(--badbg);color:var(--bad)}
+
+        /* overview */
+        .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:20px}
+        .stat{padding:14px 16px}
+        .stat b{display:block;font-size:26px;line-height:1.1}
+        .stat span{color:var(--mute);font-size:12px}
+        .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}
+        h2{font-size:15px;margin:0 0 10px}
+        .box{padding:16px}
+
+        /* tables */
+        .toolbar{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+        .toolbar input{max-width:340px}
+        .toolbar .count{color:var(--mute);font-size:13px}
+        .toolbar label.chk{display:flex;align-items:center;gap:6px;margin:0;color:var(--ink);font-size:13px}
+        .wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+        table{border-collapse:collapse;width:100%;min-width:640px}
+        th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+        th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);background:var(--bg);position:sticky;top:0;white-space:nowrap}
+        th.sort{cursor:pointer;user-select:none}
+        th.sort:hover{color:var(--ink)}
+        tr:last-child td{border-bottom:0}
+        td.empty{text-align:center;color:var(--mute);padding:28px}
+        .mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px}
+        .muted{color:var(--mute)}
+        .pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
+        .pill.ok{background:var(--okbg);color:var(--ok)} .pill.warn{background:var(--warnbg);color:var(--warn)}
+        .pill.bad{background:var(--badbg);color:var(--bad)} .pill.info{background:var(--infobg);color:var(--info)} .pill.gray{background:var(--bg);color:var(--mute)}
+        .dates div{white-space:nowrap}
+        ul.plain{list-style:none;margin:0;padding:0}
+        ul.plain li{padding:8px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px}
+        ul.plain li:last-child{border-bottom:0}
+        .stars{color:#d9a400;letter-spacing:1px}
+        tr.click{cursor:pointer} tr.click:hover td{background:var(--soft)}
+        .back{margin-bottom:14px}
+        .profile{padding:18px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+        .avatar{width:54px;height:54px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-size:22px;font-weight:700}
+        .kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px 24px;flex:1}
+        .kv span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute)}
+        .section{margin:22px 0 8px;display:flex;align-items:baseline;gap:8px}
+        .section h2{margin:0}
+    </style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<section id="login">
+    <form class="card login-box" id="loginForm" autocomplete="on">
+        <h1>StayLanka Admin</h1>
+        <p>Sign in with an admin account to see all hotel data.</p>
+        <label for="u">Username</label>
+        <input id="u" type="text" autocomplete="username" required>
+        <label for="p">Password</label>
+        <input id="p" type="password" autocomplete="current-password" required>
+        <p class="err" id="loginErr" role="alert"></p>
+        <button class="btn" id="loginBtn" type="submit" style="width:100%;margin-top:8px">Sign in</button>
+    </form>
+</section>
+
+<!-- ============ PANEL ============ -->
+<section id="panel" class="hidden">
+    <header class="top">
+        <h1>StayLanka Admin Panel</h1>
+        <div class="right">
+            <span id="updated"></span>
+            <button class="btn ghost" id="refreshBtn" type="button">Refresh</button>
+            <span id="who"></span>
+            <button class="btn ghost" id="logoutBtn" type="button">Sign out</button>
+        </div>
+    </header>
+    <nav class="tabs" id="tabs" role="tablist"></nav>
+    <main>
+        <div id="banner"></div>
+        <div id="view"></div>
+    </main>
+</section>
+
+<script>
+    (function(){
+        /* ---------- backend address ---------- */
+        // opened from the Spring Boot server (port 8080)? use relative paths, otherwise talk to localhost:8080
+        var ROOT=(location.protocol.indexOf("http")===0&&location.port==="8080")?"":"http://localhost:8080";
+        var URLS={
+            customers:ROOT+"/customer/customers",
+            admins:ROOT+"/admin/admins",
+            rooms:ROOT+"/api/v1/rooms",
+            bookings:ROOT+"/api/v1/bookings",
+            payments:ROOT+"/payment/payments",
+            reviews:ROOT+"/review/reviews"
+        };
+        var SESSION="staylanka_admin_name";
+
+        var D={customers:[],admins:[],rooms:[],bookings:[],payments:[],reviews:[]};
+        var ui={tab:"overview",selected:null,q:{},sort:{},showSecrets:false,showPast:true};
+
+        /* ---------- tiny helpers ---------- */
+        function $(id){return document.getElementById(id)}
+        function esc(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+        function money(n){return "Rs. "+(Number(n)||0).toLocaleString("en-LK",{maximumFractionDigits:2})}
+        function todayStr(){var d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)}
+        function nights(a,b){return Math.max(0,Math.round((new Date(b)-new Date(a))/86400000))}
+        function pill(text,kind){return '<span class="pill '+kind+'">'+esc(text)+'</span>'}
+        function stars(n){n=Math.max(0,Math.min(5,Number(n)||0));return '<span class="stars">'+"★★★★★".slice(0,n)+"☆☆☆☆☆".slice(0,5-n)+'</span>'}
+        function dt(v){if(!v)return "-";return esc(String(v).replace("T"," ").slice(0,16))}
+        function mask(v){return v?"••••••":"-"}
+        function secret(v){return ui.showSecrets?'<span class="mono">'+esc(v||"-")+'</span>':'<span class="muted">'+mask(v)+'</span>'}
+        function isCancelled(b){return String(b.status||"").toLowerCase()==="cancelled"}
+
+        function bookingState(b){            // what is happening with this booking today
+            var t=todayStr();
+            if(isCancelled(b))return {t:"Cancelled",k:"bad",order:4};
+            if(b.checkOut<=t)return {t:"Completed",k:"gray",order:3};
+            if(b.checkIn<=t)return {t:"Checked in",k:"ok",order:0};
+            return {t:"Upcoming",k:"info",order:1};
+        }
+        function payFor(bookingId){
+            return D.payments.filter(function(p){return p.booking&&String(p.booking.bookingId)===String(bookingId)});
+        }
+        function payState(b){
+            var ps=payFor(b.bookingId);
+            if(!ps.length)return pill("Not paid","warn");
+            var s=String(ps[0].status||"PENDING");
+            return pill(s.charAt(0)+s.slice(1).toLowerCase(),/^(failed|cancelled|refunded)$/i.test(s)?"bad":"ok");
+        }
+        function customerFor(b){
+            return D.customers.filter(function(c){return c.userName===b.guestName&&String(c.phoneNumber||"")===String(b.guestPhone||"")})[0]||
+                D.customers.filter(function(c){return c.userName===b.guestName})[0]||null;
+        }
+        function roomMaint(r){return r.maintenanceFrom?esc(r.maintenanceFrom)+" → "+esc(r.maintenanceTo):'<span class="muted">none</span>'}
+
+        /* ---------- loading ---------- */
+        async function getJSON(url){
+            var res=await fetch(url);
+            if(!res.ok)throw new Error(url.replace(ROOT,"")+" answered "+res.status);
+            return res.json();
+        }
+        async function loadAll(){
+            $("refreshBtn").disabled=true;
+            var errors=[];
+            await Promise.all(Object.keys(URLS).map(async function(k){
+                try{var list=await getJSON(URLS[k]);D[k]=Array.isArray(list)?list:[]}
+                catch(e){D[k]=[];errors.push(e.message)}
+            }));
+            $("banner").innerHTML=errors.length
+                ?'<div class="banner">Could not load: '+esc(errors.join(" · "))+'. Is the Spring Boot app running on port 8080?</div>':"";
+            $("updated").textContent="Updated "+new Date().toLocaleTimeString();
+            $("refreshBtn").disabled=false;
+            render();
+        }
+
+        /* ---------- generic table ---------- */
+        // cols: {key, label, get(row)->sort value, html(row)->cell html}
+        function table(name,rows,cols,searchText,rowAttr){
+            var q=(ui.q[name]||"").toLowerCase().trim();
+            var list=rows.filter(function(r){return !q||searchText(r).toLowerCase().indexOf(q)>-1});
+            var s=ui.sort[name];
+            if(s){
+                var col=cols.filter(function(c){return c.key===s.key})[0];
+                if(col&&col.get){
+                    list=list.slice().sort(function(a,b){
+                        var x=col.get(a),y=col.get(b);
+                        if(x==null)x="";if(y==null)y="";
+                        var r=(typeof x==="number"&&typeof y==="number")?x-y:String(x).localeCompare(String(y),undefined,{numeric:true});
+                        return s.dir*r;
+                    });
+                }
+            }
+            var h='<div class="toolbar"><input type="search" data-q="'+name+'" placeholder="Search…" value="'+esc(ui.q[name]||"")+'" aria-label="Search">'
+                +'<span class="count">'+list.length+(list.length===rows.length?"":" of "+rows.length)+' shown</span>'
+                +(name==="customers"||name==="admins"||name==="payments"?'<label class="chk"><input type="checkbox" data-secrets '+(ui.showSecrets?"checked":"")+'> Show passwords / security numbers / CVV</label>':"")
+                +'</div><div class="wrap"><table><thead><tr>';
+            cols.forEach(function(c){
+                var arrow=s&&s.key===c.key?(s.dir>0?" ▲":" ▼"):"";
+                h+='<th'+(c.get?' class="sort" data-sort="'+name+'|'+c.key+'"':'')+'>'+esc(c.label)+arrow+'</th>';
+            });
+            h+='</tr></thead><tbody>';
+            if(!list.length)h+='<tr><td class="empty" colspan="'+cols.length+'">'+(rows.length?"Nothing matches your search":"No records")+'</td></tr>';
+            list.forEach(function(r){h+='<tr'+(rowAttr?' class="click" tabindex="0" '+rowAttr(r):'')+'>'+cols.map(function(c){return '<td>'+c.html(r)+'</td>'}).join("")+'</tr>'});
+            return h+'</tbody></table></div>';
+        }
+
+        /* ---------- views ---------- */
+        function viewOverview(){
+            var t=todayStr();
+            var active=D.bookings.filter(function(b){return !isCancelled(b)});
+            var inHouse=active.filter(function(b){return b.checkIn<=t&&b.checkOut>t});
+            var upcoming=active.filter(function(b){return b.checkIn>t});
+            var revenue=D.payments.filter(function(p){return !/^(failed|cancelled|refunded)$/i.test(p.status||"")}).reduce(function(a,p){return a+(Number(p.amount)||0)},0);
+            var maintNow=D.rooms.filter(function(r){return r.maintenanceFrom&&r.maintenanceFrom<=t&&r.maintenanceTo>=t});
+            var avg=D.reviews.length?(D.reviews.reduce(function(a,r){return a+(Number(r.rating)||0)},0)/D.reviews.length).toFixed(1):"-";
+            var stats=[
+                [D.customers.length,"Customer accounts"],[D.admins.length,"Admin accounts"],[D.rooms.length,"Rooms"],
+                [inHouse.length,"Guests checked in now"],[upcoming.length,"Upcoming bookings"],[D.bookings.length,"Bookings (all)"],
+                [maintNow.length,"Rooms in maintenance today"],[money(revenue),"Payments received"],[avg,"Average review ("+D.reviews.length+")"]
+            ];
+            var h='<div class="stats">'+stats.map(function(s){return '<div class="card stat"><b>'+esc(s[0])+'</b><span>'+esc(s[1])+'</span></div>'}).join("")+'</div>';
+
+            var recent=D.bookings.slice().sort(function(a,b){return (b.bookingId||0)-(a.bookingId||0)}).slice(0,6);
+            h+='<div class="two"><div class="card box"><h2>Latest bookings</h2><ul class="plain">'
+                +(recent.length?recent.map(function(b){var s=bookingState(b);
+                    return '<li><span><b>'+esc(b.guestName)+'</b> · Room '+esc(b.roomId)+'<br><span class="muted">'+esc(b.checkIn)+' → '+esc(b.checkOut)+'</span></span>'+pill(s.t,s.k)+'</li>'}).join(""):'<li class="muted">No bookings yet</li>')
+                +'</ul></div>';
+            var rev=D.reviews.slice().sort(function(a,b){return (b.id||0)-(a.id||0)}).slice(0,6);
+            h+='<div class="card box"><h2>Latest reviews</h2><ul class="plain">'
+                +(rev.length?rev.map(function(r){
+                    return '<li><span><b>'+esc(r.user&&r.user.userName)+'</b> · Room '+esc(r.room&&r.room.roomId)+'<br><span class="muted">'+esc(r.comment)+'</span></span>'+stars(r.rating)+'</li>'}).join(""):'<li class="muted">No reviews yet</li>')
+                +'</ul></div></div>';
+            return h;
+        }
+
+        function viewCustomers(){
+            if(ui.selected!=null){var c=D.customers.filter(function(x){return String(x.id)===String(ui.selected)})[0];if(c)return viewCustomerDetail(c);ui.selected=null}
+            return table("customers",D.customers,[
+                {key:"id",label:"ID",get:function(r){return r.id},html:function(r){return esc(r.id)}},
+                {key:"name",label:"Username",get:function(r){return r.userName},html:function(r){return '<b>'+esc(r.userName)+'</b>'}},
+                {key:"phone",label:"Phone",get:function(r){return r.phoneNumber},html:function(r){return esc(r.phoneNumber)}},
+                {key:"pw",label:"Password",html:function(r){return secret(r.password)}},
+                {key:"sec",label:"Security no.",html:function(r){return secret(r.securityNumber)}},
+                {key:"bk",label:"Bookings",get:function(r){return bookingsOf(r).length},html:function(r){var n=bookingsOf(r).length;return n?pill(n+(n===1?" booking":" bookings"),"info"):'<span class="muted">0</span>'}},
+                {key:"rv",label:"Reviews",get:function(r){return reviewsOf(r).length},html:function(r){return reviewsOf(r).length}}
+            ],function(r){return [r.id,r.userName,r.phoneNumber].join(" ")},function(r){return 'data-cust="'+esc(r.id)+'"'});
+        }
+
+        function miniTable(cols,rows,emptyText){
+            if(!rows.length)return '<div class="wrap"><table><tbody><tr><td class="empty">'+esc(emptyText)+'</td></tr></tbody></table></div>';
+            return '<div class="wrap"><table><thead><tr>'+cols.map(function(c){return '<th>'+esc(c[0])+'</th>'}).join("")+'</tr></thead><tbody>'
+                +rows.map(function(r){return '<tr>'+cols.map(function(c){return '<td>'+c[1](r)+'</td>'}).join("")+'</tr>'}).join("")+'</tbody></table></div>';
+        }
+        function viewCustomerDetail(c){
+            var mine=bookingsOf(c).sort(function(a,b){return a.checkIn<b.checkIn?1:-1});
+            var current=mine.filter(function(b){var t=bookingState(b).t;return t==="Checked in"||t==="Upcoming"}).sort(function(a,b){return a.checkIn<b.checkIn?-1:1});
+            var past=mine.filter(function(b){var t=bookingState(b).t;return t==="Completed"||t==="Cancelled"});
+            var pays=D.payments.filter(function(p){return p.user&&String(p.user.id)===String(c.id)});
+            var revs=reviewsOf(c);
+            var spent=pays.filter(function(p){return !/^(failed|cancelled|refunded)$/i.test(p.status||"")}).reduce(function(a,p){return a+(Number(p.amount)||0)},0);
+            var bcols=[
+                ["ID",function(b){return esc(b.bookingId)}],
+                ["Room",function(b){var rm=D.rooms.filter(function(x){return x.roomId===b.roomId})[0];return '<b>'+esc(b.roomId)+'</b>'+(rm?' <span class="muted">'+esc(rm.type)+'</span>':"")}],
+                ["Check-in",function(b){return esc(b.checkIn)}],
+                ["Check-out",function(b){return esc(b.checkOut)}],
+                ["Nights",function(b){return nights(b.checkIn,b.checkOut)}],
+                ["Total",function(b){return money(b.totalPrice)}],
+                ["Stay",function(b){var s=bookingState(b);return pill(s.t,s.k)}],
+                ["Payment",function(b){return payState(b)}]
+            ];
+            var h='<button class="btn ghost back" type="button" data-back>← All customers</button>'
+                +'<div class="card profile"><div class="avatar">'+esc(String(c.userName||"?").charAt(0).toUpperCase())+'</div>'
+                +'<div class="kv">'
+                +'<div><span>Username</span><b>'+esc(c.userName)+'</b></div>'
+                +'<div><span>Account ID</span>'+esc(c.id)+'</div>'
+                +'<div><span>Phone</span>'+esc(c.phoneNumber)+'</div>'
+                +'<div><span>Password</span>'+secret(c.password)+'</div>'
+                +'<div><span>Security no.</span>'+secret(c.securityNumber)+'</div>'
+                +'<div><span>Role</span>'+esc(c.role||c.Role||"CUSTOMER")+'</div>'
+                +'<div><span>Total bookings</span>'+mine.length+'</div>'
+                +'<div><span>Total paid</span>'+money(spent)+'</div>'
+                +'</div><label class="chk" style="display:flex;gap:6px;align-items:center;margin:0;color:var(--ink);font-size:13px"><input type="checkbox" data-secrets '+(ui.showSecrets?"checked":"")+'> Show password / security no.</label></div>'
+                +'<div class="section"><h2>Booked now &amp; upcoming</h2><span class="muted">'+current.length+'</span></div>'
+                +miniTable(bcols,current,"No current or upcoming bookings")
+                +'<div class="section"><h2>Past bookings</h2><span class="muted">'+past.length+'</span></div>'
+                +miniTable(bcols,past,"No past bookings")
+                +'<div class="section"><h2>Payments</h2><span class="muted">'+pays.length+'</span></div>'
+                +miniTable([
+                    ["ID",function(p){return esc(p.paymentId)}],
+                    ["Booking",function(p){var b=p.booking;return b?'#'+esc(b.bookingId)+' · Room '+esc(b.roomId):"-"}],
+                    ["Amount",function(p){return money(p.amount)}],
+                    ["Status",function(p){var s=String(p.status||"");return pill(s||"-",/^(failed|cancelled|refunded)$/i.test(s)?"bad":/pending/i.test(s)?"warn":"ok")}],
+                    ["Paid on",function(p){return dt(p.paymentDate)}],
+                    ["Card holder",function(p){return esc(p.cardHolder||"-")}]
+                ],pays,"No payments")
+                +'<div class="section"><h2>Reviews</h2><span class="muted">'+revs.length+'</span></div>'
+                +miniTable([
+                    ["Room",function(r){return esc(r.room&&r.room.roomId)}],
+                    ["Rating",function(r){return stars(r.rating)}],
+                    ["Comment",function(r){return esc(r.comment)}],
+                    ["Date",function(r){return esc(r.Date||r.date||"-")}]
+                ],revs,"No reviews");
+            return h;
+        }
+        function bookingsOf(c){return D.bookings.filter(function(b){return b.guestName===c.userName&&String(b.guestPhone||"")===String(c.phoneNumber||"")})}
+        function reviewsOf(c){return D.reviews.filter(function(r){return r.user&&String(r.user.id)===String(c.id)})}
+
+        function viewAdmins(){
+            return table("admins",D.admins,[
+                {key:"id",label:"ID",get:function(r){return r.id},html:function(r){return esc(r.id)}},
+                {key:"name",label:"Username",get:function(r){return r.userName},html:function(r){return '<b>'+esc(r.userName)+'</b>'}},
+                {key:"phone",label:"Phone",get:function(r){return r.phoneNumber},html:function(r){return esc(r.phoneNumber)}},
+                {key:"role",label:"Role",html:function(r){return pill(r.role||r.Role||"ADMIN","info")}},
+                {key:"pw",label:"Password",html:function(r){return secret(r.password)}},
+                {key:"sec",label:"Security no.",html:function(r){return secret(r.securityNumber)}}
+            ],function(r){return [r.id,r.userName,r.phoneNumber].join(" ")});
+        }
+
+        function viewRooms(){
+            var t=todayStr();
+            return table("rooms",D.rooms,[
+                {key:"id",label:"Room",get:function(r){return r.roomId},html:function(r){return '<b>'+esc(r.roomId)+'</b>'}},
+                {key:"type",label:"Type",get:function(r){return r.type},html:function(r){return esc(r.type)}},
+                {key:"price",label:"Price / night",get:function(r){return Number(r.pricePerNight)},html:function(r){return money(r.pricePerNight)}},
+                {key:"cap",label:"Sleeps",get:function(r){return Number(r.capacity)},html:function(r){return esc(r.capacity)}},
+                {key:"maint",label:"Maintenance period",get:function(r){return r.maintenanceFrom||""},html:function(r){
+                        var on=r.maintenanceFrom&&r.maintenanceFrom<=t&&r.maintenanceTo>=t;
+                        return roomMaint(r)+(on?" "+pill("now","warn"):"")}},
+                {key:"booked",label:"Booked dates",html:function(r){
+                        var list=D.bookings.filter(function(b){return b.roomId===r.roomId&&!isCancelled(b)&&b.checkOut>=t}).sort(function(a,b){return a.checkIn<b.checkIn?-1:1});
+                        if(!list.length)return '<span class="muted">no current / upcoming bookings</span>';
+                        return '<div class="dates">'+list.map(function(b){return '<div>'+esc(b.checkIn)+' → '+esc(b.checkOut)+' <span class="muted">'+esc(b.guestName)+'</span></div>'}).join("")+'</div>'}},
+                {key:"rev",label:"Reviews",get:function(r){return reviewsFor(r.roomId).length},html:function(r){
+                        var l=reviewsFor(r.roomId);if(!l.length)return '<span class="muted">none</span>';
+                        var avg=(l.reduce(function(a,x){return a+(Number(x.rating)||0)},0)/l.length).toFixed(1);
+                        return '★ '+avg+' <span class="muted">('+l.length+')</span>'}}
+            ],function(r){return [r.roomId,r.type,r.maintenanceFrom,r.maintenanceTo].join(" ")});
+        }
+        function reviewsFor(roomId){return D.reviews.filter(function(r){return r.room&&r.room.roomId===roomId})}
+
+        function viewBookings(){
+            var rows=D.bookings.filter(function(b){return ui.showPast||bookingState(b).t!=="Completed"});
+            var h='<div class="toolbar"><label class="chk"><input type="checkbox" data-past '+(ui.showPast?"checked":"")+'> Include completed stays</label></div>';
+            return h+table("bookings",rows,[
+                {key:"id",label:"ID",get:function(r){return r.bookingId},html:function(r){return esc(r.bookingId)}},
+                {key:"room",label:"Room",get:function(r){return r.roomId},html:function(r){return '<b>'+esc(r.roomId)+'</b>'}},
+                {key:"guest",label:"Guest",get:function(r){return r.guestName},html:function(r){var c=customerFor(r);return '<b>'+(c?'<a href="#" data-cust-link="'+esc(c.id)+'" style="color:var(--brand)">'+esc(r.guestName)+'</a>':esc(r.guestName))+'</b><br><span class="muted">'+esc(r.guestPhone||"-")+(c?"":" · no matching account")+'</span>'}},
+                {key:"in",label:"Check-in",get:function(r){return r.checkIn},html:function(r){return esc(r.checkIn)}},
+                {key:"out",label:"Check-out",get:function(r){return r.checkOut},html:function(r){return esc(r.checkOut)}},
+                {key:"n",label:"Nights",get:function(r){return nights(r.checkIn,r.checkOut)},html:function(r){return nights(r.checkIn,r.checkOut)}},
+                {key:"total",label:"Total",get:function(r){return Number(r.totalPrice)},html:function(r){return money(r.totalPrice)}},
+                {key:"state",label:"Stay",get:function(r){return bookingState(r).order},html:function(r){var s=bookingState(r);return pill(s.t,s.k)}},
+                {key:"pay",label:"Payment",html:function(r){return payState(r)}}
+            ],function(r){return [r.bookingId,r.roomId,r.guestName,r.guestPhone,r.checkIn,r.checkOut,bookingState(r).t].join(" ")});
+        }
+
+        function viewPayments(){
+            return table("payments",D.payments,[
+                {key:"id",label:"ID",get:function(r){return r.paymentId},html:function(r){return esc(r.paymentId)}},
+                {key:"user",label:"Customer",get:function(r){return r.user&&r.user.userName},html:function(r){return '<b>'+esc(r.user&&r.user.userName)+'</b>'}},
+                {key:"bk",label:"Booking",get:function(r){return r.booking&&r.booking.bookingId},html:function(r){var b=r.booking;return b?'#'+esc(b.bookingId)+' · Room '+esc(b.roomId)+'<br><span class="muted">'+esc(b.checkIn)+' → '+esc(b.checkOut)+'</span>':"-"}},
+                {key:"amt",label:"Amount",get:function(r){return Number(r.amount)},html:function(r){return money(r.amount)}},
+                {key:"st",label:"Status",get:function(r){return r.status},html:function(r){var s=String(r.status||"");return pill(s||"-",/^(failed|cancelled|refunded)$/i.test(s)?"bad":/pending/i.test(s)?"warn":"ok")}},
+                {key:"date",label:"Paid on",get:function(r){return r.paymentDate},html:function(r){return dt(r.paymentDate)}},
+                {key:"holder",label:"Card holder",html:function(r){return esc(r.cardHolder||"-")}},
+                {key:"cvv",label:"CVV",html:function(r){return r.cardCvvNumber!=null?secret(r.cardCvvNumber):'<span class="muted">-</span>'}}
+            ],function(r){return [r.paymentId,r.user&&r.user.userName,r.booking&&r.booking.roomId,r.status,r.cardHolder].join(" ")});
+        }
+
+        function viewReviews(){
+            return table("reviews",D.reviews,[
+                {key:"id",label:"ID",get:function(r){return r.id},html:function(r){return esc(r.id)}},
+                {key:"user",label:"Guest",get:function(r){return r.user&&r.user.userName},html:function(r){return '<b>'+esc(r.user&&r.user.userName)+'</b>'}},
+                {key:"room",label:"Room",get:function(r){return r.room&&r.room.roomId},html:function(r){return esc(r.room&&r.room.roomId)+' <span class="muted">'+esc(r.room&&r.room.type)+'</span>'}},
+                {key:"rate",label:"Rating",get:function(r){return Number(r.rating)},html:function(r){return stars(r.rating)}},
+                {key:"cmt",label:"Comment",html:function(r){return esc(r.comment)}},
+                {key:"date",label:"Date",get:function(r){return r.Date||r.date},html:function(r){return esc(r.Date||r.date||"-")}}
+            ],function(r){return [r.id,r.user&&r.user.userName,r.room&&r.room.roomId,r.comment,r.rating].join(" ")});
+        }
+
+        var TABS=[
+            ["overview","Overview",viewOverview,null],
+            ["customers","Customers",viewCustomers,"customers"],
+            ["bookings","Bookings",viewBookings,"bookings"],
+            ["rooms","Rooms",viewRooms,"rooms"],
+            ["payments","Payments",viewPayments,"payments"],
+            ["reviews","Reviews",viewReviews,"reviews"],
+            ["admins","Admins",viewAdmins,"admins"]
+        ];
+
+        function render(){
+            $("tabs").innerHTML=TABS.map(function(t){
+                return '<button role="tab" type="button" data-tab="'+t[0]+'" aria-selected="'+(ui.tab===t[0])+'">'+t[1]+(t[3]?'<span class="n">'+D[t[3]].length+'</span>':"")+'</button>';
+            }).join("");
+            var tab=TABS.filter(function(t){return t[0]===ui.tab})[0]||TABS[0];
+            var active=document.activeElement,keepQ=active&&active.getAttribute&&active.getAttribute("data-q");
+            var pos=keepQ?active.selectionStart:0;
+            $("view").innerHTML=tab[2]();
+            if(keepQ){var el=document.querySelector('[data-q="'+keepQ+'"]');if(el){el.focus();try{el.setSelectionRange(pos,pos)}catch(e){}}}
+        }
+
+        /* ---------- events (one set, delegated) ---------- */
+        document.addEventListener("click",function(e){
+            var t=e.target.closest("[data-tab]");
+            if(t){ui.tab=t.getAttribute("data-tab");ui.selected=null;render();return}
+            if(e.target.closest("[data-back]")){ui.selected=null;render();return}
+            var cl=e.target.closest("[data-cust-link]");
+            if(cl){e.preventDefault();ui.tab="customers";ui.selected=cl.getAttribute("data-cust-link");render();window.scrollTo(0,0);return}
+            var row=e.target.closest("tr[data-cust]");
+            if(row){ui.selected=row.getAttribute("data-cust");render();window.scrollTo(0,0);return}
+            var s=e.target.closest("[data-sort]");
+            if(s){
+                var p=s.getAttribute("data-sort").split("|"),cur=ui.sort[p[0]];
+                ui.sort[p[0]]={key:p[1],dir:cur&&cur.key===p[1]?-cur.dir:1};
+                render();
+            }
+        });
+        document.addEventListener("keydown",function(e){
+            var row=e.target.closest&&e.target.closest("tr[data-cust]");
+            if(row&&(e.key==="Enter"||e.key===" ")){e.preventDefault();ui.selected=row.getAttribute("data-cust");render();window.scrollTo(0,0)}
+        });
+        document.addEventListener("input",function(e){
+            var q=e.target.getAttribute&&e.target.getAttribute("data-q");
+            if(q){ui.q[q]=e.target.value;render()}
+        });
+        document.addEventListener("change",function(e){
+            if(e.target.hasAttribute&&e.target.hasAttribute("data-secrets")){ui.showSecrets=e.target.checked;render()}
+            if(e.target.hasAttribute&&e.target.hasAttribute("data-past")){ui.showPast=e.target.checked;render()}
+        });
+        $("refreshBtn").addEventListener("click",loadAll);
+
+        /* ---------- sign in / out ---------- */
+        function lsGet(k){try{return sessionStorage.getItem(k)}catch(e){return null}}
+        function lsSet(k,v){try{sessionStorage.setItem(k,v)}catch(e){}}
+        function enter(name){
+            lsSet(SESSION,name);
+            $("login").classList.add("hidden");$("panel").classList.remove("hidden");
+            $("who").textContent="Signed in as "+name;
+            loadAll();
+        }
+        $("logoutBtn").addEventListener("click",function(){
+            lsSet(SESSION,"");$("panel").classList.add("hidden");$("login").classList.remove("hidden");$("p").value="";
+        });
+        $("loginForm").addEventListener("submit",async function(e){
+            e.preventDefault();
+            var err=$("loginErr"),btn=$("loginBtn");err.textContent="";btn.disabled=true;
+            try{
+                var res=await fetch(ROOT+"/auth/admin",{method:"POST",headers:{"Content-Type":"application/json"},
+                    body:JSON.stringify({userName:$("u").value.trim(),password:$("p").value})});
+                if(!res.ok)throw new Error("Server answered "+res.status);
+                var text=await res.text(),admin=null;
+                try{admin=text?JSON.parse(text):null}catch(x){}
+                if(!admin||!admin.userName){err.textContent="Wrong username or password.";return}
+                enter(admin.userName);
+            }catch(ex){err.textContent="Cannot reach the server. Is the Spring Boot app running?"}
+            finally{btn.disabled=false}
+        });
+        var saved=lsGet(SESSION);
+        if(saved)enter(saved);
+    })();
+</script>
+</body>
+</html>
