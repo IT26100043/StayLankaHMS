@@ -2,6 +2,7 @@ package com.staylanka.staylanka.service;
 
 import com.staylanka.staylanka.entity.AdminUser;
 import com.staylanka.staylanka.entity.CustomerUser;
+import com.staylanka.staylanka.entity.RequestForgotPassword;
 import com.staylanka.staylanka.entity.RequestUserDataByUserName;
 import com.staylanka.staylanka.repository.AdminUserRepository;
 import com.staylanka.staylanka.repository.CustomerRepository;
@@ -48,6 +49,22 @@ public class AuthenticationService {
         }else {
             return null;
         }
+    }
+
+
+    public CustomerUser forgotPassword(RequestForgotPassword requestForgotPassword){
+        List<CustomerUser> existingCustomer = customerRepository.findCustomerUserByUserName(requestForgotPassword.getUserName());
+
+        if(existingCustomer.isEmpty()){
+            return null;
+        }
+        CustomerUser selectCustomerUser = existingCustomer.get(0);
+        
+        if(selectCustomerUser.getUserName().equals(requestForgotPassword.getUserName()) && selectCustomerUser.getPhoneNumber().equals(requestForgotPassword.getPhoneNumber()) && selectCustomerUser.getSecurityNumber().equals(requestForgotPassword.getSecurityNumber())){
+            selectCustomerUser.setPassword(requestForgotPassword.getPassword());
+            customerRepository.save(selectCustomerUser);
+            return selectCustomerUser;
+        }else return null;
     }
 
 

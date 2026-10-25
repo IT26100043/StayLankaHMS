@@ -2,6 +2,7 @@ package com.staylanka.staylanka.controllers;
 
 import com.staylanka.staylanka.entity.AdminUser;
 import com.staylanka.staylanka.entity.CustomerUser;
+import com.staylanka.staylanka.entity.RequestForgotPassword;
 import com.staylanka.staylanka.entity.RequestUserDataByUserName;
 import com.staylanka.staylanka.service.AuthenticationService;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,11 @@ public class AuthenticationController {
     @PostMapping("/customer")
     public CustomerUser checkCustomerAuth(@RequestBody RequestUserDataByUserName requestUserDataByUserName){
         return authenticationService.checkCustomerAuthentication(requestUserDataByUserName);
+    }
+
+    @PutMapping("/forgot")
+    public CustomerUser forgotPassword(@RequestBody RequestForgotPassword requestForgotPassword){
+        return authenticationService.forgotPassword(requestForgotPassword);
     }
 
 }
