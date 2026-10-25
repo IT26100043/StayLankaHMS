@@ -24,8 +24,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/customer")
-    public CustomerUser checkCustomerAuth(@RequestBody CustomerUser customerUser){
-        return authenticationService.checkCustomerAuthentication(customerUser);
+    public CustomerUser checkCustomerAuth(@RequestBody RequestUserDataByUserName requestUserDataByUserName){
+        return authenticationService.checkCustomerAuthentication(requestUserDataByUserName);
     }
 
 }

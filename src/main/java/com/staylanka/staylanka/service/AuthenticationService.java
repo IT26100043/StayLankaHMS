@@ -35,19 +35,22 @@ public class AuthenticationService {
     }
 
 
-    public CustomerUser checkCustomerAuthentication(CustomerUser customerUser){
-        List<CustomerUser> existCustomerUser = customerRepository.findCustomerUserByUserName(customerUser.getUserName());
+    public CustomerUser checkCustomerAuthentication(RequestUserDataByUserName userLoginData){
+        List<CustomerUser> existCustomerUser = customerRepository.findCustomerUserByUserName(userLoginData.getUserName());
 
         if(existCustomerUser.isEmpty()){
             return null;
         }
         CustomerUser selectCustomerUser = existCustomerUser.get(0);
 
-        if(selectCustomerUser.getPassword().equals(customerUser.getPassword())){
+        if(selectCustomerUser.getPassword().equals(userLoginData.getPassword())){
             return selectCustomerUser;
         }else {
             return null;
         }
     }
+
+
+
     
 }

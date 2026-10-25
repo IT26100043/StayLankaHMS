@@ -21,17 +21,25 @@ public class User {
     private String phoneNumber;
     private String Role;
 
+    @Column(nullable = false)
+    private String SecurityNumber;
+
     public User(){}
 
-    public User(String userName,String password,String phoneNumber,String Role){
+    public User(String userName,String password,String phoneNumber,String Role,String SecurityNumber){
         this.userName = userName;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.Role = Role;
+        this.SecurityNumber = SecurityNumber;
     }
 
     //setters
 
+
+    public void setSecurityNumber(String securityNumber) {
+        SecurityNumber = securityNumber;
+    }
 
     public void setId(Long id) {
         this.id = id;
@@ -55,6 +63,10 @@ public class User {
 
     //getters
 
+
+    public String getSecurityNumber() {
+        return SecurityNumber;
+    }
 
     public Long getId() {
         return id;

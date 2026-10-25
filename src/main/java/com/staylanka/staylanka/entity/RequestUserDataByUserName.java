@@ -1,26 +1,26 @@
 package com.staylanka.staylanka.entity;
 
 public class RequestUserDataByUserName {
-    private String UserName;
-    private String Password;
+    private String userName;
+    private String password;
 
     public RequestUserDataByUserName(){}
 
     //getters
 
     public String getUserName() {
-        return UserName;
+        return userName;
     }
 
     public String getPassword() {
-        return Password;
+        return password;
     }
 
     public void setUserName(String userName) {
-        UserName = userName;
+        this.userName = userName;
     }
 
     public void setPassword(String password) {
-        Password = password;
+        this.password = password;
     }
 }

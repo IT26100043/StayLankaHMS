@@ -27,13 +27,13 @@ import java.time.LocalDateTime;
         CommandLineRunner initDatabase(CustomerRepository customerRepository , AdminUserRepository adminUserRepository, RoomRepository roomRepository, PaymentRepository paymentRepository, BookingRepository bookingRepository, ReviewRepository reviewRepository)  {
             return args -> {
                 // add customer dummy data
-                customerRepository.save(new CustomerUser("testuser1", "abc@123", "0712655299"));
-                customerRepository.save(new CustomerUser("testuser2","xyz@789", "071345678"));
+                customerRepository.save(new CustomerUser("testuser1", "abc@123", "0712655299","500"));
+                customerRepository.save(new CustomerUser("testuser2","xyz@789", "071345678","600"));
 
                 //add admin dummy data
-                adminUserRepository.save(new AdminUser("Admin1","abcd@123","94118812388"));
-                adminUserRepository.save(new AdminUser("Admin2","xyz@123","0711256789"));
-                adminUserRepository.save(new AdminUser("Admin3","pqr@123","071145678"));
+                adminUserRepository.save(new AdminUser("Admin1","abcd@123","94118812388","600"));
+                adminUserRepository.save(new AdminUser("Admin2","xyz@123","0711256789","700"));
+                adminUserRepository.save(new AdminUser("Admin3","pqr@123","071145678","600"));
 
                 // add room dummy data
                 // Standard room
@@ -51,7 +51,7 @@ import java.time.LocalDateTime;
                 roomRepository.save(new SuiteRoom("R302", 18000, 4, "Maintenance"));
 
                 //paymentDummy
-                CustomerUser customerUser = new CustomerUser("lesly","Lesly123","078300468");
+                CustomerUser customerUser = new CustomerUser("lesly","Lesly123","078300468","800");
                 Booking booking = new Booking("AAA","ABC","071233654", LocalDate.of(2026, 11, 1),LocalDate.of(2026,11,10),1500,"CONFIRMED");
 
                 bookingRepository.save(new Booking("AAAs","ABC","07123888854", LocalDate.of(2026, 11, 1),LocalDate.of(2026,11,10),1500,"CONFIRMED"));
