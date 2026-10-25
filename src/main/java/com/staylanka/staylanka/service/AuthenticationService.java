@@ -20,7 +20,7 @@ public class AuthenticationService {
         this.customerRepository = customerRepository;
     }
 
-    //login using username
+
     public AdminUser checkAdminAuthentication(RequestUserDataByUserName userLoginData) {
         List<AdminUser> existAdminUser = adminUserRepository.findAdminUserByUserName(userLoginData.getUserName());
         if(existAdminUser.isEmpty()){
@@ -52,18 +52,34 @@ public class AuthenticationService {
     }
 
 
-    public CustomerUser forgotPassword(RequestForgotPassword requestForgotPassword){
+    public CustomerUser forgotPasswordCustomer(RequestForgotPassword requestForgotPassword){
         List<CustomerUser> existingCustomer = customerRepository.findCustomerUserByUserName(requestForgotPassword.getUserName());
 
         if(existingCustomer.isEmpty()){
             return null;
         }
         CustomerUser selectCustomerUser = existingCustomer.get(0);
-        
+
         if(selectCustomerUser.getUserName().equals(requestForgotPassword.getUserName()) && selectCustomerUser.getPhoneNumber().equals(requestForgotPassword.getPhoneNumber()) && selectCustomerUser.getSecurityNumber().equals(requestForgotPassword.getSecurityNumber())){
             selectCustomerUser.setPassword(requestForgotPassword.getPassword());
             customerRepository.save(selectCustomerUser);
             return selectCustomerUser;
+        }else return null;
+    }
+
+
+    public AdminUser forgotPasswordAdmin(RequestForgotPassword requestForgotPassword){
+        List<AdminUser> existingAdmin = adminUserRepository.findAdminUserByUserName(requestForgotPassword.getUserName());
+
+        if(existingAdmin.isEmpty()){
+            return null;
+        }
+        AdminUser selectAdminUser = existingAdmin.get(0);
+
+        if(selectAdminUser.getUserName().equals(requestForgotPassword.getUserName()) && selectAdminUser.getPhoneNumber().equals(requestForgotPassword.getPhoneNumber()) && selectAdminUser.getSecurityNumber().equals(requestForgotPassword.getSecurityNumber())){
+            selectAdminUser.setPassword(requestForgotPassword.getPassword());
+            adminUserRepository.save(selectAdminUser);
+            return selectAdminUser;
         }else return null;
     }
 

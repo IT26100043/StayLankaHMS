@@ -29,9 +29,14 @@ public class AuthenticationController {
         return authenticationService.checkCustomerAuthentication(requestUserDataByUserName);
     }
 
-    @PutMapping("/forgot")
-    public CustomerUser forgotPassword(@RequestBody RequestForgotPassword requestForgotPassword){
-        return authenticationService.forgotPassword(requestForgotPassword);
+    @PutMapping("/customerforgot")
+    public CustomerUser forgotPasswordCustomer(@RequestBody RequestForgotPassword requestForgotPassword){
+        return authenticationService.forgotPasswordCustomer(requestForgotPassword);
+    }
+
+    @PutMapping("/adminforgot")
+    public AdminUser forgotPasswordAdmin(@RequestBody RequestForgotPassword requestForgotPassword){
+        return authenticationService.forgotPasswordAdmin(requestForgotPassword);
     }
 
 }
