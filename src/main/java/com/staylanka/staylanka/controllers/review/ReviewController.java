@@ -12,11 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*")
-<<<<<<< HEAD
-@RestController()
-=======
 @RestController
->>>>>>> cde5947fa15ce4cdd2fa75058c29d25a68e672cc
 @RequestMapping("/review")
 public class ReviewController {
 
