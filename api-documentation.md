@@ -5,6 +5,34 @@
 
 1. Get Method - Get All Customers in Database <br>
 `localhost:8080/customer/customers`
+```
+[
+    {
+        "userName": "testuser1",
+        "password": "abc@123",
+        "phoneNumber": "0712655299",
+        "securityNumber": "500",
+        "Role": "CUSTOMER",
+        "id": 1
+    },
+    {
+        "userName": "testuser2",
+        "password": "xyz@789",
+        "phoneNumber": "071345678",
+        "securityNumber": "600",
+        "Role": "CUSTOMER",
+        "id": 2
+    },
+    {
+        "userName": "lesly",
+        "password": "Lesly123",
+        "phoneNumber": "078300468",
+        "securityNumber": "800",
+        "Role": "CUSTOMER",
+        "id": 6
+    }
+]
+```
 2. Get Method - Get Customer by Id <br>
 `localhost:8080/customer/1`
 3. Post Method - create new User <br>
