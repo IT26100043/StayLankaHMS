@@ -2,13 +2,12 @@ package com.staylanka.staylanka.service;
 
 import com.staylanka.staylanka.entity.AdminUser;
 import com.staylanka.staylanka.entity.CustomerUser;
+import com.staylanka.staylanka.entity.RequestUserDataByUserName;
 import com.staylanka.staylanka.repository.AdminUserRepository;
 import com.staylanka.staylanka.repository.CustomerRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AuthenticationService {
@@ -20,15 +19,15 @@ public class AuthenticationService {
         this.customerRepository = customerRepository;
     }
 
-    public AdminUser checkAdminAuthentication(AdminUser adminUser){
-        List<AdminUser> existAdminUser = adminUserRepository.findAdminUserByUserName(adminUser.getUserName());
-
+    //login using username
+    public AdminUser checkAdminAuthentication(RequestUserDataByUserName userLoginData) {
+        List<AdminUser> existAdminUser = adminUserRepository.findAdminUserByUserName(userLoginData.getUserName());
         if(existAdminUser.isEmpty()){
             return null;
         }
         AdminUser selectAdminUser = existAdminUser.get(0);
 
-        if(selectAdminUser.getPassword().equals(adminUser.getPassword())) {
+        if(selectAdminUser.getPassword().equals(userLoginData.getPassword())) {
             return selectAdminUser;
         }else {
             return null;

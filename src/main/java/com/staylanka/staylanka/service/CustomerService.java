@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
 public class CustomerService {
 
@@ -24,6 +25,7 @@ public class CustomerService {
         return customerRepository.findById(id);
     }
 
+    /*
     public CustomerUser UpdateCustomer(Long id, CustomerUser customerDetails ){
         CustomerUser existingUser = customerRepository.findById(id).orElseThrow();
 
@@ -40,6 +42,29 @@ public class CustomerService {
         customerRepository.save(existingUser);
         return existingUser;
 
+    }*/
+
+    public CustomerUser UpdateCustomer(Long id,CustomerUser customerDetails){
+        try{
+            CustomerUser existingUser = customerRepository.findById(id).orElseThrow();
+
+            if(customerDetails.getUserName() != null){
+                existingUser.setUserName(customerDetails.getUserName());
+            }
+
+            if(customerDetails.getPassword() != null) {
+                existingUser.setPassword(customerDetails.getPassword());
+            }
+            if(customerDetails.getPhoneNumber() != null){
+                existingUser.setPhoneNumber(customerDetails.getPhoneNumber());
+            }
+            customerRepository.save(existingUser);
+            return existingUser;
+
+        } catch (Exception e) {
+            System.out.println("Error Found in UpdateCustomer Method!");
+            return customerDetails;
+        }
     }
 
     public void deleteCustomer(Long id){
