@@ -1,0 +1,139 @@
+/* NOVA hotel additions on top of the Keto template. Scoped to avoid Bootstrap clashes. */
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+[hidden]{display:none!important}
+:focus-visible{outline:3px solid #fe0000;outline-offset:2px}
+
+/* header stays visible so Login and menu are always reachable */
+.site-header{position:sticky;top:0;z-index:1030;box-shadow:0 2px 14px rgba(0,0,0,.08);background:#fff}
+.navigation.navbar-dark .navbar-nav .nav-link.on{color:#fe0000;border-bottom:#fe0000 solid 3px}
+.nav-auth{display:flex;align-items:center;margin-left:14px}
+.nav-auth .auth{position:relative}
+.header{height:auto;min-height:86px}
+@media (max-width:767px){
+  .navigation.navbar{float:none;padding-top:0!important}
+  .navigation.navbar-dark .navbar-nav .nav-link{margin:0 10px;padding:10px 0}
+  .nav-auth{margin:10px 10px 14px}
+  .navbar-toggler{background:#121212;margin:8px 0}
+  .header .col{display:flex;align-items:center}
+}
+
+/* hero booking widget extras */
+.book_now select.online_book{padding-right:10px;appearance:auto}
+.book_now select.online_book option{background:#111;color:#fff}
+.book_now .online_book{color-scheme:dark}
+.stay-err{color:#ffb4a6;font-size:15px;min-height:0;margin:-10px 0 10px;text-align:center}
+.stay-err.dark{color:#c40000;margin:0 0 10px;text-align:left}
+.banner .carousel-item img{width:100%;min-height:420px;object-fit:cover}
+@media (max-width:991px){.booking_ocline{position:static;transform:none;background:#121212;padding:20px 0}.carousel-indicators{display:none}.book_room{padding:20px}}
+
+/* room filters */
+.filters{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:0 0 30px}
+.chip{background:#fff;border:1px solid #d9d9d9;border-radius:30px;padding:8px 22px;font-size:15px;font-weight:500;color:#121212;cursor:pointer;transition:all .2s}
+.chip:hover{border-color:#fe0000;color:#fe0000}
+.chip[aria-pressed="true"]{background:#fe0000;border-color:#fe0000;color:#fff}
+.roomnote{width:100%;text-align:center;color:#121212;font-size:16px;margin:0 0 24px}
+.roomnote button{background:none;border:0;color:#fe0000;text-decoration:underline;cursor:pointer;padding:0;font-size:inherit}
+
+/* room cards (extends the template .room) */
+.our_room .room{height:calc(100% - 30px);display:flex;flex-direction:column}
+.our_room .room:hover{box-shadow:0 0 30px rgba(255,9,9,.15)}
+.our_room .room .room_img{position:relative}
+.our_room .room .room_img figure img:hover{transform:none}
+.tag{position:absolute;top:12px;left:12px;background:#121212;color:#fff;font-size:13px;font-weight:500;padding:4px 12px;border-radius:30px}
+.tag.mine{left:auto;right:12px;background:#fe0000}
+.our_room .room .bed_room{padding:26px 24px;flex:1;display:flex;flex-direction:column}
+.our_room .room .bed_room h3{line-height:1.2;margin-bottom:10px}
+.our_room .room .bed_room p{color:#666;font-size:15px;margin:0 0 12px}
+.rmeta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14px;color:#121212;margin-bottom:16px}
+.rvlink{background:none;border:0;padding:0;color:#fe0000;text-decoration:underline;cursor:pointer;font-size:14px}
+.rfoot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:16px;border-top:1px solid #eee}
+.price{font-size:24px;font-weight:600;color:#121212;text-align:left}
+.price small{font-size:13px;font-weight:400;color:#666}
+.lead.msg{width:100%;text-align:center;color:#121212;font-size:17px;padding:10px 0 30px}
+
+/* buttons used by the dynamic UI */
+.btn{display:inline-block;border:1px solid #121212;background:#fff;color:#121212;padding:8px 22px;border-radius:30px;font-weight:500;font-size:15px;line-height:1.4;cursor:pointer;transition:all .2s}
+.btn:hover{background:#121212;color:#fff;text-decoration:none}
+.btn.solid{background:#fe0000;border-color:#fe0000;color:#fff}
+.btn.solid:hover{background:#121212;border-color:#121212;color:#fff}
+.btn.ghost{border-color:#cfcfcf;color:#121212;background:#fff}
+.btn.ghost:hover{background:#f4f5f7;color:#121212}
+.btn.danger{border-color:#c40000;color:#c40000;background:#fff}
+.btn.danger:hover{background:#c40000;color:#fff}
+.btn.full{width:100%;padding:12px 22px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.nav-auth .btn{border-color:#fe0000;color:#fe0000}
+.nav-auth .btn:hover{background:#fe0000;color:#fff}
+.avatar{width:42px;height:42px;border-radius:50%;border:0;background:#fe0000;color:#fff;font:600 18px/1 Poppins,sans-serif;cursor:pointer}
+.avatar:hover,.avatar[aria-expanded="true"]{background:#121212}
+
+/* account popover */
+.pop{position:absolute;right:0;top:calc(100% + 14px);width:min(350px,calc(100vw - 32px));background:#fff;color:#121212;border:1px solid #e5e5e5;border-top:4px solid #fe0000;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,.2);z-index:1040;text-align:left}
+.pop h3{font-size:22px;margin:0}
+.pop .sub,.back .sub{color:#666;font-size:14px;margin:2px 0 16px;overflow-wrap:anywhere}
+.pop .row,.back .row{display:flex;gap:10px;flex-wrap:wrap;margin:0}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;margin:0 0 16px;font-size:14px}
+.dl dt{color:#666;font-weight:500}.dl dd{margin:0;overflow-wrap:anywhere}
+.dl dd button{background:none;border:0;color:#fe0000;cursor:pointer;font-size:12px;margin-left:6px;text-decoration:underline;padding:0}
+.dl dd input{padding:6px 8px;font-size:13px}
+.res{border-top:1px solid #eee;padding-top:14px;margin-bottom:16px;font-size:14px}
+.res b{display:block;margin-bottom:8px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#666}
+.bk{margin-bottom:14px}
+.bkbtns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
+.bkbtns .btn{padding:3px 12px;font-size:12.5px}
+.paytag{font-size:12px;color:#666}
+.confirm{border-top:1px solid #eee;margin-top:14px;padding-top:14px}
+.confirm p{margin:0 0 10px;font-size:14px}
+
+/* modal (scoped under .back to override Bootstrap's .modal) */
+.back{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.65);display:grid;place-items:center;padding:16px;overflow-y:auto}
+.back .modal{display:block;position:relative;top:auto;left:auto;width:min(480px,100%);height:auto;overflow:visible;z-index:auto;background:#fff;border-top:5px solid #fe0000;padding:32px 28px;margin-block:auto;box-shadow:0 30px 80px rgba(0,0,0,.4);color:#121212;outline:0}
+.back .modal h2{font-size:28px;font-weight:600;margin:0 0 4px;color:#121212}
+.back .modal .sub{margin-bottom:22px}
+.back .x{position:absolute;right:12px;top:12px;width:36px;height:36px;border-radius:50%;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:20px;line-height:1;color:#666}
+.back .x:hover{background:#f4f5f7}
+.back form{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:0}
+.back .f{display:flex;flex-direction:column;gap:6px;min-width:0}.back .f.full{grid-column:1/-1}
+.back label{font-size:13px;font-weight:600;color:#121212;margin:0}
+.back input,.back select,.back textarea,.pop input{background:#fff;border:1.5px solid #cfcfcf;border-radius:0;padding:11px 13px;width:100%;min-width:0;outline:none;font-size:15px;color:#121212}
+.back textarea{resize:vertical;min-height:84px}
+.back input:focus,.back select:focus,.back textarea:focus,.pop input:focus{border-color:#fe0000}
+.err{grid-column:1/-1;color:#c40000;font-size:14px;margin:0}
+.pop .err{font-size:13px}
+.swap{grid-column:1/-1;display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;margin-top:4px;padding-top:16px;border-top:1px solid #eee;color:#666;font-size:14px}
+.rvlist{max-height:240px;overflow:auto;margin:0 0 18px;display:flex;flex-direction:column;gap:10px}
+.rv{border:1px solid #eee;padding:12px 14px;background:#f9f9f9}
+.rv p{margin:6px 0 0;font-size:14px}
+.rvtop{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12.5px;color:#666}
+.rvstars{color:#fe0000;letter-spacing:.1em;font-size:15px}
+.back .modal .rvtop+p{color:#121212}
+
+/* reviews section reuses the template .blog cards */
+.blog .blog_box{height:calc(100% - 30px)}
+.blog .blog_box .blog_room p{font-size:15px;line-height:1.6;color:#555;overflow-wrap:anywhere;margin:0}
+.blog .blog_box .blog_room h3{line-height:1.3}
+.blog .titlepage p{color:#fff}
+.blog .blog_box .blog_room span.stars{letter-spacing:.12em}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:#121212;color:#fff;padding:12px 22px;border-radius:30px;font-size:15px;opacity:0;pointer-events:none;transition:all .25s;z-index:3000;max-width:calc(100vw - 32px);width:auto;border:0}
+.toast:not(.show){display:block}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:560px){.back form{grid-template-columns:1fr}.back .modal{padding:26px 20px}.rfoot{flex-wrap:wrap}}
+
+/* text logo in the template's red-to-black style */
+.brand{display:inline-flex;flex-direction:column;line-height:1;text-decoration:none!important;padding-top:4px}
+.brand span{font:700 36px/1 Poppins,sans-serif;letter-spacing:.12em;background:linear-gradient(90deg,#fe0000,#121212);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand small{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:#121212;margin-top:4px;font-weight:500}
+/* one calendar icon only: the template icon shows, the native picker stays clickable over the field */
+.book_now .col-md-12{position:relative}
+.book_now input[type=date].online_book{position:relative}
+.book_now input[type=date].online_book::-webkit-calendar-picker-indicator{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.date_cua{pointer-events:none}
+.price{line-height:1.1}
+.price small{display:block;margin-top:4px}
+/* visible hamburger icon on phones */
+.navbar-toggler{border:0;background:#121212;border-radius:4px;padding:10px 12px}
+.navbar-toggler .navbar-toggler-icon{display:block;width:24px;height:24px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' stroke='%23fff' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M3 6h18M3 12h18M3 18h18'/%3E%3C/svg%3E");background-size:100% 100%}
