@@ -415,7 +415,9 @@
     "customerId": 1,
     "bookingId": 2,
     "cardHolderName": "John Silva",
-    "cardCvvNumber": "123"
+    "cardCvvNumber": "123",
+    "cardNumber":"123 456 789"
+
 }
 ```
 #### output format
@@ -444,6 +446,7 @@
     "status": "PENDING",
     "paymentDate": "2026-10-25T15:36:31.2754042",
     "amount": 1500,
+    "cardNumber":"123 456 789",
     "paymentId": 2
 }
 ```
@@ -455,7 +458,8 @@
 ```
 {
     "cardHolder": "John Silva Updated 2000",
-    "cardCvvNumber":"100"
+    "cardCvvNumber":"100",
+    "cardNumber":"123 456 789"
 }
 ```
 #### output format
@@ -487,6 +491,7 @@
     "status": "PENDING",
     "paymentDate": "2026-10-25T15:36:31.275404",
     "amount": 1500,
+    "cardNumber":"123 456 789",
     "paymentId": 2
 }
 ```
