@@ -7,7 +7,7 @@ public class UpdateReviewRequest {
 
     public UpdateReviewRequest(){}
 
-    //getters
+    
 
     public String getComment() {
         return comment;
@@ -17,7 +17,7 @@ public class UpdateReviewRequest {
         return rating;
     }
 
-    //setters
+    
 
     public void setComment(String comment) {
         this.comment = comment;
