@@ -12,7 +12,7 @@ public class ReviewRequest {
 
     public ReviewRequest(){}
 
-    //getters
+    
 
     public LocalDate getDate() {
         return date;
@@ -34,7 +34,7 @@ public class ReviewRequest {
         return roomId;
     }
 
-    //setters
+    
 
     public void setDate(LocalDate date) {
         this.date = date;
