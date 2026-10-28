@@ -5,6 +5,7 @@ public class CardPaymentRequest {
     private Long bookingId;
     private String cardCvvNumber;
     private String cardHolderName;
+    private String cardNumber;
 
     public CardPaymentRequest(){}
 
@@ -26,6 +27,10 @@ public class CardPaymentRequest {
         return cardHolderName;
     }
 
+    public String getCardNumber() {
+        return cardNumber;
+    }
+
     //setters
 
     public void setCustomerId(Long customerId) {
@@ -44,4 +49,7 @@ public class CardPaymentRequest {
         this.cardHolderName = cardHolderName;
     }
 
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
+    }
 }

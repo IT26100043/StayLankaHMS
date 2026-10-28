@@ -31,9 +31,9 @@ import java.time.LocalDateTime;
                 customerRepository.save(new CustomerUser("testuser2","xyz@789", "071345678","600"));
 
                 //add admin dummy data
-                adminUserRepository.save(new AdminUser("Admin1","abcd@123","94118812388","600"));
-                adminUserRepository.save(new AdminUser("Admin2","xyz@123","0711256789","700"));
-                adminUserRepository.save(new AdminUser("Admin3","pqr@123","071145678","600"));
+                adminUserRepository.save(new AdminUser("Root","root","0711234567","600"));
+                //adminUserRepository.save(new AdminUser("Admin2","xyz@123","0711256789","700"));
+               // adminUserRepository.save(new AdminUser("Admin3","pqr@123","071145678","600"));
 
                 // add room dummy data
                 // Standard room

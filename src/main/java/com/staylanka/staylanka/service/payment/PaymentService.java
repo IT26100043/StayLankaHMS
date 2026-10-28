@@ -42,7 +42,7 @@ public class PaymentService {
     public payment CreateNewPayment(CardPaymentRequest cardPaymentRequest){
         CustomerUser customerUser = customerRepository.findById(cardPaymentRequest.getCustomerId()).orElseThrow();
         Booking booking = bookingRepository.findById(cardPaymentRequest.getBookingId()).orElseThrow();
-        CardPayment cardPayment = new CardPayment(cardPaymentRequest.getCardHolderName(), cardPaymentRequest.getCardCvvNumber(), customerUser,booking,"PENDING", LocalDateTime.now(),booking.getTotalPrice());
+        CardPayment cardPayment = new CardPayment(cardPaymentRequest.getCardHolderName(), cardPaymentRequest.getCardCvvNumber(), customerUser,booking,"PENDING", LocalDateTime.now(),booking.getTotalPrice(),cardPaymentRequest.getCardNumber());
         return paymentRepository.save(cardPayment);
     }
 
@@ -54,6 +54,9 @@ public class PaymentService {
         }
         if(updateCardRequestData.getCardHolder() != null){
             existingPayment.setCardHolder(updateCardRequestData.getCardHolder());
+        }
+        if(updateCardRequestData.getCardNumber() != null){
+            existingPayment.setCardNumber(updateCardRequestData.getCardNumber());
         }
         return paymentRepository.save(existingPayment);
     }

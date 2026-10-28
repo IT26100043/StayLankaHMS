@@ -14,11 +14,13 @@ public class CardPayment extends payment{
 
     private String cardHolder;
     private String cardCvvNumber;
+    private String cardNumber;
 
-    public CardPayment(String cardHolder, String cardCvvNumber, User user, Booking booking, String status, LocalDateTime paymentDate, double amount){
+    public CardPayment(String cardHolder, String cardCvvNumber, User user, Booking booking, String status, LocalDateTime paymentDate, double amount , String cardNumber){
         super(user,booking,status,paymentDate,amount);
         this.cardCvvNumber = cardCvvNumber;
         this.cardHolder = cardHolder;
+        this.cardNumber = cardNumber;
     }
 
     public CardPayment() {}
@@ -34,6 +36,10 @@ public class CardPayment extends payment{
         return cardHolder;
     }
 
+    public String getCardNumber() {
+        return cardNumber;
+    }
+
     //setter
 
 
@@ -43,5 +49,9 @@ public class CardPayment extends payment{
 
     public void setCardHolder(String cardHolder) {
         this.cardHolder = cardHolder;
+    }
+
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
     }
 }

@@ -3,6 +3,7 @@ package com.staylanka.staylanka.entity.payment;
 public class UpdateCardRequestData {
     private String cardHolder;
     private String cardCvvNumber;
+    private String cardNumber;
 
     public UpdateCardRequestData(){}
 
@@ -16,6 +17,9 @@ public class UpdateCardRequestData {
         return cardHolder;
     }
 
+    public String getCardNumber() {
+        return cardNumber;
+    }
 
     //setters
 
@@ -27,5 +31,7 @@ public class UpdateCardRequestData {
         this.cardHolder = cardHolder;
     }
 
-
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
+    }
 }
