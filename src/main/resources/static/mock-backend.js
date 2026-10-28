@@ -33,10 +33,10 @@ http.createServer((req,res)=>{
       if(m==="PUT"){if(b.phoneNumber)c.phoneNumber=b.phoneNumber;return json(res,strip(c))}
       if(m==="DELETE"){customers=customers.filter(t=>t!==c);return send(res,200,"","text/plain")}}
     if(p==="/payment/newpay"&&m==="POST"){const c=customers.find(t=>t.id==b.customerId),bk=bookings.find(t=>t.bookingId==b.bookingId);if(!c||!bk)return send(res,400,"Bad request","text/plain");
-      const pay={paymentId:ids.p++,booking:{bookingId:bk.bookingId},user:{id:c.id},cardHolder:b.cardHolderName,cvv:b.cardCvvNumber,status:"paid"};payments.push(pay);return json(res,pay)}
+      const pay={paymentId:ids.p++,booking:{bookingId:bk.bookingId},user:{id:c.id},cardHolder:b.cardHolderName,cvv:b.cardCvvNumber,cardNumber:b.cardNumber,status:"PENDING"};payments.push(pay);return json(res,pay)}
     if(p==="/payment/payments"&&m==="GET")return json(res,payments.map(({cvv,...r})=>r));
     if((x=p.match(/^\/payment\/(\d+)$/))){const t=payments.find(q=>q.paymentId==x[1]);if(!t)return send(res,404,"Not found","text/plain");
-      if(m==="PUT"){if(b.cardHolder)t.cardHolder=b.cardHolder;if(b.cardCvvNumber)t.cvv=b.cardCvvNumber;return json(res,t)}
+      if(m==="PUT"){if(b.cardHolder)t.cardHolder=b.cardHolder;if(b.cardCvvNumber)t.cvv=b.cardCvvNumber;if(b.cardNumber)t.cardNumber=b.cardNumber;return json(res,t)}
       if(m==="DELETE"){payments=payments.filter(q=>q!==t);return send(res,200,"","text/plain")}}
     if(p==="/review/reviews"&&m==="GET")return json(res,reviews);
     if(p==="/review/can-review"&&m==="GET"){const cid=u.searchParams.get("customerId"),rid=u.searchParams.get("roomId");

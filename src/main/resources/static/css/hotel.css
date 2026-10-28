@@ -1,4 +1,4 @@
-/* NOVA hotel additions on top of the Keto template. Scoped to avoid Bootstrap clashes. */
+/* Nelum Retreat additions on top of the Keto template. Scoped to avoid Bootstrap clashes. */
 html{scroll-behavior:smooth;scroll-padding-top:90px}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 [hidden]{display:none!important}
@@ -125,7 +125,7 @@ html{scroll-behavior:smooth;scroll-padding-top:90px}
 
 /* text logo in the template's red-to-black style */
 .brand{display:inline-flex;flex-direction:column;line-height:1;text-decoration:none!important;padding-top:4px}
-.brand span{font:700 36px/1 Poppins,sans-serif;letter-spacing:.12em;background:linear-gradient(90deg,#fe0000,#121212);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand span{font:700 28px/1 Poppins,sans-serif;letter-spacing:.05em;white-space:nowrap;background:linear-gradient(90deg,#fe0000,#121212);-webkit-background-clip:text;background-clip:text;color:transparent}
 .brand small{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:#121212;margin-top:4px;font-weight:500}
 /* one calendar icon only: the template icon shows, the native picker stays clickable over the field */
 .book_now .col-md-12{position:relative}
