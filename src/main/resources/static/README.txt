@@ -1,4 +1,4 @@
-NOVA Hotel site (Keto template + your Spring Boot backend)
+Nelum Retreat site (Keto template + your Spring Boot backend)
 
 OPTION A - with your backend (recommended)
   Copy everything in this folder (index.html, css, js, images, fonts) into
