@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nelum Retreat | Booking confirmed</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script>tailwind.config={theme:{extend:{colors:{ink:"#073b32",gold:"#c89b3c",paper:"#f7f5ef"}}}}</script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>body{font-family:Inter,ui-sans-serif,system-ui}.serif{font-family:"DM Serif Display",Georgia,serif}</style>
+</head>
+<body class="min-h-screen bg-paper text-ink">
+<main class="flex min-h-screen items-center justify-center px-5 py-12">
+    <section class="w-full max-w-2xl rounded-[2rem] bg-ink p-8 text-white shadow-2xl sm:p-12">
+        <div class="flex h-16 w-16 items-center justify-center rounded-full bg-gold text-3xl text-ink">✓</div>
+        <p class="mt-8 text-xs font-extrabold uppercase tracking-[.25em] text-amber-200">Nelum Retreat</p>
+        <h1 class="serif mt-3 text-5xl sm:text-6xl">Thank you for choosing us.</h1>
+        <p class="mt-5 max-w-xl text-sm leading-7 text-emerald-100/75">Your reservation and payment have been confirmed. We look forward to welcoming you to your sanctuary.</p>
+        <div class="mt-8 grid gap-3 rounded-2xl bg-white/10 p-5 text-sm sm:grid-cols-2">
+            <div><p class="text-xs uppercase tracking-widest text-emerald-100/50">Booking</p><strong id="booking"></strong></div>
+            <div><p class="text-xs uppercase tracking-widest text-emerald-100/50">Room</p><strong id="room"></strong></div>
+            <div><p class="text-xs uppercase tracking-widest text-emerald-100/50">Stay dates</p><strong id="dates"></strong></div>
+            <div><p class="text-xs uppercase tracking-widest text-emerald-100/50">Paid today</p><strong id="paid"></strong></div>
+        </div>
+        <p id="balanceRow" class="mt-4 rounded-xl border border-amber-200/20 bg-amber-200/10 p-4 text-sm text-amber-100"></p>
+        <div class="mt-8 flex flex-wrap gap-3"><a href="/" class="rounded-xl bg-gold px-5 py-3 text-sm font-extrabold text-ink">Return to Nelum Retreat</a><a href="/profile.html" class="rounded-xl border border-white/20 px-5 py-3 text-sm font-extrabold text-white">View my profile</a></div>
+    </section>
+</main>
+<script>
+(function(){var p=new URLSearchParams(location.search),money=function(v){return"Rs. "+(Number(v)||0).toLocaleString("en-LK",{maximumFractionDigits:2})};document.getElementById("booking").textContent="#"+(p.get("bookingId")||"confirmed");document.getElementById("room").textContent=p.get("roomName")||"Nelum Retreat sanctuary";document.getElementById("dates").textContent=(p.get("checkIn")||"")+" → "+(p.get("checkOut")||"");document.getElementById("paid").textContent=money(p.get("paid"));var balance=Number(p.get("balance")||0),row=document.getElementById("balanceRow");row.textContent=balance>0?"Your remaining installment balance is "+money(balance)+".":"Your reservation is fully paid.";})();
+</script>
+</body>
+</html>
