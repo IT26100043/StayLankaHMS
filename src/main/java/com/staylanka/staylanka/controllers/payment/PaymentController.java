@@ -29,6 +29,7 @@ public class PaymentController {
         return paymentService.getAllPaymentDetails();
     }
 
+    // payment from id
     @GetMapping("/{id}")
     public Optional<payment> getPaymentById(@PathVariable Long id){
         return paymentService.getPaymentById(id);
