@@ -23,6 +23,7 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
+    //get all the payment
     @GetMapping("payments")
     public List<payment> getAllPaymentDetails(){
         return paymentService.getAllPaymentDetails();
