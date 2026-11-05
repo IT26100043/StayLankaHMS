@@ -23,11 +23,13 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
+    //get all the payment
     @GetMapping("payments")
     public List<payment> getAllPaymentDetails(){
         return paymentService.getAllPaymentDetails();
     }
 
+    // payment from id
     @GetMapping("/{id}")
     public Optional<payment> getPaymentById(@PathVariable Long id){
         return paymentService.getPaymentById(id);
