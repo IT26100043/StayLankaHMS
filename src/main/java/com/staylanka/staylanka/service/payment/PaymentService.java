@@ -40,8 +40,25 @@ public class PaymentService {
     }
 
     public payment CreateNewPayment(CardPaymentRequest cardPaymentRequest){
-        CustomerUser customerUser = customerRepository.findById(cardPaymentRequest.getCustomerId()).orElseThrow();
-        Booking booking = bookingRepository.findById(cardPaymentRequest.getBookingId()).orElseThrow();
+        if (cardPaymentRequest == null
+                || cardPaymentRequest.getCustomerId() == null
+                || cardPaymentRequest.getBookingId() == null) {
+            throw new IllegalArgumentException("Customer ID and booking ID are required");
+        }
+        CustomerUser customerUser = customerRepository.findById(cardPaymentRequest.getCustomerId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Customer " + cardPaymentRequest.getCustomerId() + " was not found"));
+        Booking booking = bookingRepository.findById(cardPaymentRequest.getBookingId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Booking " + cardPaymentRequest.getBookingId() + " was not found"));
+        if (cardPaymentRequest.getCardHolderName() == null
+                || cardPaymentRequest.getCardHolderName().isBlank()
+                || cardPaymentRequest.getCardNumber() == null
+                || cardPaymentRequest.getCardNumber().isBlank()
+                || cardPaymentRequest.getCardCvvNumber() == null
+                || cardPaymentRequest.getCardCvvNumber().isBlank()) {
+            throw new IllegalArgumentException("Card holder name, card number, and CVV are required");
+        }
         CardPayment cardPayment = new CardPayment(cardPaymentRequest.getCardHolderName(), cardPaymentRequest.getCardCvvNumber(), customerUser,booking,"PENDING", LocalDateTime.now(),booking.getTotalPrice(),cardPaymentRequest.getCardNumber());
         return paymentRepository.save(cardPayment);
     }

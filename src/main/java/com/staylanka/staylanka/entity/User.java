@@ -37,7 +37,7 @@ public class User {
 
 
     public void setSecurityNumber(String securityNumber) {
-        securityNumber = securityNumber;
+        this.securityNumber = securityNumber;
     }
 
     public void setId(Long id) {

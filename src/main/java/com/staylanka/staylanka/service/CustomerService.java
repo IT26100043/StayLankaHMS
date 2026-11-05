@@ -39,6 +39,9 @@ public class CustomerService {
         if(customerDetails.getPhoneNumber() != null){
             existingUser.setPhoneNumber(customerDetails.getPhoneNumber());
         }
+        if(customerDetails.getSecurityNumber() != null){
+            existingUser.setSecurityNumber(customerDetails.getSecurityNumber());
+        }
         customerRepository.save(existingUser);
         return existingUser;
 
