@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>StayLanka Admin Portal</title>
+    <title>Nelum Retreat Operations</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
     <script>
@@ -16,15 +16,15 @@
                     },
                     colors: {
                         brand: {
-                            50: '#f0fdf4',
-                            100: '#dcfce7',
-                            200: '#bbf7d0',
-                            500: '#10b981',
-                            600: '#059669',
-                            700: '#047857',
-                            800: '#065f46',
-                            900: '#064e3b',
-                            950: '#022c22'
+                            50: '#f8f6f0',
+                            100: '#eee8d8',
+                            200: '#ded0b2',
+                            500: '#b28a45',
+                            600: '#967238',
+                            700: '#76572d',
+                            800: '#594321',
+                            900: '#3e301c',
+                            950: '#201b14'
                         }
                     }
                 }
@@ -33,6 +33,61 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root { color-scheme: dark; }
+        body { background: #101820; color: #e7ebee; }
+        #app { background: #101820; }
+        #app aside { width: 17rem; background: #09121b; border-color: rgba(255,255,255,.08); }
+        #app .lg\:ml-64 { margin-left: 17rem; }
+        #app header { background: rgba(20,30,40,.97); border-color: #293a49; }
+        #app .bg-white { background-color: #1b2733; }
+        #app .bg-white\/80 { background-color: rgba(20,30,40,.97); }
+        #app .bg-slate-50\/80 { background-color: #223242; }
+        #app .bg-slate-50 { background-color: #1d2b38; }
+        #app main { max-width: 1500px; }
+        #nav button { border-radius: .6rem; margin-bottom: .25rem; letter-spacing: .01em; }
+        #nav button.bg-brand-600 { background: #b28a45; color: #101820; box-shadow: 0 8px 18px rgba(178,138,69,.16); }
+        #nav button:not(.bg-brand-600):hover { background: #1d3342; color: #edf2f5; }
+        #app .bg-brand-600 { background-color: #b28a45; }
+        #app .text-brand-500, #app .text-brand-400 { color: #d3b06b; }
+        #app .bg-brand-500\/20 { background-color: rgba(178,138,69,.16); }
+        #nav button[data-tab="overview"] { margin-top: .5rem; }
+        #view > .grid:first-child > div,
+        #view > div.grid:first-child > div { border: 1px solid #2d4050; border-radius: .85rem; box-shadow: 0 12px 30px rgba(0,0,0,.2); background: #1b2733; }
+        #view > .grid:first-child > div:nth-child(n) { border-top: 3px solid #b28a45; }
+        #view > .grid:first-child > div:nth-child(2n) { border-top-color: #87958a; }
+        #view > .grid:first-child > div:nth-child(3n) { border-top-color: #536b63; }
+        #view > div > div[class*="rounded"] { border-color: #2d4050; box-shadow: 0 12px 30px rgba(0,0,0,.2); background: #1b2733; }
+        #view table thead th { background: #223242; color: #c2cbd2; letter-spacing: .12em; }
+        #view table tbody tr:hover { background: #223242; }
+        #view table td { border-color: #293d4d; color: #d8e0e5; }
+        #view table td:first-child { color: #f0f3f5; }
+        #app .text-slate-900 { color: #f0f3f5; }
+        #app .text-slate-800 { color: #e0e6ea; }
+        #app .text-slate-700 { color: #c7d0d6; }
+        #app .text-slate-600 { color: #afbdc7; }
+        #app .text-slate-500 { color: #93a5b2; }
+        #app .text-slate-400 { color: #7e94a3; }
+        #app .border-slate-200, #app .border-slate-200\/80 { border-color: #2d4050; }
+        #app .border-slate-100 { border-color: #263b4b; }
+        #app input, #app textarea, #app select { color: #edf2f5; background-color: #1d2b38; border-color: #3b5263; }
+        #app input::placeholder, #app textarea::placeholder { color: #7f95a4; }
+        #app .bg-slate-100 { background-color: #263846; }
+        #app .bg-slate-200 { background-color: #304656; }
+        #modal > div { border: 1px solid #2d4050; box-shadow: 0 24px 80px rgba(0,0,0,.5); background: #1b2733; }
+        #modal .bg-white { background-color: #1b2733; }
+        #login { background: #101820; }
+        #login > div:first-child { background: linear-gradient(140deg,#09121b 0%,#1d3344 55%,#765a2c 100%); border-color: rgba(255,255,255,.1); }
+        #login > div:first-child .bg-brand-500\/20 { background: rgba(178,138,69,.18); border-color: rgba(221,192,126,.3); }
+        #login > div:first-child .text-brand-400,
+        #login > div:first-child .text-brand-500 { color: #e0c47e; }
+        #login > div:last-child { background: #151f29; }
+        #login input { background: #1d2b38; border-color: #3b5263; color: #edf2f5; }
+        #login button.bg-brand-600 { background: #b28a45; color: #111820; }
+        #login button.bg-brand-600:hover { background: #c9a762; }
+        #mnav { background: #162431; border-color: #293e4e; }
+        @media (max-width: 1023px) {
+            #app .lg\:ml-64 { margin-left: 0; }
+        }
         @keyframes pop {
             from { opacity: 0; transform: translateY(6px) scale(.99); }
             to { opacity: 1; transform: translateY(0) scale(1); }
@@ -58,9 +113,9 @@
 
         <div class="relative z-10 flex items-center gap-3">
             <div class="h-10 w-10 rounded-xl bg-brand-500/20 border border-brand-500/30 flex items-center justify-center text-brand-400 font-bold text-xl shadow-inner">
-                S
+            N
             </div>
-            <span class="text-2xl font-bold tracking-tight text-white">Stay<span class="text-brand-500">Lanka</span></span>
+            <span class="text-2xl font-bold tracking-tight text-white">Nelum<span class="text-brand-500">Retreat</span></span>
         </div>
 
         <div class="relative z-10 my-auto max-w-lg">
@@ -77,7 +132,7 @@
         </div>
 
         <div class="relative z-10 flex items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-6">
-            <span>© StayLanka Hotel Management System</span>
+            <span>© Nelum Retreat Hotel Management System</span>
             <span class="flex items-center gap-1.5"><span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span> System Operational</span>
         </div>
     </div>
@@ -87,7 +142,7 @@
         <form id="loginForm" class="w-full max-w-sm pop space-y-6">
             <div class="lg:hidden flex items-center gap-2 mb-2">
                 <div class="h-9 w-9 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold text-lg">S</div>
-                <span class="text-2xl font-bold text-slate-900 dark:text-white">Stay<span class="text-brand-500">Lanka</span></span>
+                <span class="text-2xl font-bold text-slate-900 dark:text-white">Nelum<span class="text-brand-500">Retreat</span></span>
             </div>
 
             <div>
@@ -129,8 +184,8 @@
         <!-- Sidebar Brand Header -->
         <div class="px-6 py-5 flex items-center justify-between border-b border-slate-800/80">
             <div class="flex items-center gap-2.5">
-                <div class="h-8 w-8 rounded-lg bg-brand-600 flex items-center justify-center text-white font-bold text-base shadow-sm">S</div>
-                <div class="text-xl font-bold text-white tracking-tight">Stay<span class="text-brand-500">Lanka</span></div>
+                <div class="h-8 w-8 rounded-lg bg-brand-600 flex items-center justify-center text-white font-bold text-base shadow-sm">N</div>
+                <div class="text-xl font-bold text-white tracking-tight">Nelum<span class="text-brand-500">Retreat</span></div>
             </div>
             <span class="text-[10px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">v1.0</span>
         </div>
@@ -198,11 +253,11 @@
 <!-- JAVASCRIPT LOGIC (ORIGINAL LOGIC PRESERVED) -->
 <script>
     (function(){
-        var ROOT=(location.protocol.indexOf("http")===0&&location.port==="8080")?"":"http://localhost:8080";
+        var ROOT=location.protocol.indexOf("http")===0?(location.port==="8080"?"":location.origin):"http://localhost:8080";
         var SESSION="staylanka_admin_name";
 
         /* ---------- entity definitions (one place to change endpoints) ---------- */
-        var ROOMTYPES=["Standard","Deluxe","Suite","Family"];
+        var ROOMTYPES=["Standard","Deluxe","Suite"];
         var E={
             customers:{t:"Customer",list:"/customer/customers",add:"/customer/register",one:function(r){return"/customer/"+r.id},id:function(r){return r.id},name:function(r){return r.userName},
                 f:[["userName","Username"],["password","Password","password"],["phoneNumber","Phone number"],["securityNumber","Security number"]]},
@@ -211,9 +266,9 @@
             rooms:{t:"Room",list:"/api/v1/rooms",add:"/api/v1/rooms",one:function(r){return"/api/v1/rooms/"+r.roomId},id:function(r){return r.roomId},name:function(r){return"room "+r.roomId},lock:["roomId"],
                 f:[["roomId","Room ID"],["type","Type","select",ROOMTYPES],["pricePerNight","Price per night (Rs.)","number"],["capacity","Capacity","number"],["maintenanceFrom","Maintenance from","date"],["maintenanceTo","Maintenance to","date"]]},
             bookings:{t:"Booking",list:"/api/v1/bookings",add:"/api/v1/bookings",one:function(r){return"/api/v1/bookings/"+r.bookingId},id:function(r){return r.bookingId},name:function(r){return"booking #"+r.bookingId},
-                f:[["roomId","Room ID"],["guestName","Guest name"],["guestPhone","Guest phone"],["checkIn","Check-in","date"],["checkOut","Check-out","date"],["totalPrice","Total price (Rs.)","number"],["status","Status","select",["CONFIRMED","CANCELLED"]]]},
+                f:[["roomId","Room ID"],["guestName","Guest name"],["guestPhone","Guest phone"],["checkIn","Check-in","date"],["checkOut","Check-out","date"]]},
             payments:{t:"Payment",list:"/payment/payments",one:function(r){return"/payment/"+r.paymentId},id:function(r){return r.paymentId},name:function(r){return"payment #"+r.paymentId},
-                f:[["cardHolder","Card holder name"],["cardCvvNumber","CVV","password"]],partial:true},
+                f:[["cardHolder","Card holder name"],["cardNumber","Card number"],["cardCvvNumber","CVV","password"]],partial:true},
             reviews:{t:"Review",list:"/review/reviews",one:function(r){return"/review/"+r.id},id:function(r){return r.id},name:function(r){return"review #"+r.id},
                 f:[["rating","Rating (1-5)","number"],["comment","Comment","textarea"]]}
         };
@@ -261,9 +316,17 @@
         }
 
         async function call(m,u,b){
-            var r=await fetch(ROOT+u,{method:m,headers:{"Content-Type":"application/json"},body:b?JSON.stringify(b):undefined});
+            var options={method:m,headers:{}};
+            if(b!==undefined){options.headers["Content-Type"]="application/json";options.body=JSON.stringify(b)}
+            var r;
+            try{r=await fetch(ROOT+u,options)}catch(e){throw new Error("Cannot connect to the API at "+ROOT+". Start the Spring Boot server and try again.")}
             var t=await r.text(),d=t;try{d=t?JSON.parse(t):null}catch(e){}
-            if(!r.ok)throw new Error((d&&d.message)||(typeof d==="string"&&d.slice(0,140))||"Server answered "+r.status);return d}
+            if(!r.ok){
+                var detail=d&&d.message?d.message:(typeof d==="string"?d.trim().slice(0,240):"");
+                throw new Error(detail||"Server answered "+r.status+" for "+m+" "+u)
+            }
+            return d
+        }
 
         /* ---------- modal: forms + confirm ---------- */
         var INP="mt-1 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 disabled:opacity-50 transition-all duration-150";
@@ -281,14 +344,17 @@
             $("mOk").onclick=async function(){
                 var v={};$("modal").querySelectorAll("[name]").forEach(function(i){v[i.name]=i.type==="number"?(i.value===""?null:Number(i.value)):(i.value===""&&i.type==="date"?null:i.value)});
                 this.disabled=true;try{await onSubmit(v);closeModal()}catch(e){$("mErr").textContent=e.message;this.disabled=false}}}
-        function confirmDel(title,msg,onYes){
-            openModal('<h3 class="text-lg font-bold text-slate-900 dark:text-white">'+esc(title)+'</h3><p class="text-sm text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">'+esc(msg)+'</p><p id="mErr" class="text-rose-500 text-xs font-medium min-h-[20px] mt-3"></p><div class="flex justify-end gap-2.5 mt-5"><button data-close class="rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300">Cancel</button><button id="mOk" class="rounded-xl bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 text-xs font-semibold shadow-sm transition">Delete</button></div>');
+        function confirmDel(title,msg,onYes,actionText){
+            actionText=actionText||"Delete";
+            openModal('<h3 class="text-lg font-bold text-slate-900 dark:text-white">'+esc(title)+'</h3><p class="text-sm text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">'+esc(msg)+'</p><p id="mErr" class="text-rose-500 text-xs font-medium min-h-[20px] mt-3"></p><div class="flex justify-end gap-2.5 mt-5"><button data-close class="rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300">Cancel</button><button id="mOk" class="rounded-xl bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 text-xs font-semibold shadow-sm transition">'+esc(actionText)+'</button></div>');
             $("mOk").onclick=async function(){this.disabled=true;try{await onYes();closeModal()}catch(e){$("mErr").textContent=e.message;this.disabled=false}}}
 
         /* ---------- CRUD ---------- */
         function formFor(name,row){
             var d=E[name],edit=!!row;
-            openForm((edit?"Edit ":"Add ")+d.t.toLowerCase(),d.f,row||{},edit?d.lock:[],async function(v){
+            var fields=d.f;
+            if(name==="bookings"&&!edit)fields=[["roomId","Room ID","select",D.rooms.map(function(r){return r.roomId})],["guestName","Guest name"],["guestPhone","Guest phone"],["checkIn","Check-in","date"],["checkOut","Check-out","date"]];
+            openForm((edit?"Edit ":"Add ")+d.t.toLowerCase(),fields,row||{},edit?d.lock:[],async function(v){
                 if(d.partial){var b={};Object.keys(v).forEach(function(k){if(v[k])b[k]=v[k]});v=b}
                 if(edit)await call("PUT",d.one(row),v);else await call("POST",d.add,v);
                 toast(d.t+(edit?" updated":" created"));await loadAll()},edit?"Save changes":"Create")}
@@ -296,6 +362,23 @@
             var d=E[name];confirmDel("Delete "+d.t.toLowerCase()+"?","This permanently removes "+d.name(row)+". This action cannot be undone.",async function(){
                 await call("DELETE",d.one(row));toast(d.t+" deleted");if(ui.sel!=null&&name==="customers")ui.sel=null;await loadAll()})}
         function rowOf(name,id){return D[name].filter(function(r){return String(E[name].id(r))===String(id)})[0]}
+        function openPaymentForm(){
+            openForm("Create payment",[["customerId","Customer","select",D.customers.map(function(c){return String(c.id)})],["bookingId","Booking","select",D.bookings.map(function(b){return String(b.bookingId)})],["cardHolderName","Card holder name"],["cardNumber","Card number"],["cardCvvNumber","CVV","password"]],{},[],async function(v){
+                await call("POST","/payment/newpay",v);toast("Payment created");await loadAll()},"Create payment")}
+        function openReviewForm(){
+            openForm("Create review",[["customerId","Customer","select",D.customers.map(function(c){return String(c.id)})],["roomId","Room","select",D.rooms.map(function(r){return r.roomId})],["rating","Rating (1-5)","number"],["comment","Comment","textarea"]],{},[],async function(v){
+                await call("POST","/review/newreview",v);toast("Review created");await loadAll()},"Create review")}
+        function cancelBooking(row){
+            confirmDel("Cancel booking?","Booking #"+row.bookingId+" will remain visible with a Cancelled status.",async function(){
+                await call("PUT","/api/v1/bookings/"+row.bookingId+"/cancel");toast("Booking cancelled");await loadAll()},"Cancel")}
+        function createInstallments(row){
+            call("POST","/api/v1/installments/"+row.bookingId).then(function(items){
+                var rows=Array.isArray(items)?items:[];
+                openModal('<div class="flex items-center justify-between mb-5"><h3 class="text-xl font-bold text-slate-900 dark:text-white">Installments for booking #'+esc(row.bookingId)+'</h3><button data-close class="text-slate-400 text-lg">✕</button></div>'+
+                    '<div class="space-y-2">'+rows.map(function(item){return'<div class="flex justify-between rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm"><span>Installment '+esc(item.installmentNumber)+'</span><strong>'+money(item.amount)+'</strong></div>'}).join("")+'</div>'+
+                    '<button data-close class="mt-5 w-full rounded-xl bg-brand-600 text-white py-2.5 text-sm font-semibold">Close</button>');
+            }).catch(function(e){toast(e.message,true)})
+        }
 
         /* ---------- table ---------- */
         var CARD="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-xs overflow-hidden";
@@ -317,7 +400,7 @@
             if(!list.length)h+='<tr><td colspan="'+(cols.length+1)+'" class="'+TD+' text-center text-slate-400 py-12"><div class="text-3xl mb-2">📁</div>'+(rows.length?"Nothing matches your search filter":"No records available")+'</td></tr>';
             list.forEach(function(r){var id=esc(d.id(r));
                 h+='<tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors'+(opt.click?" cursor-pointer":"")+'" '+(opt.click?'data-cust="'+id+'"':"")+'>'+cols.map(function(c){return'<td class="'+TD+'">'+c[1](r)+'</td>'}).join("")
-                    +(hasAct?'<td class="'+TD+' text-right whitespace-nowrap"><button data-edit="'+name+'|'+id+'" class="'+BTN+'bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200">Edit</button> <button data-del="'+name+'|'+id+'" class="'+BTN+'bg-rose-50 text-rose-600 hover:bg-rose-100 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 dark:text-rose-400">Delete</button></td>':"")+'</tr>'});
+                    +(hasAct?'<td class="'+TD+' text-right whitespace-nowrap">'+(opt.actions?opt.actions(r,id):'<button data-edit="'+name+'|'+id+'" class="'+BTN+'bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200">Edit</button> <button data-del="'+name+'|'+id+'" class="'+BTN+'bg-rose-50 text-rose-600 hover:bg-rose-100 dark:bg-rose-500/10 dark:text-rose-400">Delete</button>')+'</td>':"")+'</tr>'});
             return h+'</tbody></table></div>'}
 
         /* ---------- views ---------- */
@@ -376,7 +459,18 @@
             var a=document.activeElement,kq=a&&a.getAttribute&&a.getAttribute("data-q"),pos=kq?a.selectionStart:0,h;
             if(ui.tab==="overview")h=viewOverview();
             else if(ui.tab==="customers"&&ui.sel!=null&&rowOf("customers",ui.sel))h=viewCustomer(rowOf("customers",ui.sel));
-            else{ui.sel=null;h=table(ui.tab,COLS[ui.tab],{click:ui.tab==="customers",secrets:/^(customers|admins|payments)$/.test(ui.tab)})}
+            else{
+                ui.sel=null;
+                var opt={click:ui.tab==="customers",secrets:/^(customers|admins|payments)$/.test(ui.tab)};
+                if(ui.tab==="payments")opt.extra='<button data-new-payment class="rounded-xl bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 text-xs font-semibold">+ New payment</button>';
+                if(ui.tab==="reviews")opt.extra='<button data-new-review class="rounded-xl bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 text-xs font-semibold">+ New review</button>';
+                if(ui.tab==="bookings")opt.actions=function(r,id){
+                    var out='<button data-edit="bookings|'+id+'" class="'+BTN+'bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200">Edit</button> ';
+                    if(!cancelled(r))out+='<button data-cancel-booking="'+id+'" class="'+BTN+'bg-amber-50 text-amber-700 hover:bg-amber-100">Cancel</button> ';
+                    out+='<button data-installments="'+id+'" class="'+BTN+'bg-sky-50 text-sky-700 hover:bg-sky-100">Installments</button> <button data-del="bookings|'+id+'" class="'+BTN+'bg-rose-50 text-rose-600 hover:bg-rose-100">Delete</button>';
+                    return out};
+                h=table(ui.tab,COLS[ui.tab],opt)
+            }
             $("view").innerHTML=h;
             if(kq){var el=document.querySelector('[data-q="'+kq+'"]');if(el){el.focus();try{el.setSelectionRange(pos,pos)}catch(e){}}}}
 
@@ -394,6 +488,10 @@
             if(x=g("[data-edit]")){var p=x.getAttribute("data-edit").split("|");formFor(p[0],rowOf(p[0],p[1]));return}
             if(x=g("[data-del]")){var q=x.getAttribute("data-del").split("|");delFor(q[0],rowOf(q[0],q[1]));return}
             if(x=g("[data-add]")){formFor(x.getAttribute("data-add"));return}
+            if(x=g("[data-new-payment]")){openPaymentForm();return}
+            if(x=g("[data-new-review]")){openReviewForm();return}
+            if(x=g("[data-cancel-booking]")){cancelBooking(rowOf("bookings",x.getAttribute("data-cancel-booking")));return}
+            if(x=g("[data-installments]")){createInstallments(rowOf("bookings",x.getAttribute("data-installments")));return}
             if(x=g("[data-tab]")){ui.tab=x.getAttribute("data-tab");ui.sel=null;render();return}
             if(g("[data-back]")){ui.sel=null;render();return}
             if(x=g("[data-cust-link]")){e.preventDefault();ui.tab="customers";ui.sel=x.getAttribute("data-cust-link");render();scrollTo(0,0);return}

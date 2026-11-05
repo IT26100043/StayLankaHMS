@@ -9,6 +9,8 @@ import com.staylanka.staylanka.entity.payment.UpdateCardRequestData;
 import com.staylanka.staylanka.entity.payment.payment;
 import com.staylanka.staylanka.service.payment.PaymentService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,8 +38,13 @@ public class PaymentController {
     }
 
     @PostMapping("/newpay")
-    public payment CreateNewPayment(@RequestBody CardPaymentRequest cardPaymentRequest){
-        return paymentService.CreateNewPayment(cardPaymentRequest);
+    public ResponseEntity<?> CreateNewPayment(@RequestBody CardPaymentRequest cardPaymentRequest){
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(paymentService.CreateNewPayment(cardPaymentRequest));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
