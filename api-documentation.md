@@ -501,5 +501,62 @@
 
 
 
+6. POST - PayAsInstallment
+`http://localhost:8080/api/v1/installments/2`
+
+#### output
+```
+[
+    {
+        "amount": 500,
+        "booking": {
+            "bookingId": 2,
+            "checkIn": "2026-11-01",
+            "checkOut": "2026-11-10",
+            "guestName": "ABC",
+            "guestPhone": "071233654",
+            "roomId": "AAA",
+            "status": "CONFIRMED",
+            "totalPrice": 1500
+        },
+        "installmentId": 1,
+        "installmentNumber": 1,
+        "status": "PENDING"
+    },
+    {
+        "amount": 500,
+        "booking": {
+            "bookingId": 2,
+            "checkIn": "2026-11-01",
+            "checkOut": "2026-11-10",
+            "guestName": "ABC",
+            "guestPhone": "071233654",
+            "roomId": "AAA",
+            "status": "CONFIRMED",
+            "totalPrice": 1500
+        },
+        "installmentId": 2,
+        "installmentNumber": 2,
+        "status": "PENDING"
+    },
+    {
+        "amount": 500,
+        "booking": {
+            "bookingId": 2,
+            "checkIn": "2026-11-01",
+            "checkOut": "2026-11-10",
+            "guestName": "ABC",
+            "guestPhone": "071233654",
+            "roomId": "AAA",
+            "status": "CONFIRMED",
+            "totalPrice": 1500
+        },
+        "installmentId": 3,
+        "installmentNumber": 3,
+        "status": "PENDING"
+    }
+]
+```
+
 
 
