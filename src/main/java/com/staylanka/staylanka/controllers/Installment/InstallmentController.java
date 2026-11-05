@@ -6,7 +6,6 @@ import com.staylanka.staylanka.service.Installment.InstallmentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.staylanka.staylanka.entity.payment.CardPayment;
 
 import java.util.List;
 
