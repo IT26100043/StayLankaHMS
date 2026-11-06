@@ -21,19 +21,29 @@
         .serif { font-family: "DM Serif Display", Georgia, serif; }
         .glass { background: rgba(255,255,255,.82); backdrop-filter: blur(18px); }
         .pop { animation: pop .3s ease both; }
-        .hero-image { background-image: linear-gradient(90deg, rgba(9,24,37,.9) 0%, rgba(9,24,37,.55) 48%, rgba(9,24,37,.2) 100%), url("https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=2200&q=88"); background-position: center; background-size: cover; }
+        .hero-image { min-height: 820px; background-image: linear-gradient(90deg, rgba(9,24,37,.9) 0%, rgba(9,24,37,.55) 48%, rgba(9,24,37,.2) 100%), url("https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=2200&q=88"); background-position: center; background-size: cover; animation: heroZoom 20s ease-out both; }
         .leaf-pattern { background-image: radial-gradient(rgba(200,155,60,.18) 1px, transparent 1px); background-size: 18px 18px; }
-        #roomGrid article { border-color: #ddd6c9; border-radius: .75rem; box-shadow: 0 14px 40px rgba(18,34,48,.09); }
+        #roomGrid article { border-color: #ddd6c9; border-radius: 1.25rem; box-shadow: 0 14px 40px rgba(18,34,48,.09); }
         #roomGrid article h3 { font-family: "DM Serif Display", Georgia, serif; }
+        #roomGrid article img { transition: transform .7s cubic-bezier(.2,.7,.2,1); }
+        #roomGrid article:hover img { transform: scale(1.07); }
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+        .reveal.is-visible { opacity: 1; transform: none; }
+        .gallery-tile { min-height: 220px; background-position: center; background-size: cover; transition: transform .5s ease, filter .5s ease; }
+        .gallery-tile:hover { transform: scale(1.02); filter: brightness(1.08); }
+        @keyframes heroZoom { from { background-size: 105%; } to { background-size: 100%; } }
         #benefits, #experience { background: #fffdf9; }
         #rooms { background-color: #f4f1ea; }
         #reviews, footer { background-color: #0c1b29; }
         #roomGrid article button { background: #0c1b29; }
+        .header-scrolled { background: rgba(12,27,41,.9); backdrop-filter: blur(18px); box-shadow: 0 10px 30px rgba(0,0,0,.12); }
+        @media (max-width: 767px) { .hero-image { min-height: 900px; } }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } .reveal { opacity: 1; transform: none; } }
         @keyframes pop { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
     </style>
 </head>
 <body class="bg-sand text-ink antialiased">
-<header class="absolute left-0 right-0 top-0 z-30 border-b border-white/20 text-white">
+<header id="siteHeader" class="absolute left-0 right-0 top-0 z-30 border-b border-white/20 text-white transition-all duration-300">
     <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 lg:px-8">
         <a href="/" class="leading-none"><span class="serif block text-3xl">Nelum</span><span class="block text-[9px] font-bold uppercase tracking-[.32em] text-amber-200">Retreat</span></a>
         <nav class="hidden items-center gap-8 text-[11px] font-bold uppercase tracking-[.18em] md:flex">
@@ -42,14 +52,15 @@
             <a href="#reviews" class="transition hover:text-amber-200">Guest notes</a>
             <a href="/adminportal.html" class="transition hover:text-amber-200">Operations</a>
         </nav>
-        <button id="accountBtn" class="rounded-full border border-white/50 px-5 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white transition hover:bg-white hover:text-ink">Sign in</button>
+        <div class="flex items-center gap-2"><button id="mobileMenuBtn" class="rounded-full border border-white/50 px-3 py-2 text-lg leading-none md:hidden" aria-label="Open menu">☰</button><button id="accountBtn" class="rounded-full border border-white/50 px-5 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white transition hover:bg-white hover:text-ink">Sign in</button></div>
     </div>
+    <nav id="mobileMenu" class="hidden border-t border-white/20 bg-ink/95 px-5 py-5 md:hidden"><div class="grid gap-4 text-xs font-bold uppercase tracking-[.18em]"><a href="#rooms">Stay</a><a href="#experience">Experience</a><a href="#reviews">Guest notes</a><a href="/adminportal.html">Operations</a></div></nav>
 </header>
 
 <main>
-    <section class="hero-image relative flex min-h-[720px] items-end overflow-hidden text-white">
+    <section class="hero-image relative flex items-end overflow-hidden text-white">
         <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-ink/20"></div>
-        <div class="relative mx-auto w-full max-w-7xl px-5 pb-20 pt-40 lg:px-8">
+        <div class="relative mx-auto w-full max-w-7xl px-5 pb-52 pt-40 lg:px-8">
             <div class="max-w-3xl pop">
                 <p class="mb-6 text-xs font-extrabold uppercase tracking-[.28em] text-amber-200">A soulful hideaway in Sri Lanka</p>
                 <h1 class="serif text-7xl leading-[.9] sm:text-8xl lg:text-9xl">The art of<br><em class="font-normal text-amber-100">slowing down.</em></h1>
@@ -63,13 +74,31 @@
                 <span>Thoughtful stays</span><span>Wild surroundings</span><span>Enjoy now · pay later</span>
             </div>
         </div>
+        <form id="heroBooking" class="glass absolute bottom-6 left-1/2 z-10 grid w-[calc(100%-2.5rem)] max-w-5xl -translate-x-1/2 gap-3 rounded-2xl p-3 text-ink shadow-2xl md:grid-cols-[1.2fr_1fr_1fr_.8fr_auto] md:rounded-full md:p-2">
+            <label class="px-4 py-2 text-left"><span class="block text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Room type</span><select id="heroRoomType" class="mt-1 w-full bg-transparent text-sm font-bold outline-none"><option value="">Any sanctuary</option><option>Standard</option><option>Deluxe</option><option>Suite</option></select></label>
+            <label class="border-slate-200 px-4 py-2 text-left md:border-l"><span class="block text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Check-in</span><input id="heroCheckIn" type="date" class="mt-1 w-full bg-transparent text-sm font-bold outline-none"></label>
+            <label class="border-slate-200 px-4 py-2 text-left md:border-l"><span class="block text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Check-out</span><input id="heroCheckOut" type="date" class="mt-1 w-full bg-transparent text-sm font-bold outline-none"></label>
+            <label class="border-slate-200 px-4 py-2 text-left md:border-l"><span class="block text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Guests</span><input id="heroGuests" type="number" min="1" value="2" class="mt-1 w-full bg-transparent text-sm font-bold outline-none"></label>
+            <button class="rounded-xl bg-gold px-6 py-3 text-xs font-extrabold uppercase tracking-wider text-ink transition hover:bg-amber-300 md:rounded-full">Check availability</button>
+        </form>
     </section>
 
     <section id="experience" class="border-b border-stone-200 bg-white">
         <div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 md:grid-cols-3 lg:px-8">
-            <div><p class="text-3xl text-coral">01</p><h2 class="serif mt-3 text-3xl">A place with soul</h2><p class="mt-2 text-sm leading-7 text-slate-500">A considered retreat shaped by Sri Lankan warmth, natural textures, and the rhythm of the landscape.</p></div>
-            <div><p class="text-3xl text-coral">02</p><h2 class="serif mt-3 text-3xl">Stay at your pace</h2><p class="mt-2 text-sm leading-7 text-slate-500">Real availability from our booking system, with the freedom to enjoy now and pay later in three live installments.</p></div>
-            <div><p class="text-3xl text-coral">03</p><h2 class="serif mt-3 text-3xl">Make it yours</h2><p class="mt-2 text-sm leading-7 text-slate-500">Choose a sanctuary, share your stay, and keep your retreat details close in your guest profile.</p></div>
+            <div class="reveal"><p class="text-3xl text-coral">01</p><h2 class="serif mt-3 text-3xl">A place with soul</h2><p class="mt-2 text-sm leading-7 text-slate-500">A considered retreat shaped by Sri Lankan warmth, natural textures, and the rhythm of the landscape.</p></div>
+            <div class="reveal"><p class="text-3xl text-coral">02</p><h2 class="serif mt-3 text-3xl">Stay at your pace</h2><p class="mt-2 text-sm leading-7 text-slate-500">Real availability from our booking system, with the freedom to enjoy now and pay later in three live installments.</p></div>
+            <div class="reveal"><p class="text-3xl text-coral">03</p><h2 class="serif mt-3 text-3xl">Make it yours</h2><p class="mt-2 text-sm leading-7 text-slate-500">Choose a sanctuary, share your stay, and keep your retreat details close in your guest profile.</p></div>
+        </div>
+    </section>
+
+    <section class="bg-white px-5 py-20 lg:px-8">
+        <div class="mx-auto max-w-7xl"><div class="reveal"><p class="text-sm font-extrabold uppercase tracking-[.2em] text-coral">The Nelum standard</p><h2 class="serif mt-2 text-5xl">Everything considered</h2></div>
+            <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div class="reveal rounded-3xl bg-sand p-6"><span class="text-3xl">✦</span><h3 class="serif mt-5 text-2xl">Infinity pool</h3><p class="mt-2 text-sm leading-6 text-slate-500">Slow afternoons with uninterrupted hill views.</p></div>
+                <div class="reveal rounded-3xl bg-sand p-6"><span class="text-3xl">❋</span><h3 class="serif mt-5 text-2xl">Private dining</h3><p class="mt-2 text-sm leading-6 text-slate-500">Seasonal Sri Lankan flavours, prepared just for you.</p></div>
+                <div class="reveal rounded-3xl bg-sand p-6"><span class="text-3xl">◌</span><h3 class="serif mt-5 text-2xl">Wellness rituals</h3><p class="mt-2 text-sm leading-6 text-slate-500">Restorative treatments inspired by the island.</p></div>
+                <div class="reveal rounded-3xl bg-sand p-6"><span class="text-3xl">⌁</span><h3 class="serif mt-5 text-2xl">Warm service</h3><p class="mt-2 text-sm leading-6 text-slate-500">Thoughtful details from arrival to farewell.</p></div>
+            </div>
         </div>
     </section>
 
@@ -81,6 +110,8 @@
         <div id="roomStatus" class="mt-6 text-sm text-slate-500">Loading rooms…</div>
         <div id="roomGrid" class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"></div>
     </section>
+
+    <section id="gallery" class="bg-white px-5 py-20 lg:px-8"><div class="mx-auto max-w-7xl"><div class="reveal"><p class="text-sm font-extrabold uppercase tracking-[.2em] text-coral">A glimpse of the retreat</p><h2 class="serif mt-2 text-5xl">Come away with us</h2></div><div class="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><div class="gallery-tile reveal rounded-3xl bg-[url('https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=900&q=85')] lg:col-span-2 lg:row-span-2"></div><div class="gallery-tile reveal rounded-3xl bg-[url('https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=900&q=85')]"></div><div class="gallery-tile reveal rounded-3xl bg-[url('https://images.unsplash.com/photo-1600494603989-9650cf6ddd3d?auto=format&fit=crop&w=900&q=85')]"></div><div class="gallery-tile reveal rounded-3xl bg-[url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=900&q=85')]"></div><div class="gallery-tile reveal rounded-3xl bg-[url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=85')]"></div></div></div></section>
 
     <section id="reviews" class="bg-ink text-white">
         <div class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
@@ -113,9 +144,9 @@
     var money = function (n) { return "Rs. " + (Number(n) || 0).toLocaleString("en-LK", { maximumFractionDigits: 2 }); };
     var roomImage = function (type) {
         var images = {
-            Standard: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80",
-            Deluxe: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&q=80",
-            Suite: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80"
+            Standard: "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1200&q=80",
+            Deluxe: "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80",
+            Suite: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=1200&q=80"
         };
         return images[type] || images.Standard;
     };
@@ -148,7 +179,7 @@
         $("forgotForm").onsubmit = async function (event) { event.preventDefault(); try { await api("PUT", "/auth/customerforgot", formValues()); closeModal(); toast("Password reset. You can sign in now."); authModal("login"); } catch (e) { $("formError").textContent = e.message; } };
     }
     function updateAccount() { var u = user(); $("accountBtn").textContent = u ? "Hi, " + u.userName : "Sign in"; }
-    function roomCard(room) { var label = room.type + " sanctuary"; return '<article class="overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"><div class="relative h-56"><img loading="lazy" decoding="async" class="h-full w-full object-cover" src="' + roomImage(room.type) + '" alt="' + esc(room.type) + ' room at Nelum Retreat"><div class="absolute left-4 top-4 rounded-full bg-ink px-3 py-1 text-xs font-extrabold text-white">' + esc(label) + '</div></div><div class="p-6"><h3 class="serif text-3xl">' + esc(label) + '</h3><p class="mt-2 text-sm text-slate-500">Up to ' + esc(room.capacity) + ' guests · thoughtfully appointed for quiet comfort.</p><div class="mt-5 flex items-end justify-between border-t border-stone-100 pt-4"><div><span class="text-2xl font-extrabold text-ink">' + money(room.pricePerNight) + '</span><span class="text-xs text-slate-400"> / night</span></div><button data-book="' + esc(room.roomId) + '" class="rounded-xl bg-ink px-4 py-3 text-xs font-extrabold text-white hover:bg-moss">Reserve now</button></div><p class="mt-3 text-[11px] font-bold uppercase tracking-wider text-coral">Enjoy now · pay later available</p></div></article>'; }
+    function roomCard(room) { var label = room.type + " sanctuary"; return '<article class="reveal overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"><div class="group relative h-60 overflow-hidden"><img loading="lazy" decoding="async" class="h-full w-full object-cover" src="' + roomImage(room.type) + '" alt="' + esc(room.type) + ' room at Nelum Retreat"><div class="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent"></div><div class="absolute left-4 top-4 rounded-full bg-ink/90 px-3 py-1 text-xs font-extrabold text-white">' + esc(label) + '</div><div class="absolute bottom-4 left-4 text-xs font-bold text-white">★ 4.9 · Signature comfort</div></div><div class="p-6"><h3 class="serif text-3xl">' + esc(label) + '</h3><p class="mt-2 text-sm text-slate-500">Up to ' + esc(room.capacity) + ' guests · thoughtfully appointed for quiet comfort.</p><div class="mt-4 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-500"><span class="rounded-full bg-sand px-3 py-1">Wi-Fi</span><span class="rounded-full bg-sand px-3 py-1">Breakfast</span><span class="rounded-full bg-sand px-3 py-1">Room service</span></div><div class="mt-5 flex items-end justify-between border-t border-stone-100 pt-4"><div><span class="text-2xl font-extrabold text-ink">' + money(room.pricePerNight) + '</span><span class="text-xs text-slate-400"> / night</span></div><button data-book="' + esc(room.roomId) + '" class="rounded-xl bg-ink px-4 py-3 text-xs font-extrabold text-white transition hover:bg-moss hover:shadow-lg">Reserve now</button></div><p class="mt-3 text-[11px] font-bold uppercase tracking-wider text-coral">Enjoy now · pay later available</p></div></article>'; }
     function roomList(data) {
         if (Array.isArray(data)) return data;
         if (data && Array.isArray(data.content)) return data.content;
@@ -166,6 +197,7 @@
                 return matching.length ? { room: matching[0], total: matching.length } : null;
             }).filter(Boolean);
             $("roomGrid").innerHTML = brands.length ? brands.map(function (brand) { return roomCard(brand.room); }).join("") : '<p class="text-sm text-slate-500">No rooms are currently available.</p>';
+            requestAnimationFrame(function () { document.querySelectorAll("#roomGrid .reveal").forEach(function (item, index) { setTimeout(function () { item.classList.add("is-visible"); }, index * 100); }); });
             $("roomStatus").textContent = brands.length + " sanctuary brands · " + state.rooms.length + " live rooms available";
         } catch (e) {
             state.rooms = [];
@@ -173,7 +205,7 @@
             $("roomGrid").innerHTML = "";
         }
     }
-    async function loadReviews() { try { state.reviews = await api("GET", "/review/reviews"); $("reviewGrid").innerHTML = state.reviews.length ? state.reviews.slice(0, 6).map(function (r) { return '<article class="rounded-3xl bg-white/10 p-6"><div class="text-orange-300">' + "★".repeat(Math.max(0, Math.min(5, Number(r.rating) || 0))) + '</div><p class="mt-4 min-h-16 text-sm leading-6 text-slate-200">“' + esc(r.comment) + '”</p><p class="mt-5 text-xs font-bold text-slate-400">' + esc(r.user && r.user.userName || "Nelum Retreat guest") + ' · Room ' + esc(r.room && r.room.roomId || "") + '</p></article>'; }).join("") : '<p class="text-slate-400">Reviews will appear here after guests share their stays.</p>'; } catch (e) { $("reviewGrid").innerHTML = '<p class="text-slate-400">' + esc(e.message) + "</p>"; } }
+    async function loadReviews() { try { state.reviews = await api("GET", "/review/reviews"); $("reviewGrid").innerHTML = state.reviews.length ? state.reviews.slice(0, 6).map(function (r) { var name = r.user && r.user.userName || "Nelum Retreat guest"; return '<article class="reveal rounded-3xl border border-white/10 bg-white/10 p-6 backdrop-blur transition hover:-translate-y-1 hover:bg-white/15"><div class="flex items-center justify-between"><span class="flex h-10 w-10 items-center justify-center rounded-full bg-gold font-bold text-ink">' + esc(String(name).charAt(0).toUpperCase()) + '</span><div class="text-lg tracking-widest text-orange-300">' + "★".repeat(Math.max(0, Math.min(5, Number(r.rating) || 0))) + '</div></div><p class="mt-5 min-h-16 text-sm leading-6 text-slate-200">“' + esc(r.comment) + '”</p><p class="mt-5 text-xs font-bold text-slate-400">' + esc(name) + ' · Verified guest</p></article>'; }).join("") : '<p class="text-slate-400">Reviews will appear here after guests share their stays.</p>'; $("reviewGrid").querySelectorAll(".reveal").forEach(function (item, index) { setTimeout(function () { item.classList.add("is-visible"); }, index * 100); }); } catch (e) { $("reviewGrid").innerHTML = '<p class="text-slate-400">' + esc(e.message) + "</p>"; } }
     function bookingForm(roomId) {
         var u = user(); if (!u) { authModal("login"); toast("Sign in to make a booking.", true); return; }
         showModal('<div class="flex items-center justify-between"><div><p class="text-sm font-extrabold uppercase tracking-widest text-coral">Reserve room ' + esc(roomId) + '</p><h2 class="serif mt-1 text-4xl">Plan your stay</h2></div><button data-close class="text-2xl text-slate-400">×</button></div><form id="bookingForm" class="mt-6 space-y-4">' + input("guestName", "Guest name", "text", u.userName) + input("guestPhone", "Guest phone", "tel", u.phoneNumber) + input("checkIn", "Check-in", "date") + input("checkOut", "Check-out", "date") + '<p class="rounded-xl bg-orange-50 p-3 text-xs leading-5 text-orange-800">Your final total is calculated by the server from the selected room and dates. You can create three installments after confirmation.</p><p id="formError" class="min-h-5 text-sm font-semibold text-red-600"></p><button class="w-full rounded-xl bg-coral py-3 font-extrabold text-white">Confirm booking</button></form>');
@@ -198,6 +230,12 @@
     async function createInstallments(id) { try { var result = await api("POST", "/api/v1/installments/" + id); showModal('<h2 class="serif text-4xl">Your pay-later plan</h2><p class="mt-2 text-sm text-slate-500">Booking #' + esc(id) + ' is split into three live installments.</p><div class="mt-5 space-y-2">' + result.map(function (i) { return '<div class="flex justify-between rounded-xl bg-orange-50 p-4 text-sm"><span>Installment ' + esc(i.installmentNumber) + '</span><strong>' + money(i.amount) + '</strong></div>'; }).join("") + '</div><button data-close class="mt-6 w-full rounded-xl bg-ink py-3 font-bold text-white">Done</button>'); } catch (e) { toast(e.message, true); } }
     document.addEventListener("click", function (event) { var el = event.target.closest("[data-close]"); if (el || event.target === $("modal")) closeModal(); var book = event.target.closest("[data-book]"); if (book) window.location.href = "/checkout.html?roomId=" + encodeURIComponent(book.getAttribute("data-book")); var pay = event.target.closest("[data-pay]"); if (pay) paymentForm(pay.getAttribute("data-pay")); var later = event.target.closest("[data-paylater]"); if (later) createInstallments(later.getAttribute("data-paylater")); var review = event.target.closest("[data-review]"); if (review) reviewForm(review.getAttribute("data-review")); });
     $("accountBtn").onclick = accountModal; $("heroSignIn").onclick = accountModal; $("refreshRooms").onclick = loadRooms; $("refreshReviews").onclick = loadReviews; $("roomSearch").onchange = loadRooms; $("roomSearch").onkeydown = function (e) { if (e.key === "Enter") loadRooms(); };
+    $("mobileMenuBtn").onclick = function () { $("mobileMenu").classList.toggle("hidden"); };
+    $("mobileMenu").querySelectorAll("a").forEach(function (link) { link.onclick = function () { $("mobileMenu").classList.add("hidden"); }; });
+    $("heroBooking").onsubmit = function (event) { event.preventDefault(); var type = $("heroRoomType").value; $("roomSearch").value = type; $("rooms").scrollIntoView({ behavior: "smooth" }); loadRooms(); };
+    window.addEventListener("scroll", function () { $("siteHeader").classList.toggle("header-scrolled", window.scrollY > 24); }, { passive: true });
+    var revealObserver = new IntersectionObserver(function (entries) { entries.forEach(function (entry) { if (entry.isIntersecting) { entry.target.classList.add("is-visible"); revealObserver.unobserve(entry.target); } }); }, { threshold: .12 });
+    document.querySelectorAll(".reveal").forEach(function (item) { revealObserver.observe(item); });
     updateAccount(); loadRooms(); loadReviews();
 }());
 </script>
