@@ -46,29 +46,6 @@ public class CustomerService {
         return existingUser;
 
     }
-/*
-    public CustomerUser UpdateCustomer(Long id,CustomerUser customerDetails){
-        try{
-            CustomerUser existingUser = customerRepository.findById(id).orElseThrow();
-
-            if(customerDetails.getUserName() != null){
-                existingUser.setUserName(customerDetails.getUserName());
-            }
-
-            if(customerDetails.getPassword() != null) {
-                existingUser.setPassword(customerDetails.getPassword());
-            }
-            if(customerDetails.getPhoneNumber() != null){
-                existingUser.setPhoneNumber(customerDetails.getPhoneNumber());
-            }
-            customerRepository.save(existingUser);
-            return existingUser;
-
-        } catch (Exception e) {
-            System.out.println("Error Found in UpdateCustomer Method!");
-            return customerDetails;
-        }
-    }*/
 
     public void deleteCustomer(Long id){
         customerRepository.deleteById(id);
