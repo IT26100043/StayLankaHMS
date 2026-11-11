@@ -21,7 +21,10 @@
         .serif { font-family: "DM Serif Display", Georgia, serif; }
         .glass { background: rgba(255,255,255,.82); backdrop-filter: blur(18px); }
         .pop { animation: pop .3s ease both; }
-        .hero-image { min-height: 820px; background-image: linear-gradient(90deg, rgba(9,24,37,.9) 0%, rgba(9,24,37,.55) 48%, rgba(9,24,37,.2) 100%), url("https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=2200&q=88"); background-position: center; background-size: cover; animation: heroZoom 20s ease-out both; }
+        .hero-image { min-height: 820px; }
+        .hero-slide { position: absolute; inset: 0; background-position: center; background-size: cover; opacity: 0; transform: scale(1.06); transition: opacity 1.2s ease, transform 8s ease-out; }
+        .hero-slide.is-active { opacity: 1; transform: scale(1); }
+        .hero-slide::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(9,24,37,.9) 0%, rgba(9,24,37,.55) 48%, rgba(9,24,37,.2) 100%); }
         .leaf-pattern { background-image: radial-gradient(rgba(200,155,60,.18) 1px, transparent 1px); background-size: 18px 18px; }
         #roomGrid article { border-color: #ddd6c9; border-radius: 1.25rem; box-shadow: 0 14px 40px rgba(18,34,48,.09); }
         #roomGrid article h3 { font-family: "DM Serif Display", Georgia, serif; }
@@ -31,14 +34,18 @@
         .reveal.is-visible { opacity: 1; transform: none; }
         .gallery-tile { min-height: 220px; background-position: center; background-size: cover; transition: transform .5s ease, filter .5s ease; }
         .gallery-tile:hover { transform: scale(1.02); filter: brightness(1.08); }
-        @keyframes heroZoom { from { background-size: 105%; } to { background-size: 100%; } }
         #benefits, #experience { background: #fffdf9; }
         #rooms { background-color: #f4f1ea; }
         #reviews, footer { background-color: #0c1b29; }
+        .review-card { border: 1px solid rgba(255,255,255,.1); background: linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.06)); }
+        .review-card:hover { border-color: rgba(199,161,90,.5); transform: translateY(-3px); }
+        .review-bar { background: rgba(255,255,255,.1); }
+        #reviewFilter { color-scheme: dark; background-color: #132839; color: #fff; }
+        #reviewFilter option { background-color: #132839; color: #fff; }
         #roomGrid article button { background: #0c1b29; }
         .header-scrolled { background: rgba(12,27,41,.9); backdrop-filter: blur(18px); box-shadow: 0 10px 30px rgba(0,0,0,.12); }
         @media (max-width: 767px) { .hero-image { min-height: 900px; } }
-        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } .reveal { opacity: 1; transform: none; } }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } .reveal { opacity: 1; transform: none; } .hero-slide { transform: none; } }
         @keyframes pop { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
     </style>
 </head>
@@ -58,7 +65,10 @@
 </header>
 
 <main>
-    <section class="hero-image relative flex items-end overflow-hidden text-white">
+    <section class="hero-image relative flex items-end overflow-hidden text-white" aria-label="Nelum Retreat highlights">
+        <div class="hero-slide is-active" data-slide="0" style="background-image:url('https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=2200&q=88')" role="img" aria-label="Infinity pool surrounded by tropical greenery"></div>
+        <div class="hero-slide" data-slide="1" style="background-image:url('https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=2200&q=88')" role="img" aria-label="Warmly lit retreat bedroom"></div>
+        <div class="hero-slide" data-slide="2" style="background-image:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2200&q=88')" role="img" aria-label="Peaceful Sri Lankan coastline"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-ink/20"></div>
         <div class="relative mx-auto w-full max-w-7xl px-5 pb-52 pt-40 lg:px-8">
             <div class="max-w-3xl pop">
@@ -81,6 +91,16 @@
             <label class="border-slate-200 px-4 py-2 text-left md:border-l"><span class="block text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Guests</span><input id="heroGuests" type="number" min="1" value="2" class="mt-1 w-full bg-transparent text-sm font-bold outline-none"></label>
             <button class="rounded-xl bg-gold px-6 py-3 text-xs font-extrabold uppercase tracking-wider text-ink transition hover:bg-amber-300 md:rounded-full">Check availability</button>
         </form>
+        <div class="absolute bottom-28 right-5 z-10 flex items-center gap-2 sm:right-8" aria-label="Hero gallery controls">
+            <button type="button" class="hero-control rounded-full border border-white/40 bg-ink/20 px-3 py-2 text-sm text-white backdrop-blur transition hover:bg-white hover:text-ink" data-hero-prev aria-label="Previous highlight">←</button>
+            <div class="flex gap-1.5" role="tablist" aria-label="Choose a highlight">
+                <button type="button" class="hero-dot h-2 w-8 rounded-full bg-white transition" data-hero-slide="0" role="tab" aria-label="Show pool highlight" aria-selected="true"></button>
+                <button type="button" class="hero-dot h-2 w-2 rounded-full bg-white/50 transition" data-hero-slide="1" role="tab" aria-label="Show bedroom highlight" aria-selected="false"></button>
+                <button type="button" class="hero-dot h-2 w-2 rounded-full bg-white/50 transition" data-hero-slide="2" role="tab" aria-label="Show coastline highlight" aria-selected="false"></button>
+            </div>
+            <button type="button" class="hero-control rounded-full border border-white/40 bg-ink/20 px-3 py-2 text-sm text-white backdrop-blur transition hover:bg-white hover:text-ink" data-hero-next aria-label="Next highlight">→</button>
+            <button type="button" class="hero-control rounded-full border border-white/40 bg-ink/20 px-3 py-2 text-sm text-white backdrop-blur transition hover:bg-white hover:text-ink" data-hero-pause aria-label="Pause highlights">Ⅱ</button>
+        </div>
     </section>
 
     <section id="experience" class="border-b border-stone-200 bg-white">
@@ -114,9 +134,18 @@
     <section id="gallery" class="bg-white px-5 py-20 lg:px-8"><div class="mx-auto max-w-7xl"><div class="reveal"><p class="text-sm font-extrabold uppercase tracking-[.2em] text-coral">A glimpse of the retreat</p><h2 class="serif mt-2 text-5xl">Come away with us</h2></div><div class="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><div class="gallery-tile reveal rounded-3xl bg-[url('https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=900&q=85')] lg:col-span-2 lg:row-span-2"></div><div class="gallery-tile reveal rounded-3xl bg-[url('https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=900&q=85')]"></div><div class="gallery-tile reveal rounded-3xl bg-[url('https://images.unsplash.com/photo-1600494603989-9650cf6ddd3d?auto=format&fit=crop&w=900&q=85')]"></div><div class="gallery-tile reveal rounded-3xl bg-[url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=900&q=85')]"></div><div class="gallery-tile reveal rounded-3xl bg-[url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=85')]"></div></div></div></section>
 
     <section id="reviews" class="bg-ink text-white">
-        <div class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
-            <div class="flex items-end justify-between gap-5"><div><p class="text-sm font-extrabold uppercase tracking-widest text-orange-300">Guest notes</p><h2 class="serif mt-2 text-5xl">Recent reviews</h2></div><button id="refreshReviews" class="rounded-full border border-white/30 px-4 py-2 text-sm font-bold hover:bg-white/10">Refresh</button></div>
-            <div id="reviewGrid" class="mt-8 grid gap-5 md:grid-cols-3"></div>
+        <div class="mx-auto max-w-7xl px-5 py-20 lg:px-8">
+            <div class="flex flex-wrap items-end justify-between gap-5">
+                <div><p class="text-sm font-extrabold uppercase tracking-widest text-orange-300">Guest notes</p><h2 class="serif mt-2 text-5xl">Words worth staying for</h2><p class="mt-3 max-w-xl text-sm leading-7 text-slate-400">A living collection of stories from guests who found their slower side at Nelum.</p></div>
+                <button id="refreshReviews" class="rounded-full border border-white/30 px-4 py-2 text-sm font-bold transition hover:bg-white/10">Refresh</button>
+            </div>
+            <div class="mt-10 grid gap-4 lg:grid-cols-[.8fr_1.2fr]">
+                <div class="rounded-3xl border border-white/10 bg-white/[.06] p-6">
+                    <div class="flex items-end gap-3"><span id="reviewAverage" class="serif text-6xl text-amber-200">—</span><div class="pb-2"><div id="reviewStars" class="text-lg tracking-widest text-orange-300">★★★★★</div><p id="reviewTotal" class="mt-1 text-xs font-bold uppercase tracking-widest text-slate-400">Loading guest notes</p></div></div>
+                    <div id="reviewDistribution" class="mt-7 space-y-3"></div>
+                </div>
+                <div class="rounded-3xl border border-white/10 bg-[#132839] p-6 sm:p-8"><div class="flex flex-wrap items-center justify-between gap-4"><div><p class="text-xs font-bold uppercase tracking-widest text-amber-200">The latest voices</p><p id="reviewRange" class="mt-1 text-sm text-slate-400">Loading reviews…</p></div><select id="reviewFilter" class="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-bold text-white outline-none"><option value="">All ratings</option><option value="5">5 stars</option><option value="4">4 stars</option><option value="3">3 stars</option><option value="2">2 stars</option><option value="1">1 star</option></select></div><div id="reviewGrid" class="mt-6 grid gap-4 sm:grid-cols-2"></div><div class="mt-7 flex items-center justify-between border-t border-white/10 pt-5"><button id="reviewPrevious" class="rounded-full border border-white/20 px-4 py-2 text-xs font-bold transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30">← Previous</button><span id="reviewPage" class="text-xs font-bold text-slate-400">Page 1</span><button id="reviewNext" class="rounded-full border border-white/20 px-4 py-2 text-xs font-bold transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30">Next →</button></div></div>
+            </div>
         </div>
     </section>
 </main>
@@ -138,7 +167,7 @@
     "use strict";
     var ROOT = location.protocol.indexOf("http") === 0 ? (location.port === "8080" ? "" : location.origin) : "http://localhost:8080";
     var KEY = "nelum_retreat_customer";
-    var state = { rooms: [], reviews: [], bookings: [], payments: [], installments: [] };
+    var state = { rooms: [], reviews: [], bookings: [], payments: [], installments: [], reviewPage: 0, reviewPages: 0, reviewRating: "" };
     var $ = function (id) { return document.getElementById(id); };
     var esc = function (v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); };
     var money = function (n) { return "Rs. " + (Number(n) || 0).toLocaleString("en-LK", { maximumFractionDigits: 2 }); };
@@ -205,11 +234,41 @@
             $("roomGrid").innerHTML = "";
         }
     }
-    async function loadReviews() { try { state.reviews = await api("GET", "/review/reviews"); $("reviewGrid").innerHTML = state.reviews.length ? state.reviews.slice(0, 6).map(function (r) { var name = r.user && r.user.userName || "Nelum Retreat guest"; return '<article class="reveal rounded-3xl border border-white/10 bg-white/10 p-6 backdrop-blur transition hover:-translate-y-1 hover:bg-white/15"><div class="flex items-center justify-between"><span class="flex h-10 w-10 items-center justify-center rounded-full bg-gold font-bold text-ink">' + esc(String(name).charAt(0).toUpperCase()) + '</span><div class="text-lg tracking-widest text-orange-300">' + "★".repeat(Math.max(0, Math.min(5, Number(r.rating) || 0))) + '</div></div><p class="mt-5 min-h-16 text-sm leading-6 text-slate-200">“' + esc(r.comment) + '”</p><p class="mt-5 text-xs font-bold text-slate-400">' + esc(name) + ' · Verified guest</p></article>'; }).join("") : '<p class="text-slate-400">Reviews will appear here after guests share their stays.</p>'; $("reviewGrid").querySelectorAll(".reveal").forEach(function (item, index) { setTimeout(function () { item.classList.add("is-visible"); }, index * 100); }); } catch (e) { $("reviewGrid").innerHTML = '<p class="text-slate-400">' + esc(e.message) + "</p>"; } }
+    function reviewCard(r) {
+        var name = r.user && r.user.userName || "Nelum Retreat guest";
+        var rating = Math.max(0, Math.min(5, Number(r.rating) || 0));
+        var date = r.date || r.Date || "";
+        return '<article class="review-card reveal rounded-3xl p-5 transition"><div class="flex items-start justify-between gap-3"><span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold font-bold text-ink">' + esc(String(name).charAt(0).toUpperCase()) + '</span><div class="text-right"><div class="text-sm tracking-widest text-orange-300">' + "★".repeat(rating) + '<span class="text-white/20">' + "★".repeat(5 - rating) + '</span></div><span class="text-[10px] font-bold uppercase tracking-wider text-emerald-200/60">Verified stay</span></div></div><p class="mt-5 min-h-14 text-sm leading-6 text-slate-200">“' + esc(r.comment) + '”</p><div class="mt-5 flex items-center justify-between gap-2 border-t border-white/10 pt-4 text-xs"><span class="font-bold text-slate-300">' + esc(name) + '</span><span class="text-slate-500">' + esc(date) + '</span></div></article>';
+    }
+    async function loadReviews() {
+        var query = "?page=" + state.reviewPage + "&size=8" + (state.reviewRating ? "&rating=" + state.reviewRating : "");
+        $("reviewGrid").innerHTML = '<p class="text-sm text-slate-400 sm:col-span-2">Gathering guest notes…</p>';
+        try {
+            var results = await Promise.all([api("GET", "/review/reviews/page" + query), api("GET", "/review/summary")]);
+            var page = results[0], summary = results[1];
+            state.reviews = page.content || [];
+            state.reviewPages = page.totalPages || 0;
+            $("reviewAverage").textContent = Number(summary.average || 0).toFixed(1);
+            $("reviewTotal").textContent = Number(summary.total || 0).toLocaleString("en-LK") + " guest notes";
+            $("reviewDistribution").innerHTML = [5, 4, 3, 2, 1].map(function (rating) {
+                var count = Number((summary.distribution || {})[rating] || 0);
+                var width = summary.total ? Math.round(count / summary.total * 100) : 0;
+                return '<div class="flex items-center gap-3 text-xs"><span class="w-8 text-slate-300">' + rating + ' ★</span><div class="review-bar h-2 flex-1 overflow-hidden rounded-full"><div class="h-full rounded-full bg-gold" style="width:' + width + '%"></div></div><span class="w-10 text-right text-slate-500">' + count.toLocaleString("en-LK") + '</span></div>';
+            }).join("");
+            $("reviewGrid").innerHTML = state.reviews.length ? state.reviews.map(reviewCard).join("") : '<p class="text-sm text-slate-400 sm:col-span-2">No reviews match this filter.</p>';
+            $("reviewRange").textContent = page.totalElements ? "Showing " + (page.number * page.size + 1) + "–" + Math.min((page.number + 1) * page.size, page.totalElements) + " of " + Number(page.totalElements).toLocaleString("en-LK") : "No reviews to show";
+            $("reviewPage").textContent = "Page " + (page.totalPages ? page.number + 1 : 0) + " of " + (page.totalPages || 0);
+            $("reviewPrevious").disabled = page.first !== false;
+            $("reviewNext").disabled = page.last !== false;
+            $("reviewGrid").querySelectorAll(".reveal").forEach(function (item, index) { setTimeout(function () { item.classList.add("is-visible"); }, index * 70); });
+        } catch (e) {
+            $("reviewGrid").innerHTML = '<p class="text-sm text-red-200 sm:col-span-2">' + esc(e.message) + "</p>";
+        }
+    }
     function bookingForm(roomId) {
         var u = user(); if (!u) { authModal("login"); toast("Sign in to make a booking.", true); return; }
         showModal('<div class="flex items-center justify-between"><div><p class="text-sm font-extrabold uppercase tracking-widest text-coral">Reserve room ' + esc(roomId) + '</p><h2 class="serif mt-1 text-4xl">Plan your stay</h2></div><button data-close class="text-2xl text-slate-400">×</button></div><form id="bookingForm" class="mt-6 space-y-4">' + input("guestName", "Guest name", "text", u.userName) + input("guestPhone", "Guest phone", "tel", u.phoneNumber) + input("checkIn", "Check-in", "date") + input("checkOut", "Check-out", "date") + '<p class="rounded-xl bg-orange-50 p-3 text-xs leading-5 text-orange-800">Your final total is calculated by the server from the selected room and dates. You can create three installments after confirmation.</p><p id="formError" class="min-h-5 text-sm font-semibold text-red-600"></p><button class="w-full rounded-xl bg-coral py-3 font-extrabold text-white">Confirm booking</button></form>');
-        $("bookingForm").onsubmit = async function (event) { event.preventDefault(); var values = formValues(); values.roomId = roomId; try { var result = await api("POST", "/api/v1/bookings", values); closeModal(); toast(typeof result === "string" ? result : "Booking confirmed."); await loadCustomerData(); } catch (e) { $("formError").textContent = e.message; } };
+        $("bookingForm").onsubmit = async function (event) { event.preventDefault(); var values = formValues(); values.roomId = roomId; values.customerId = Number(u.id); try { var result = await api("POST", "/api/v1/bookings", values); closeModal(); toast(typeof result === "string" ? result : "Booking confirmed."); await loadCustomerData(); } catch (e) { $("formError").textContent = e.message; } };
     }
     function accountModal() {
         var u = user(); if (!u) { authModal("login"); return; }
@@ -217,7 +276,7 @@
         $("logout").onclick = function () { setUser(null); closeModal(); updateAccount(); toast("Signed out."); };
         loadCustomerData().then(renderAccount);
     }
-    async function loadCustomerData() { if (user()) { try { state.bookings = await api("GET", "/api/v1/bookings?keyword=" + encodeURIComponent(user().userName)); } catch (e) { state.bookings = []; } } }
+    async function loadCustomerData() { if (user()) { try { state.bookings = await api("GET", "/api/v1/customers/" + encodeURIComponent(user().id) + "/bookings"); } catch (e) { state.bookings = []; } } }
     function renderAccount() {
         var html = state.bookings.length ? state.bookings.map(function (b) { return '<div class="mb-3 rounded-2xl border border-slate-200 p-4"><div class="flex justify-between gap-3"><strong>Room ' + esc(b.roomId) + '</strong><span class="rounded-full bg-orange-100 px-2 py-1 text-xs font-bold">' + esc(b.status) + '</span></div><p class="mt-1 text-xs text-slate-500">' + esc(b.checkIn) + " → " + esc(b.checkOut) + " · " + money(b.totalPrice) + '</p><div class="mt-3 flex flex-wrap gap-2"><button data-paylater="' + esc(b.bookingId) + '" class="rounded-lg bg-coral px-3 py-2 text-xs font-bold text-white">Pay later: split into 3</button><button data-pay="' + esc(b.bookingId) + '" class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold">Pay now</button><button data-review="' + esc(b.roomId) + '" class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold">Review stay</button></div></div>'; }).join("") : '<p class="rounded-2xl bg-slate-50 p-5">You have no bookings yet. Choose a room to get started.</p>'; $("accountContent").innerHTML = html; }
     async function reviewForm(roomId) {
@@ -233,6 +292,42 @@
     $("mobileMenuBtn").onclick = function () { $("mobileMenu").classList.toggle("hidden"); };
     $("mobileMenu").querySelectorAll("a").forEach(function (link) { link.onclick = function () { $("mobileMenu").classList.add("hidden"); }; });
     $("heroBooking").onsubmit = function (event) { event.preventDefault(); var type = $("heroRoomType").value; $("roomSearch").value = type; $("rooms").scrollIntoView({ behavior: "smooth" }); loadRooms(); };
+    var heroSlides = document.querySelectorAll(".hero-slide");
+    var heroDots = document.querySelectorAll("[data-hero-slide]");
+    var heroIndex = 0;
+    var heroTimer;
+    var heroPaused = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function showHeroSlide(index) {
+        heroIndex = (index + heroSlides.length) % heroSlides.length;
+        heroSlides.forEach(function (slide, i) { slide.classList.toggle("is-active", i === heroIndex); });
+        heroDots.forEach(function (dot, i) {
+            dot.classList.toggle("w-8", i === heroIndex);
+            dot.classList.toggle("w-2", i !== heroIndex);
+            dot.classList.toggle("bg-white", i === heroIndex);
+            dot.classList.toggle("bg-white/50", i !== heroIndex);
+            dot.setAttribute("aria-selected", i === heroIndex ? "true" : "false");
+        });
+    }
+    function restartHeroTimer() {
+        window.clearInterval(heroTimer);
+        if (!heroPaused) { heroTimer = window.setInterval(function () { showHeroSlide(heroIndex + 1); }, 6500); }
+    }
+    document.querySelector("[data-hero-prev]").onclick = function () { showHeroSlide(heroIndex - 1); restartHeroTimer(); };
+    document.querySelector("[data-hero-next]").onclick = function () { showHeroSlide(heroIndex + 1); restartHeroTimer(); };
+    heroDots.forEach(function (dot) { dot.onclick = function () { showHeroSlide(Number(dot.getAttribute("data-hero-slide"))); restartHeroTimer(); }; });
+    document.querySelector("[data-hero-pause]").onclick = function (event) {
+        heroPaused = !heroPaused;
+        event.currentTarget.textContent = heroPaused ? "▶" : "Ⅱ";
+        event.currentTarget.setAttribute("aria-label", heroPaused ? "Play highlights" : "Pause highlights");
+        restartHeroTimer();
+    };
+    document.querySelector(".hero-image").addEventListener("mouseenter", function () { if (!heroPaused) window.clearInterval(heroTimer); });
+    document.querySelector(".hero-image").addEventListener("mouseleave", restartHeroTimer);
+    restartHeroTimer();
+    $("refreshReviews").onclick = function () { loadReviews(); };
+    $("reviewFilter").onchange = function (event) { state.reviewRating = event.target.value; state.reviewPage = 0; loadReviews(); };
+    $("reviewPrevious").onclick = function () { if (state.reviewPage > 0) { state.reviewPage--; loadReviews(); } };
+    $("reviewNext").onclick = function () { if (state.reviewPage + 1 < state.reviewPages) { state.reviewPage++; loadReviews(); } };
     window.addEventListener("scroll", function () { $("siteHeader").classList.toggle("header-scrolled", window.scrollY > 24); }, { passive: true });
     var revealObserver = new IntersectionObserver(function (entries) { entries.forEach(function (entry) { if (entry.isIntersecting) { entry.target.classList.add("is-visible"); revealObserver.unobserve(entry.target); } }); }, { threshold: .12 });
     document.querySelectorAll(".reveal").forEach(function (item) { revealObserver.observe(item); });

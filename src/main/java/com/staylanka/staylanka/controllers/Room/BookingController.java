@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import com.staylanka.staylanka.entity.CustomerUser;
+import com.staylanka.staylanka.service.CustomerService;
 
 @RestController // create rest API
 @CrossOrigin
@@ -13,10 +15,12 @@ import java.util.List;
 public class BookingController {
 
     private BookingService bookingService;
+    private CustomerService customerService;
 
     // Spring gives us the BookingService automatically
-    public BookingController(BookingService bookingService) {
+    public BookingController(BookingService bookingService, CustomerService customerService) {
         this.bookingService = bookingService;
+        this.customerService = customerService;
     }
 
     // 1. READ ALL (and search by guest name)
@@ -28,6 +32,15 @@ public class BookingController {
             return bookingService.getAllBookings();
         }
         return bookingService.searchBookings(keyword);
+    }
+
+    @GetMapping("/customers/{customerId}/bookings")
+    public ResponseEntity<List<Booking>> getCustomerBookings(@PathVariable Long customerId) {
+        CustomerUser customer = customerService.getCustomerById(customerId).orElse(null);
+        if (customer == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(bookingService.getBookingsForCustomer(customerId, customer.getPhoneNumber()));
     }
 
     // 2. READ ONE

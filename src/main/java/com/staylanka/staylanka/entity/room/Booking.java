@@ -20,6 +20,7 @@ public class Booking {
     private String roomId;
     private String guestName;
     private String guestPhone;
+    private Long customerId;
     private LocalDate checkIn;
     private LocalDate checkOut;
     private double totalPrice;
@@ -70,6 +71,14 @@ public class Booking {
 
     public void setGuestPhone(String guestPhone) {
         this.guestPhone = guestPhone;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
     public LocalDate getCheckIn() {

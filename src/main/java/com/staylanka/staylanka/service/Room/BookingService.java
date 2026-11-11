@@ -55,6 +55,10 @@ public class BookingService {
         return bookingRepository.findByGuestNameContainingIgnoreCase(keyword);
     }
 
+    public List<Booking> getBookingsForCustomer(Long customerId, String phoneNumber) {
+        return bookingRepository.findByCustomerIdOrGuestPhone(customerId, phoneNumber);
+    }
+
     // updte
     public Booking updateBooking(Long id, Booking updated) {
         Booking existing = bookingRepository.findById(id).orElse(null);

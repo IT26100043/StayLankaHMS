@@ -6,9 +6,14 @@ import com.staylanka.staylanka.entity.review.Review;
 import com.staylanka.staylanka.entity.review.ReviewRequest;
 import com.staylanka.staylanka.entity.review.UpdateReviewRequest;
 import com.staylanka.staylanka.service.review.ReviewService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*")
@@ -25,6 +30,22 @@ public class ReviewController {
     @GetMapping("/reviews")
     public List<Review> getAllReviews(){
         return reviewService.getAllReviews();
+    }
+
+    @GetMapping("/reviews/page")
+    public Page<Review> getReviewsPage(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            @RequestParam(required = false) Integer rating) {
+        int safePage = Math.max(0, page);
+        int safeSize = Math.min(Math.max(1, size), 24);
+        Pageable pageable = PageRequest.of(safePage, safeSize, Sort.by(Sort.Direction.DESC, "reviewId"));
+        return reviewService.getReviews(pageable, rating);
+    }
+
+    @GetMapping("/summary")
+    public Map<String, Object> getReviewSummary(){
+        return reviewService.getReviewSummary();
     }
 
 
