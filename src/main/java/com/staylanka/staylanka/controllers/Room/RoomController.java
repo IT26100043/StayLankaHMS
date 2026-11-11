@@ -14,20 +14,19 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 
-@RestController // create rest API
-@CrossOrigin
-@RequestMapping(value = "api/v1") // Rest API
+@RestController // controll rest api / li,obeject -json ez fn
+@CrossOrigin // permitions fe - server
+@RequestMapping(value = "api/v1") // which url belongs to wich mehord
 public class RoomController {
 
-    private final RoomService roomService;
+    private final RoomService roomService;  //Constructor Injection
 
 
     public RoomController(RoomService roomService) {
         this.roomService = roomService;
     }
 
-    // Builds the correct room class (Standard / Deluxe / Suite) from the JSON body
-    // empty / missing = no date
+
     private LocalDate parseDate(Object value) {
         if (value == null || String.valueOf(value).isBlank()) {
             return null;
@@ -60,7 +59,7 @@ public class RoomController {
     }
 
 
-    @GetMapping("/rooms")
+    @GetMapping("/rooms") // s rooms
     public List<Room> getAllRooms(@RequestParam(required = false) String keyword) {
         if (keyword == null || keyword.isBlank()) {
             return roomService.getAllRooms();
@@ -69,7 +68,7 @@ public class RoomController {
     }
 
 
-    @GetMapping("/rooms/{id}")
+    @GetMapping("/rooms/{id}") // by id
     public ResponseEntity<Room> getRoom(@PathVariable String id) {
         Room room = roomService.getRoomById(id);
         if (room == null) {
@@ -79,7 +78,7 @@ public class RoomController {
     }
 
 
-    @PostMapping("/rooms")
+    @PostMapping("/rooms") // to db
     public ResponseEntity<String> addRoom(@RequestBody Map<String, Object> body) {
         try {
             roomService.addRoom(buildRoom(body));

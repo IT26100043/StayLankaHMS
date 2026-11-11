@@ -54,8 +54,7 @@ public class BookingController {
         return ResponseEntity.ok(booking);                     // 200 = ok
     }
 
-    // 3. CREATE
-    // POST /api/v1/bookings   (booking details come in the request body as JSON)
+
     @PostMapping("/bookings")
     public ResponseEntity<String> addBooking(@RequestBody Booking booking) {
         try {
@@ -67,8 +66,7 @@ public class BookingController {
         }
     }
 
-    // 4. UPDATE (guest details and dates)
-    // PUT /api/v1/bookings/1
+    //update
     @PutMapping("/bookings/{id}")
     public ResponseEntity<String> updateBooking(@PathVariable Long id, @RequestBody Booking booking) {
         try {
@@ -82,8 +80,7 @@ public class BookingController {
         }
     }
 
-    // 5. CANCEL (the booking stays in the list as "Cancelled")
-    // PUT /api/v1/bookings/1/cancel
+
     @PutMapping("/bookings/{id}/cancel")
     public ResponseEntity<String> cancelBooking(@PathVariable Long id) {
         boolean cancelled = bookingService.cancelBooking(id);
@@ -93,8 +90,6 @@ public class BookingController {
         return ResponseEntity.ok("Booking cancelled");
     }
 
-    // 6. DELETE (removes the booking completely)
-    // DELETE /api/v1/bookings/1
     @DeleteMapping("/bookings/{id}")
     public ResponseEntity<String> deleteBooking(@PathVariable Long id) {
         boolean deleted = bookingService.deleteBooking(id);
