@@ -48,12 +48,16 @@ public class RoomController {
             LocalDate from = parseDate(body.get("maintenanceFrom"));
             LocalDate to = parseDate(body.get("maintenanceTo"));
 
-            return switch (type) {
-                case "Standard" -> new StandedRoom(roomId, price, capacity, from, to);
-                case "Deluxe"   -> new DeluxeRoom(roomId, price, capacity, from, to);
-                case "Suite"    -> new SuiteRoom(roomId, price, capacity, from, to);
-                default -> throw new IllegalArgumentException("Unknown room type: " + type);
-            };
+            if ("Standard".equals(type)) {
+                return new StandedRoom(roomId, price, capacity, from, to);
+            }
+            if ("Deluxe".equals(type)) {
+                return new DeluxeRoom(roomId, price, capacity, from, to);
+            }
+            if ("Suite".equals(type)) {
+                return new SuiteRoom(roomId, price, capacity, from, to);
+            }
+            throw new IllegalArgumentException("Unknown room type: " + type);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Price and capacity must be valid numbers");
         }

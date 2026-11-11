@@ -49,7 +49,7 @@ public class ReviewController {
     }
 
 
-    // GET /review/can-review?customerId=1&roomId=R101  ->  true / false
+    // GET /review/can-review?customerId=1&roomId=R101 returns true or false
     @GetMapping("/can-review")
     public boolean canReview(@RequestParam Long customerId, @RequestParam String roomId){
         return reviewService.canReview(customerId, roomId);

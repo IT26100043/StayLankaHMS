@@ -45,12 +45,18 @@ public class PaymentService {
                 || cardPaymentRequest.getBookingId() == null) {
             throw new IllegalArgumentException("Customer ID and booking ID are required");
         }
-        CustomerUser customerUser = customerRepository.findById(cardPaymentRequest.getCustomerId())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Customer " + cardPaymentRequest.getCustomerId() + " was not found"));
-        Booking booking = bookingRepository.findById(cardPaymentRequest.getBookingId())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Booking " + cardPaymentRequest.getBookingId() + " was not found"));
+        Optional<CustomerUser> customerResult = customerRepository.findById(cardPaymentRequest.getCustomerId());
+        if (!customerResult.isPresent()) {
+            throw new IllegalArgumentException(
+                    "Customer " + cardPaymentRequest.getCustomerId() + " was not found");
+        }
+        CustomerUser customerUser = customerResult.get();
+        Optional<Booking> bookingResult = bookingRepository.findById(cardPaymentRequest.getBookingId());
+        if (!bookingResult.isPresent()) {
+            throw new IllegalArgumentException(
+                    "Booking " + cardPaymentRequest.getBookingId() + " was not found");
+        }
+        Booking booking = bookingResult.get();
         if (cardPaymentRequest.getCardHolderName() == null
                 || cardPaymentRequest.getCardHolderName().isBlank()
                 || cardPaymentRequest.getCardNumber() == null

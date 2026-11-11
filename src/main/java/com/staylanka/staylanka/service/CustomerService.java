@@ -66,12 +66,13 @@ public class CustomerService {
         String newPhoneNumber = existingUser.getPhoneNumber();
         if (!java.util.Objects.equals(oldUserName, newUserName)
                 || !java.util.Objects.equals(oldPhoneNumber, newPhoneNumber)) {
-            bookingRepository.findByCustomerIdOrGuestPhone(id, oldPhoneNumber).forEach(booking -> {
+            List<Booking> bookings = bookingRepository.findByCustomerIdOrGuestPhone(id, oldPhoneNumber);
+            for (Booking booking : bookings) {
                 booking.setCustomerId(id);
                 booking.setGuestName(newUserName);
                 booking.setGuestPhone(newPhoneNumber);
                 bookingRepository.save(booking);
-            });
+            }
         }
         customerRepository.save(existingUser);
         return existingUser;

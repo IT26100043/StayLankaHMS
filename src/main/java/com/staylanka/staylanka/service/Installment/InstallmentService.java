@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class InstallmentService {
@@ -38,9 +39,11 @@ public class InstallmentService {
 
     public List<Installment> createInstallments(Long bookingId) {
 
-        Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() ->
-                        new RuntimeException("Booking not found"));
+        Optional<Booking> bookingResult = bookingRepository.findById(bookingId);
+        if (!bookingResult.isPresent()) {
+            throw new RuntimeException("Booking not found");
+        }
+        Booking booking = bookingResult.get();
 
         if (!installmentRepository
                 .findByBooking_BookingId(bookingId).isEmpty()) {
@@ -85,13 +88,19 @@ public class InstallmentService {
                 || request.getCardCvvNumber() == null || request.getCardCvvNumber().isBlank()) {
             throw new IllegalArgumentException("Customer ID and complete card details are required");
         }
-        Installment installment = installmentRepository.findById(installmentId)
-                .orElseThrow(() -> new IllegalArgumentException("Installment not found"));
+        Optional<Installment> installmentResult = installmentRepository.findById(installmentId);
+        if (!installmentResult.isPresent()) {
+            throw new IllegalArgumentException("Installment not found");
+        }
+        Installment installment = installmentResult.get();
         if (!"PENDING".equalsIgnoreCase(installment.getStatus())) {
             throw new IllegalArgumentException("This installment has already been paid");
         }
-        CustomerUser customer = customerRepository.findById(request.getCustomerId())
-                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+        Optional<CustomerUser> customerResult = customerRepository.findById(request.getCustomerId());
+        if (!customerResult.isPresent()) {
+            throw new IllegalArgumentException("Customer not found");
+        }
+        CustomerUser customer = customerResult.get();
         Booking booking = installment.getBooking();
         if (booking == null) {
             throw new IllegalArgumentException("Installment booking not found");
