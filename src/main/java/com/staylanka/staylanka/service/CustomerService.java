@@ -1,10 +1,13 @@
 package com.staylanka.staylanka.service;
 
 import com.staylanka.staylanka.entity.CustomerUser;
+import com.staylanka.staylanka.repository.AdminUserRepository;
 import com.staylanka.staylanka.repository.CustomerRepository;
 import com.staylanka.staylanka.entity.room.Booking;
 import com.staylanka.staylanka.repository.Room.BookingRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,10 +17,13 @@ import java.util.Optional;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final AdminUserRepository adminUserRepository;
     private final BookingRepository bookingRepository;
 
-    public CustomerService(CustomerRepository customerRepository, BookingRepository bookingRepository){
+    public CustomerService(CustomerRepository customerRepository, AdminUserRepository adminUserRepository,
+                           BookingRepository bookingRepository){
         this.customerRepository = customerRepository;
+        this.adminUserRepository = adminUserRepository;
         this.bookingRepository = bookingRepository;
     }
 
@@ -36,6 +42,10 @@ public class CustomerService {
         String oldPhoneNumber = existingUser.getPhoneNumber();
 
         if(customerDetails.getUserName() != null){
+            if (customerRepository.existsByUserNameAndIdNot(customerDetails.getUserName(), id)
+                    || adminUserRepository.existsByUserName(customerDetails.getUserName())) {
+                throw duplicateUserException();
+            }
             existingUser.setUserName(customerDetails.getUserName());
         }
 
@@ -43,6 +53,10 @@ public class CustomerService {
             existingUser.setPassword(customerDetails.getPassword());
         }
         if(customerDetails.getPhoneNumber() != null){
+            if (customerRepository.existsByPhoneNumberAndIdNot(customerDetails.getPhoneNumber(), id)
+                    || adminUserRepository.existsByPhoneNumber(customerDetails.getPhoneNumber())) {
+                throw duplicateUserException();
+            }
             existingUser.setPhoneNumber(customerDetails.getPhoneNumber());
         }
         if(customerDetails.getSecurityNumber() != null){
@@ -70,15 +84,19 @@ public class CustomerService {
 
 
     public CustomerUser registerCustomer(CustomerUser customerUser){
+        if (customerRepository.existsByUserName(customerUser.getUserName())
+                || customerRepository.existsByPhoneNumber(customerUser.getPhoneNumber())
+                || adminUserRepository.existsByUserName(customerUser.getUserName())
+                || adminUserRepository.existsByPhoneNumber(customerUser.getPhoneNumber())) {
+            throw duplicateUserException();
+        }
         return customerRepository.save(customerUser);
     }
 
-
-
-
-
-
-
-
-
+    private ResponseStatusException duplicateUserException() {
+        return new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Username or phone number already exists"
+        );
+    }
 }
