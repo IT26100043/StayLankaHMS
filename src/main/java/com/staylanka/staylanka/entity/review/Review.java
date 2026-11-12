@@ -40,7 +40,7 @@ public class Review {
 
 
 
-    
+    //getter
 
     public User getUser() {
         return user;
@@ -67,7 +67,7 @@ public class Review {
     }
 
     
-
+    //setter
 
     public void setUser(User user) {
         this.user = user;
