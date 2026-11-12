@@ -8,7 +8,7 @@ import jakarta.persistence.Entity;
 public class CustomerUser extends User{
     public CustomerUser(){}
 
-    public CustomerUser(String userName,String password,String phoneNumber){
-        super(userName,password,phoneNumber,"CUSTOMER");
+    public CustomerUser(String userName,String password,String phoneNumber,String securityNumber){
+        super(userName,password,phoneNumber,"CUSTOMER",securityNumber);
     }
 }

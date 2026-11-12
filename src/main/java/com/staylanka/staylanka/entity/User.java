@@ -14,24 +14,31 @@ public class User {
     @Column(nullable = true, unique = true)
     private String userName;
 
-    @Column(nullable = false)
+
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String phoneNumber;
     private String Role;
 
+    private String securityNumber;
+
     public User(){}
 
-    public User(String userName,String password,String phoneNumber,String Role){
+    public User(String userName,String password,String phoneNumber,String Role,String securityNumber){
         this.userName = userName;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.Role = Role;
+        this.securityNumber = securityNumber;
     }
 
     //setters
 
+
+    public void setSecurityNumber(String securityNumber) {
+        this.securityNumber = securityNumber;
+    }
 
     public void setId(Long id) {
         this.id = id;
@@ -55,6 +62,10 @@ public class User {
 
     //getters
 
+
+    public String getSecurityNumber() {
+        return securityNumber;
+    }
 
     public Long getId() {
         return id;

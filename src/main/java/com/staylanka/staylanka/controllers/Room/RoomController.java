@@ -9,6 +9,8 @@ import com.staylanka.staylanka.service.Room.RoomService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -25,20 +27,37 @@ public class RoomController {
     }
 
     // Builds the correct room class (Standard / Deluxe / Suite) from the JSON body
+    // empty / missing = no date
+    private LocalDate parseDate(Object value) {
+        if (value == null || String.valueOf(value).isBlank()) {
+            return null;
+        }
+        try {
+            return LocalDate.parse(String.valueOf(value));
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Maintenance dates must look like 2026-11-05");
+        }
+    }
+
     private Room buildRoom(Map<String, Object> body) {
         try {
             String type = String.valueOf(body.get("type"));
             String roomId = body.get("roomId") == null ? null : String.valueOf(body.get("roomId"));
             double price = Double.parseDouble(String.valueOf(body.get("pricePerNight")));
             int capacity = Integer.parseInt(String.valueOf(body.get("capacity")));
-            String status = String.valueOf(body.get("status"));
+            LocalDate from = parseDate(body.get("maintenanceFrom"));
+            LocalDate to = parseDate(body.get("maintenanceTo"));
 
-            return switch (type) {
-                case "Standard" -> new StandedRoom(roomId, price, capacity, status);
-                case "Deluxe"   -> new DeluxeRoom(roomId, price, capacity, status);
-                case "Suite"    -> new SuiteRoom(roomId, price, capacity, status);
-                default -> throw new IllegalArgumentException("Unknown room type: " + type);
-            };
+            if ("Standard".equals(type)) {
+                return new StandedRoom(roomId, price, capacity, from, to);
+            }
+            if ("Deluxe".equals(type)) {
+                return new DeluxeRoom(roomId, price, capacity, from, to);
+            }
+            if ("Suite".equals(type)) {
+                return new SuiteRoom(roomId, price, capacity, from, to);
+            }
+            throw new IllegalArgumentException("Unknown room type: " + type);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Price and capacity must be valid numbers");
         }

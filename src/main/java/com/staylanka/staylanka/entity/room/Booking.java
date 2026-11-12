@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.time.LocalDate;
 
@@ -19,12 +20,25 @@ public class Booking {
     private String roomId;
     private String guestName;
     private String guestPhone;
+    private Long customerId;
     private LocalDate checkIn;
     private LocalDate checkOut;
     private double totalPrice;
     private String status;
     public Booking() {
 
+    }
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+
+    // machn I add parameterized constructor @Sahan
+    public Booking(String roomId,String guestName,String guestPhone,LocalDate checkIn,LocalDate checkOut,double totalPrice,String status){
+        this.roomId = roomId;
+        this.guestName = guestName;
+        this.guestPhone = guestPhone;
+        this.checkIn = checkIn;
+        this.checkOut = checkOut;
+        this.totalPrice = totalPrice;
+        this.status  = status;
     }
 
     public Long getBookingId() {
@@ -57,6 +71,14 @@ public class Booking {
 
     public void setGuestPhone(String guestPhone) {
         this.guestPhone = guestPhone;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
     public LocalDate getCheckIn() {

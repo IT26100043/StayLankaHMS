@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
@@ -22,7 +23,6 @@ public class AdminController {
     public List<AdminUser> getAdminUser(){
         return adminService.getAdminUser();
     }
-
 
     @GetMapping("/{id}")
     public Optional<AdminUser> getAdminById(@PathVariable Long id){
@@ -43,6 +43,8 @@ public class AdminController {
     public AdminUser registerAdminUser(@RequestBody AdminUser adminUser){
         return adminService.registerNewUser(adminUser);
     }
+
+
 
 
 

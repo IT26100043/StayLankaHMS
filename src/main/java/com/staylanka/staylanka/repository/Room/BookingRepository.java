@@ -12,4 +12,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     // search by guest name
     List<Booking> findByGuestNameContainingIgnoreCase(String keyword);
+
+    List<Booking> findByCustomerIdOrGuestPhone(Long customerId, String guestPhone);
+
+    List<Booking> findByGuestName(String guestName);
 }

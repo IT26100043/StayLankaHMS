@@ -2,11 +2,10 @@ package com.staylanka.staylanka.controllers;
 
 import com.staylanka.staylanka.entity.AdminUser;
 import com.staylanka.staylanka.entity.CustomerUser;
+import com.staylanka.staylanka.entity.RequestForgotPassword;
+import com.staylanka.staylanka.entity.RequestUserDataByUserName;
 import com.staylanka.staylanka.service.AuthenticationService;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -21,13 +20,23 @@ public class AuthenticationController {
     }
 
     @PostMapping("/admin")
-    public AdminUser checkAdminUserAuth(@RequestBody AdminUser adminUser){
-        return authenticationService.checkAdminAuthentication(adminUser);
+    public AdminUser checkAdminUserAuth(@RequestBody RequestUserDataByUserName userLoginData){
+        return authenticationService.checkAdminAuthentication(userLoginData);
     }
 
     @PostMapping("/customer")
-    public CustomerUser checkCustomerAuth(@RequestBody CustomerUser customerUser){
-        return authenticationService.checkCustomerAuthentication(customerUser);
+    public CustomerUser checkCustomerAuth(@RequestBody RequestUserDataByUserName requestUserDataByUserName){
+        return authenticationService.checkCustomerAuthentication(requestUserDataByUserName);
+    }
+
+    @PutMapping("/customerforgot")
+    public CustomerUser forgotPasswordCustomer(@RequestBody RequestForgotPassword requestForgotPassword){
+        return authenticationService.forgotPasswordCustomer(requestForgotPassword);
+    }
+
+    @PutMapping("/adminforgot")
+    public AdminUser forgotPasswordAdmin(@RequestBody RequestForgotPassword requestForgotPassword){
+        return authenticationService.forgotPasswordAdmin(requestForgotPassword);
     }
 
 }
