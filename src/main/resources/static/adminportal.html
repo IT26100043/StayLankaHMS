@@ -372,10 +372,13 @@
             confirmDel("Cancel booking?","Booking #"+row.bookingId+" will remain visible with a Cancelled status.",async function(){
                 await call("PUT","/api/v1/bookings/"+row.bookingId+"/cancel");toast("Booking cancelled");await loadAll()},"Cancel")}
         function createInstallments(row){
-            call("POST","/api/v1/installments/"+row.bookingId).then(function(items){
+            call("GET","/api/v1/installments/"+row.bookingId).then(function(items){
+                if(!Array.isArray(items)||!items.length)return call("POST","/api/v1/installments/"+row.bookingId);
+                return items;
+            }).then(function(items){
                 var rows=Array.isArray(items)?items:[];
                 openModal('<div class="flex items-center justify-between mb-5"><h3 class="text-xl font-bold text-slate-900 dark:text-white">Installments for booking #'+esc(row.bookingId)+'</h3><button data-close class="text-slate-400 text-lg">✕</button></div>'+
-                    '<div class="space-y-2">'+rows.map(function(item){return'<div class="flex justify-between rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm"><span>Installment '+esc(item.installmentNumber)+'</span><strong>'+money(item.amount)+'</strong></div>'}).join("")+'</div>'+
+                    '<div class="space-y-2">'+rows.map(function(item){var status=String(item.status||"PENDING").toUpperCase();return'<div class="flex items-center justify-between rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm"><span>Installment '+esc(item.installmentNumber)+'</span><span class="flex items-center gap-3"><strong>'+money(item.amount)+'</strong>'+pill(status,status==="PAID"?"ok":"warn")+'</span></div>'}).join("")+'</div>'+
                     '<button data-close class="mt-5 w-full rounded-xl bg-brand-600 text-white py-2.5 text-sm font-semibold">Close</button>');
             }).catch(function(e){toast(e.message,true)})
         }

@@ -1,52 +1,49 @@
-package com.staylanka.staylanka.controllers;
+    package com.staylanka.staylanka.controllers;
 
-import com.staylanka.staylanka.entity.AdminUser;
-import com.staylanka.staylanka.service.AdminService;
-import org.springframework.web.bind.annotation.*;
+    import com.staylanka.staylanka.entity.AdminUser;
+    import com.staylanka.staylanka.service.AdminService;
+    import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+    import java.util.List;
+    import java.util.Optional;
 
-@CrossOrigin(origins = "*")
-@RestController
-@RequestMapping("/admin")
-public class AdminController {
+    @CrossOrigin(origins = "*")
+    @RestController
+    @RequestMapping("/admin")
+    public class AdminController {
 
-    public final AdminService adminService;
+        public final AdminService adminService;
 
-    public AdminController(AdminService adminService){
-        this.adminService = adminService;
+        public AdminController(AdminService adminService){
+            this.adminService = adminService;
+        }
+
+
+        @GetMapping("/admins")
+        public List<AdminUser> getAdminUser(){
+            return adminService.getAdminUser();
+        }
+
+        @GetMapping("/{id}")
+        public Optional<AdminUser> getAdminById(@PathVariable Long id){
+            return adminService.getAdminById(id);
+        }
+
+        @PutMapping("/{id}")
+        public AdminUser updateAdminUser(@PathVariable Long id,@RequestBody AdminUser adminUser){
+            return adminService.updateAminUser(id,adminUser);
+        }
+
+        @DeleteMapping("/{id}")
+        public void deleteAdminById(@PathVariable Long id){
+            adminService.deleteAdminUser(id);
+        }
+
+        @PostMapping("/register")
+        public AdminUser registerAdminUser(@RequestBody AdminUser adminUser){
+            return adminService.registerNewUser(adminUser);
+        }
+
+
+
     }
-
-
-    @GetMapping("/admins")
-    public List<AdminUser> getAdminUser(){
-        return adminService.getAdminUser();
-    }
-
-    @GetMapping("/{id}")
-    public Optional<AdminUser> getAdminById(@PathVariable Long id){
-        return adminService.getAdminById(id);
-    }
-
-    @PutMapping("/{id}")
-    public AdminUser updateAdminUser(@PathVariable Long id,@RequestBody AdminUser adminUser){
-        return adminService.updateAminUser(id,adminUser);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteAdminById(@PathVariable Long id){
-        adminService.deleteAdminUser(id);
-    }
-
-    @PostMapping("/register")
-    public AdminUser registerAdminUser(@RequestBody AdminUser adminUser){
-        return adminService.registerNewUser(adminUser);
-    }
-
-
-
-
-
-
-}

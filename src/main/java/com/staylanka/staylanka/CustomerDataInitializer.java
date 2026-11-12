@@ -29,11 +29,11 @@ import java.time.LocalDateTime;
                 @Override
                 public void run(String... args) {
                     // add customer dummy data
-                    customerRepository.save(new CustomerUser("testuser1", "abc@123", "0712655299","500"));
-                    customerRepository.save(new CustomerUser("testuser2","xyz@789", "071345678","600"));
+                    customerRepository.save(new CustomerUser("Alex", "abc@123", "0712883221","500"));
+                    customerRepository.save(new CustomerUser("Elon","xyz@789", "0712993167","600"));
 
                     //add admin dummy data
-                    adminUserRepository.save(new AdminUser("Root","root","0711234567","600"));
+                    adminUserRepository.save(new AdminUser("Root","root","0712773206","600"));
                     //adminUserRepository.save(new AdminUser("Admin2","xyz@123","0711256789","700"));
                    //adminUserRepository.save(new AdminUser("Admin3","pqr@123","071145678","600"));
 
@@ -53,10 +53,10 @@ import java.time.LocalDateTime;
                     roomRepository.save(new SuiteRoom("R302", 18000, 4, LocalDate.of(2026, 11, 5), LocalDate.of(2026, 11, 12)));
 
                     //paymentDummy
-                    CustomerUser customerUser = new CustomerUser("lesly","Lesly123","078300468","800");
-                    Booking booking = new Booking("AAA","ABC","071233654", LocalDate.of(2026, 11, 1),LocalDate.of(2026,11,10),1500,"CONFIRMED");
+                    CustomerUser customerUser = new CustomerUser("MahindaRajapaksha","M1234","0712013269","800");
+                    Booking booking = new Booking("R203","Namal","071233654", LocalDate.of(2026, 11, 1),LocalDate.of(2026,11,10),1500,"CONFIRMED");
 
-                    bookingRepository.save(new Booking("AAAs","ABC","07123888854", LocalDate.of(2026, 11, 1),LocalDate.of(2026,11,10),1500,"CONFIRMED"));
+                    bookingRepository.save(new Booking("R302","Mahinda Rajapaksha","0712013269", LocalDate.of(2026, 11, 1),LocalDate.of(2026,11,10),1500,"CONFIRMED"));
 
                     customerRepository.save(customerUser);
                     bookingRepository.save(booking);
@@ -67,7 +67,7 @@ import java.time.LocalDateTime;
                     Room room1 = new StandedRoom("R105",5500,3);
                     roomRepository.save(room1);
 
-                    reviewRepository.save(new Review(customerUser,room1,5,"Good Rooms",LocalDate.of(2026,11,25)));
+                    reviewRepository.save(new Review(customerUser,room1,5,"Best Customer Service",LocalDate.of(2026,11,25)));
                 }
             };
         }
